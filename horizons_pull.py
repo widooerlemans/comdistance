@@ -2,10 +2,12 @@
 """
 Fetch comet distances from JPL Horizons and write data/comets_ephem.json
 
-- Query at 'now' using a *list* of one Julian Date: epochs=[JD].
+- Query at 'now' using a list with one Julian Date: epochs=[JD].
 - If a periodic comet designation is ambiguous, parse the ambiguity table and
   choose the most recent apparition (preferably within last N years), then
   retry using the unique numeric record id.
+- Column access is robust: we map ephemeris column names case-insensitively and
+  include available column names in errors if something is missing.
 """
 
 import json
@@ -100,22 +102,49 @@ def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again
         raise
 
 
+def _colmap(cols) -> Dict[str, str]:
+    """Map lowercase -> actual column name for case-insensitive access."""
+    return {c.lower(): c for c in cols}
+
+
+def _get_float(row, cmap: Dict[str, str], key_lower: str) -> Optional[float]:
+    """Safely fetch a float from a table row using case-insensitive key."""
+    k = cmap.get(key_lower)
+    if not k:
+        return None
+    try:
+        return float(row[k])
+    except Exception:
+        return None
+
+
+def _row_to_payload(row) -> Dict[str, Any]:
+    cols = getattr(row, "colnames", None) or row.table.colnames  # astropy table row
+    cmap = _colmap(cols)
+    out = {
+        "r_au":    _get_float(row, cmap, "r"),
+        "delta_au":_get_float(row, cmap, "delta"),
+        "phase_deg":_get_float(row, cmap, "alpha"),
+        "ra_deg":  _get_float(row, cmap, "ra"),
+        "dec_deg": _get_float(row, cmap, "dec"),
+        "vmag":    _get_float(row, cmap, "v"),
+    }
+    # If some keys are missing, include what columns we actually got (debug aid)
+    if any(v is None for v in out.values()):
+        out["_cols"] = list(cmap.values())
+    return out
+
+
 def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
     """Fetch single-epoch ephemeris at 'now' (JD list) for one comet."""
     jd_now = Time.now().jd
     try:
         eph = _query_ephem(comet_id, "designation", observer, jd_now)
         row = eph[0]
-        return {
-            "id": comet_id,
-            "epoch_utc": now_iso(),
-            "r_au": float(row["r"]),
-            "delta_au": float(row["delta"]),
-            "phase_deg": float(row["alpha"]),
-            "ra_deg": float(row["RA"]),
-            "dec_deg": float(row["DEC"]),
-            "vmag": float(row["V"]),
-        }
+        core = _row_to_payload(row)
+        if core["r_au"] is None or core["delta_au"] is None:
+            return {"id": comet_id, "epoch_utc": now_iso(), "error": "missing columns", **core}
+        return {"id": comet_id, "epoch_utc": now_iso(), **core}
     except Exception as e1:
         rec_id = resolve_ambiguous_to_record_id(comet_id)
         if rec_id is None:
@@ -123,17 +152,11 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
         try:
             eph = _query_ephem(rec_id, "smallbody", observer, jd_now)
             row = eph[0]
-            return {
-                "id": comet_id,
-                "horizons_id": rec_id,
-                "epoch_utc": now_iso(),
-                "r_au": float(row["r"]),
-                "delta_au": float(row["delta"]),
-                "phase_deg": float(row["alpha"]),
-                "ra_deg": float(row["RA"]),
-                "dec_deg": float(row["DEC"]),
-                "vmag": float(row["V"]),
-            }
+            core = _row_to_payload(row)
+            if core["r_au"] is None or core["delta_au"] is None:
+                return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(),
+                        "error": "missing columns", **core}
+            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
         except Exception as e2:
             return {"id": comet_id, "epoch_utc": now_iso(), "error": f"{e1} | retry:{e2}"}
 
