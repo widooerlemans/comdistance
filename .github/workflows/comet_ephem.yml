@@ -25,50 +25,62 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      # Fetch COBS list through your Cloudflare Worker (requires ?url=)
-      - name: Fetch COBS list (observed mag ≤ 15)
+      # 1) Try Cloudflare Worker (with required ?url=)
+      - name: Fetch COBS via Worker
         run: |
           set -e
           mkdir -p data
-          curl -fsSL \
+          curl -fsSL --compressed \
             "https://cobs-proxy.widooerlemans.workers.dev/?url=https%3A%2F%2Fcobs.si%2Fapi%2Fplanner.api%3Flim_mag%3D15%26filter%3D1%26lat%3D52.0907%26long%3D5.1214%26alt%3D10" \
             -H "User-Agent: comdistance-bot/1.0" \
-            -o data/cobs_list.json
-          echo "COBS bytes:"; wc -c data/cobs_list.json || true
-          echo "COBS head:"; head -c 800 data/cobs_list.json || true
+            -o data/cobs_list.json || true
+          echo "COBS (Worker) bytes:"; wc -c data/cobs_list.json || true
+          echo "COBS (Worker) head:"; head -c 600 data/cobs_list.json || true
           echo
 
-      # Upload raw COBS for easy inspection
+      # 2) Fallback: fetch directly from COBS if Worker result looks empty/small
+      - name: Fallback fetch direct from COBS if needed
+        run: |
+          BYTES=$(wc -c < data/cobs_list.json || echo 0)
+          if [ "$BYTES" -lt 30 ]; then
+            echo "Worker result too small ($BYTES), trying direct COBS…"
+            curl -fsSL --compressed \
+              "https://cobs.si/api/planner.api?lim_mag=15&filter=1&lat=52.0907&long=5.1214&alt=10" \
+              -H "User-Agent: comdistance-bot/1.0" \
+              -o data/cobs_list.json
+          fi
+          echo "COBS (final) bytes:"; wc -c data/cobs_list.json || true
+          echo "COBS (final) head:"; head -c 600 data/cobs_list.json || true
+          echo
+
+      # Upload raw COBS to inspect easily from the run page
       - name: Upload COBS JSON artifact
         uses: actions/upload-artifact@v4
         with:
           name: debug-cobs-json
           path: data/cobs_list.json
 
-      # Show first lines of your Python (confirm SCRIPT_VERSION)
+      # Show script header to confirm active version
       - name: Show script header (first 40 lines)
         run: |
           sed -n '1,40p' horizons_pull.py
 
-      # Parser sanity check: how many designations did we detect?
+      # Parser sanity check (counts and sample)
       - name: Debug parse COBS list (designations count)
         run: |
           python - <<'PY'
           import json, re
           from pathlib import Path
-
           p = Path("data/cobs_list.json")
           try:
             raw = json.loads(p.read_text()) if p.exists() else []
           except Exception as e:
-            print("JSON parse error:", e)
-            raw = []
-
+            print("JSON parse error:", e); raw = []
           def to_desig(s):
             if not s: return None
             s = str(s)
-            m = re.match(r'^\s*(\d+\s*P(?:/\w+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
-            if m:
+            m = re.match(r'^\s*(\d+\s*P(?:/[A-Za-z0-9-]+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
+            if m: 
               return re.sub(r'\s+', ' ', m.group(1).upper())
             m2 = re.search(r'\(([^)]+)\)', s)
             return to_desig(m2.group(1)) if m2 else None
@@ -81,12 +93,14 @@ jobs:
             if items is raw and all(isinstance(k, str) for k in raw.keys()):
               items = [{ "name": k, "mag": raw[k] } for k in raw.keys()]
 
-          desigs = set()
+          desigs, sample = [], []
           for o in (items if isinstance(items, list) else []):
             name = (o.get("designation") or o.get("mpc_name") or o.get("fullname") or o.get("name"))
             d = to_desig(name)
-            if d: desigs.add(d)
-          print(f"Parsed COBS designations: {len(desigs)} ->", sorted(list(desigs))[:12])
+            if d and d not in desigs:
+              desigs.append(d)
+              if len(sample) < 12: sample.append(d)
+          print(f"Parsed COBS designations: {len(desigs)} -> {sample}")
           PY
 
       - name: Run pull (create JSON)
