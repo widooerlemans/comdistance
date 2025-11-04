@@ -3,7 +3,6 @@
 Fetch comet distances (and brightness estimates) from JPL Horizons
 and write data/comets_ephem.json
 
-What this script does:
 - Queries "now" using epochs=[JD] (list) to avoid TLIST/WLDINI issues.
 - Resolves ambiguous periodic comet designations (e.g., 2P/12P/13P) by picking
   the most recent apparition (favor last N years) and re-querying by numeric id.
@@ -11,7 +10,7 @@ What this script does:
   from state vectors so values are present even if Horizons omits r/alpha columns.
 - If V is missing, computes predicted magnitude:
       v_pred = M1 + 5*log10(Δ) + k1*log10(r)
-- Optional brightness filter to keep only comets roughly ≤ mag 15–16.
+- Brightness filter is DISABLED so you always get output.
 """
 
 import json
@@ -25,7 +24,7 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 7  # bump when you update this file
+SCRIPT_VERSION = 8  # bump when you update this file
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                 # geocenter; swap to your site dict later if you want
@@ -34,20 +33,15 @@ QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V (we still compute
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 
-# Optional: only keep comets with predicted magnitude <= this limit
-# Set to None to keep everything.
-BRIGHT_LIMIT = 15.5
+# Disable brightness filtering so nothing gets dropped
+BRIGHT_LIMIT = None  # set e.g. 17.5 to keep only predicted <= 17.5 mag
 
-# Hand list to produce useful output right now (designations!).
-# You can freely add e.g. "C/2024 S4", "C/2025 A1", "P/2021 A3", etc.
+# Hand list to produce useful output right now (designations).
 COMETS: List[str] = [
     "2P",
     "12P",
     "13P",
     "C/2023 A3",
-    # add more designations below if you like
-    # "C/2024 S4",
-    # "C/2025 A1",
 ]
 # ---------------------------
 
@@ -61,12 +55,9 @@ _ROW = re.compile(r"^\s*(?P<rec>9\d{7})\s+(?P<epoch>\d{4})\s+")
 
 
 def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
-    """Choose the most recent acceptable record id from Horizons' ambiguity table."""
     now_year = datetime.utcnow().year
     best = None
     best_epoch = -1
-
-    # Prefer within the window first
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
         if not m:
@@ -77,8 +68,6 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
             best, best_epoch = rec, epoch
     if best:
         return best
-
-    # Else: newest overall
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
         if not m:
@@ -91,12 +80,11 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
 
 
 def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
-    """If designation is ambiguous, pick the most recent apparition's numeric record id."""
     try:
         jd_now = Time.now().jd
         Horizons(id=designation, id_type="designation", location=OBSERVER, epochs=[jd_now])\
             .ephemerides(quantities="1")
-        return None  # not ambiguous
+        return None
     except Exception as e:
         msg = str(e)
         if "Ambiguous target name" not in msg:
@@ -105,7 +93,6 @@ def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
 
 
 def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again: bool = True):
-    """Observer ephemeris query with a tiny retry for Horizons hiccups."""
     try:
         obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=[jd_now])
         return obj.ephemerides(quantities=QUANTITIES)
@@ -119,7 +106,6 @@ def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again
 
 
 def _query_vectors(location: str, id_value: str, id_type: str, jd_now: float):
-    """Vectors query (returns state vectors). location '@10'=Sun, '@399'=Earth geocenter."""
     obj = Horizons(id=id_value, id_type=id_type, location=location, epochs=[jd_now])
     return obj.vectors()
 
@@ -129,9 +115,8 @@ def _vec_norm(x, y, z):
 
 
 def _phase_from_vectors(v_sun_row, v_earth_row):
-    # Both rows have x,y,z in AU for comet position relative to the center body
-    sx, sy, sz = float(v_sun_row["x"]), float(v_sun_row["y"]), float(v_sun_row["z"])     # Sun->comet
-    ex, ey, ez = float(v_earth_row["x"]), float(v_earth_row["y"]), float(v_earth_row["z"])  # Earth->comet
+    sx, sy, sz = float(v_sun_row["x"]), float(v_sun_row["y"]), float(v_sun_row["z"])
+    ex, ey, ez = float(v_earth_row["x"]), float(v_earth_row["y"]), float(v_earth_row["z"])
     rn = _vec_norm(sx, sy, sz)      # heliocentric distance r (AU)
     dn = _vec_norm(ex, ey, ez)      # geocentric distance Δ (AU)
     dot = sx*ex + sy*ey + sz*ez
@@ -170,7 +155,6 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
     M1   = _get_optional_float(row, cmap, "m1")
     k1   = _get_optional_float(row, cmap, "k1")
 
-    # prefer ephemeris delta if present; else use vector delta
     delta_au = delt if delt is not None else delta_vec_au
 
     out = {
@@ -182,14 +166,12 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
         "vmag": vmag,        # may be None
     }
 
-    # If V is missing but M1/k1 are present, compute predicted magnitude
     if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta_au is not None):
         try:
             out["v_pred"] = M1 + 5.0*math.log10(delta_au) + k1*math.log10(r_au)
         except ValueError:
             pass
 
-    # Debug aid: if critical bits are missing, expose available columns
     if any(out.get(k) is None for k in ("delta_au", "ra_deg", "dec_deg")):
         out["_cols"] = list(cmap.values())
 
@@ -251,15 +233,9 @@ def main():
         results.append(fetch_one(cid, OBSERVER))
         time.sleep(PAUSE_S)
 
-    # Optional: filter on predicted brightness so your UI shows likely-visible comets
-    if BRIGHT_LIMIT is not None:
-        filtered = []
-        for it in results:
-            vpred = it.get("v_pred")
-            # keep if we have a prediction and it's bright enough
-            if (vpred is not None) and (vpred <= BRIGHT_LIMIT):
-                filtered.append(it)
-        results = filtered
+    # Brightness filter is disabled (BRIGHT_LIMIT=None). If you want it back:
+    # if BRIGHT_LIMIT is not None:
+    #     results = [it for it in results if (it.get("v_pred") is not None and it["v_pred"] <= BRIGHT_LIMIT)]
 
     payload = {
         "generated_utc": now_iso(),
