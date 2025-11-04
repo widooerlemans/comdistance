@@ -5,7 +5,12 @@ from typing import List, Dict, Any
 from astroquery.jplhorizons import Horizons
 
 # Horizons-friendly IDs (edit as you like)
-COMETS = ["12P", "13P", "2P", "C/2023 A3"]
+COMETS = [
+    "12P/Pons-Brooks",
+    "13P/Olbers",
+    "2P/Encke",
+    "C/2023 A3 (Tsuchinshan-ATLAS)",  # full name avoids ambiguity
+]
 
 # Start with geocenter for reliability. Later you can use your site:
 # OBSERVER = {"lon": 5.1214, "lat": 52.0907, "elevation": 10}
