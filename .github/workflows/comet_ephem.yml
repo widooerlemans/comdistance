@@ -13,16 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # COBS planner location (Utrecht-ish)
+      # Location for planner.api (Utrecht-ish)
       COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
-      # Planner filter for what to download from COBS (wider = more)
-      COBS_LIM_MAG: "15"
+
+      # Fetch a bit deeper than 15 so we can locally filter to <= 15
+      COBS_LIM_MAG: "19"
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
-      # App-level display filter (keeps only observed <= this mag in output JSON)
+
+      # Local filter in Python (observed magnitude ≤ this)
       BRIGHT_LIMIT: "15"
 
     steps:
@@ -45,23 +47,20 @@ jobs:
           mkdir -p data
           URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
           echo "GET $URL"
-          curl -fsSL --compressed "$URL" \
-            -H "User-Agent: comdistance-bot/1.0" \
-            -o data/cobs_list.json
+          curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
         run: |
-          set -e
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "$BYTES" -lt 30 ]; then
             echo "Direct fetch small ($BYTES), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))" URL="$URL")
+            export URL
+            ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
-              -H "User-Agent: comdistance-bot/1.0" \
-              -o data/cobs_list.json
+              -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
             echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
           fi
@@ -88,13 +87,15 @@ jobs:
             raw = {}
           def to_desig(s):
             if not s: return None
-            s = str(s)
-            m = re.match(r'^\s*(\d+\s*P(?:/[A-Za-z0-9-]+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
-            if m:
-              import re as _re
-              return _re.sub(r'\s+', ' ', m.group(1).upper())
-            m2 = re.search(r'\(([^)]+)\)', s)
-            return to_desig(m2.group(1)) if m2 else None
+            s = str(s).strip()
+            m = re.match(r'^\s*0*(\d+)\s*P(?:\s*/.*)?\s*$', s, re.I)
+            if m: return f"{int(m.group(1))}P"
+            m = re.match(r'^\s*([PCDAXI])\s*/\s*(\d{4})\s+([A-Z]\d+)', s, re.I)
+            if m: return f"{m.group(1).upper()}/{m.group(2)} {m.group(3).upper()}"
+            m = re.match(r'^\s*(\d+)\s*I(?:\s*/.*)?\s*$', s, re.I)
+            if m: return f"{int(m.group(1))}I"
+            m = re.search(r'\(([^)]+)\)', s)
+            return to_desig(m.group(1)) if m else None
           items = []
           if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
             items = raw["comet_list"]
@@ -105,22 +106,13 @@ jobs:
           elif isinstance(raw, list):
             items = raw
           desigs = []
-          mags = {}
           for o in items:
             if not isinstance(o, dict): continue
-            name = o.get("mpc_name") or o.get("comet_name") or o.get("comet_fullname") or o.get("designation") or o.get("name")
+            name = o.get("mpc_name") or o.get("comet_name") or o.get("comet_fullname") or o.get("designation") or o.get("name") or o.get("fullname")
             d = to_desig(name)
-            mag = None
-            for k in ("mag","magnitude","current_mag","peak_mag","estimated_mag"):
-              if k in o:
-                try: mag = float(o[k]); break
-                except: pass
-            if d:
-              if d not in desigs: desigs.append(d)
-              if mag is not None: mags[d] = mag
-          print(f"Parsed COBS designations: {len(desigs)} -> {desigs[:12]}")
-          if mags:
-            print("Sample mags:", list(mags.items())[:6])
+            if d and d not in desigs:
+              desigs.append(d)
+          print(f"Parsed COBS designations: {len(desigs)} -> {desigs[:20]}")
           PY
 
       - name: Run pull (create JSON)
