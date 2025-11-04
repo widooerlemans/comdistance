@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      COBS_LAT: "52.09"
+      COBS_LAT: "52.09"     # Utrecht-ish
       COBS_LON: "5.12"
       COBS_ALT: "10"
-      COBS_LIM_MAG: "15"
+      COBS_LIM_MAG: "15"    # observed mag cutoff
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
-      BRIGHT_LIMIT: ""     # "17.5" to filter; empty disables
+      BRIGHT_LIMIT: ""      # e.g. "17.5" to filter; empty disables
 
     steps:
       - name: Checkout
@@ -51,12 +51,10 @@ jobs:
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "$BYTES" -lt 30 ]; then
             echo "Direct fetch small ($BYTES), trying Worker…"
-            ENCODED_URL=$(python - << 'PY'
-import urllib.parse, os
-u=f"https://cobs.si/api/planner.api?lat={os.environ['COBS_LAT']}&long={os.environ['COBS_LON']}&alt={os.environ['COBS_ALT']}&lim_mag={os.environ['COBS_LIM_MAG']}&min_alt={os.environ['COBS_MIN_ALT']}&min_sol={os.environ['COBS_MIN_SOL']}&min_moon={os.environ['COBS_MIN_MOON']}"
-print(urllib.parse.quote(u, safe=''))
-PY
-)
+            PYCODE="import urllib.parse, os; \
+url='https://cobs.si/api/planner.api?lat='+os.environ['COBS_LAT']+'&long='+os.environ['COBS_LON']+'&alt='+os.environ['COBS_ALT']+'&lim_mag='+os.environ['COBS_LIM_MAG']+'&min_alt='+os.environ['COBS_MIN_ALT']+'&min_sol='+os.environ['COBS_MIN_SOL']+'&min_moon='+os.environ['COBS_MIN_MOON']; \
+print(urllib.parse.quote(url, safe=''))"
+            ENCODED_URL=$(python -c "$PYCODE")
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
@@ -78,17 +76,19 @@ PY
           import json, re
           from pathlib import Path
           p = Path("data/cobs_list.json")
-          raw = {}
           try:
             raw = json.loads(p.read_text())
           except Exception as e:
             print("JSON parse error:", e)
+            raw = {}
 
           def to_desig(s):
             if not s: return None
             s = str(s)
             m = re.match(r'^\s*(\d+\s*P(?:/[A-Za-z0-9-]+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
-            if m: return re.sub(r'\s+', ' ', m.group(1).upper())
+            if m: 
+              import re as _re
+              return _re.sub(r'\s+', ' ', m.group(1).upper())
             m2 = re.search(r'\(([^)]+)\)', s)
             return to_desig(m2.group(1)) if m2 else None
 
