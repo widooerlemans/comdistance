@@ -3,7 +3,7 @@ name: Update comet ephemerides (JPL Horizons)
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "8 3 * * *"   # daily at 03:08 UTC
+    - cron: "8 3 * * *"   # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -11,6 +11,18 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # Tune these without touching code
+    env:
+      COBS_LAT: "52.09"      # Utrecht-ish
+      COBS_LON: "5.12"
+      COBS_ALT: "10"
+      COBS_LIM_MAG: "15"     # observed mag cutoff
+      COBS_MIN_ALT: "0"
+      COBS_MIN_SOL: "0"
+      COBS_MIN_MOON: "0"
+      BRIGHT_LIMIT: ""       # e.g. "17.5" to filter; empty disables
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,85 +37,87 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      # 1) Try Cloudflare Worker (with required ?url=)
-      - name: Fetch COBS via Worker
+      # Fetch COBS directly (Planner API returns comet_list)
+      - name: Fetch COBS planner list (direct)
         run: |
           set -e
           mkdir -p data
-          curl -fsSL --compressed \
-            "https://cobs-proxy.widooerlemans.workers.dev/?url=https%3A%2F%2Fcobs.si%2Fapi%2Fplanner.api%3Flim_mag%3D15%26filter%3D1%26lat%3D52.0907%26long%3D5.1214%26alt%3D10" \
-            -H "User-Agent: comdistance-bot/1.0" \
-            -o data/cobs_list.json || true
-          echo "COBS (Worker) bytes:"; wc -c data/cobs_list.json || true
-          echo "COBS (Worker) head:"; head -c 600 data/cobs_list.json || true
-          echo
+          URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
+          echo "GET $URL"
+          curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
+          echo "COBS bytes:"; wc -c data/cobs_list.json || true
+          echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
-      # 2) Fallback: fetch directly from COBS if Worker result looks empty/small
-      - name: Fallback fetch direct from COBS if needed
+      # (Optional fallback via your Cloudflare Worker if direct ever fails)
+      - name: Fallback via Worker if file tiny
         run: |
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "$BYTES" -lt 30 ]; then
-            echo "Worker result too small ($BYTES), trying direct COBS…"
-            curl -fsSL --compressed \
-              "https://cobs.si/api/planner.api?lim_mag=15&filter=1&lat=52.0907&long=5.1214&alt=10" \
-              -H "User-Agent: comdistance-bot/1.0" \
-              -o data/cobs_list.json
+            echo "Direct fetch small ($BYTES), trying Worker…"
+            ENCODED_URL=$(python - << 'PY'
+import urllib.parse, os
+u=f"https://cobs.si/api/planner.api?lat={os.environ['COBS_LAT']}&long={os.environ['COBS_LON']}&alt={os.environ['COBS_ALT']}&lim_mag={os.environ['COBS_LIM_MAG']}&min_alt={os.environ['COBS_MIN_ALT']}&min_sol={os.environ['COBS_MIN_SOL']}&min_moon={os.environ['COBS_MIN_MOON']}"
+print(urllib.parse.quote(u, safe=''))
+PY
+)
+            curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
+              -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
+            echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
+            echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
           fi
-          echo "COBS (final) bytes:"; wc -c data/cobs_list.json || true
-          echo "COBS (final) head:"; head -c 600 data/cobs_list.json || true
-          echo
 
-      # Upload raw COBS to inspect easily from the run page
       - name: Upload COBS JSON artifact
         uses: actions/upload-artifact@v4
         with:
           name: debug-cobs-json
           path: data/cobs_list.json
 
-      # Show script header to confirm active version
       - name: Show script header (first 40 lines)
-        run: |
-          sed -n '1,40p' horizons_pull.py
+        run: sed -n '1,40p' horizons_pull.py
 
-      # Parser sanity check (counts and sample)
       - name: Debug parse COBS list (designations count)
         run: |
           python - <<'PY'
           import json, re
           from pathlib import Path
           p = Path("data/cobs_list.json")
+          raw = {}
           try:
-            raw = json.loads(p.read_text()) if p.exists() else []
+            raw = json.loads(p.read_text())
           except Exception as e:
-            print("JSON parse error:", e); raw = []
+            print("JSON parse error:", e)
+
           def to_desig(s):
             if not s: return None
             s = str(s)
             m = re.match(r'^\s*(\d+\s*P(?:/[A-Za-z0-9-]+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
-            if m: 
-              return re.sub(r'\s+', ' ', m.group(1).upper())
+            if m: return re.sub(r'\s+', ' ', m.group(1).upper())
             m2 = re.search(r'\(([^)]+)\)', s)
             return to_desig(m2.group(1)) if m2 else None
 
-          items = raw
-          if isinstance(raw, dict):
+          items = []
+          if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
+            items = raw["comet_list"]
+          elif isinstance(raw, dict):
             for k in ("comets","objects","data","items","list"):
               if isinstance(raw.get(k), list):
                 items = raw[k]; break
-            if items is raw and all(isinstance(k, str) for k in raw.keys()):
-              items = [{ "name": k, "mag": raw[k] } for k in raw.keys()]
+          elif isinstance(raw, list):
+            items = raw
 
-          desigs, sample = [], []
-          for o in (items if isinstance(items, list) else []):
-            name = (o.get("designation") or o.get("mpc_name") or o.get("fullname") or o.get("name"))
+          desigs = []
+          for o in items:
+            if not isinstance(o, dict): continue
+            name = o.get("mpc_name") or o.get("comet_name") or o.get("comet_fullname") or o.get("designation") or o.get("name")
             d = to_desig(name)
             if d and d not in desigs:
               desigs.append(d)
-              if len(sample) < 12: sample.append(d)
-          print(f"Parsed COBS designations: {len(desigs)} -> {sample}")
+          print(f"Parsed COBS designations: {len(desigs)} -> {desigs[:12]}")
           PY
 
       - name: Run pull (create JSON)
+        env:
+          BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
           set -e
           ls -la
