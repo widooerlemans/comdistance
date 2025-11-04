@@ -12,7 +12,7 @@ QUANTITIES = "1,3,4,20,21,31"  # r, delta, alpha, RA, DEC, V
 PAUSE_S = 0.3
 
 # Fixed list for the first successful run — *designations only*
-COMETS = ["12P", "13P", "2P", "C/2023 A3"]
+COMETS = ["2P", "13P", "2P", "C/2023 A3"]
 
 def now_iso():
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
