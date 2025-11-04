@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Fetch comet distances from JPL Horizons and write data/comets_ephem.json
+Fetch comet distances (and brightness estimates) from JPL Horizons
+and write data/comets_ephem.json
 
-- Query at 'now' using epochs=[JD] (list) to avoid TLIST/WLDINI issues.
-- Resolve ambiguous periodic comet designations (2P/12P/13P...) by selecting
-  the most recent apparition (favor last N years) and retry via numeric record id.
-- Use observer ephemeris for RA/DEC/Δ. Compute r (heliocentric) and phase angle
-  from state vectors so we always have values even if Horizons omits r/alpha.
-- If V is missing, compute predicted magnitude v_pred = M1 + 5*log10(Δ) + k1*log10(r).
+What this script does:
+- Queries "now" using epochs=[JD] (list) to avoid TLIST/WLDINI issues.
+- Resolves ambiguous periodic comet designations (e.g., 2P/12P/13P) by picking
+  the most recent apparition (favor last N years) and re-querying by numeric id.
+- Uses observer ephemeris for RA/DEC/Δ. Computes r (heliocentric) and phase angle
+  from state vectors so values are present even if Horizons omits r/alpha columns.
+- If V is missing, computes predicted magnitude:
+      v_pred = M1 + 5*log10(Δ) + k1*log10(r)
+- Optional brightness filter to keep only comets roughly ≤ mag 15–16.
 """
 
 import json
@@ -21,21 +25,29 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 6  # bump when you update this file
+SCRIPT_VERSION = 7  # bump when you update this file
 
 # ---------- CONFIG ----------
-OBSERVER = "500"                 # geocenter; you can swap to your site dict later
-YEARS_WINDOW = 6                 # choose most recent apparition, prefer within N years
+OBSERVER = "500"                 # geocenter; swap to your site dict later if you want
+YEARS_WINDOW = 6                 # pick the most recent apparition (prefer within N years)
 QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V (we still compute r/alpha ourselves)
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 
-# Minimal fixed list to validate pipeline; we’ll swap to a COBS-driven list later.
+# Optional: only keep comets with predicted magnitude <= this limit
+# Set to None to keep everything.
+BRIGHT_LIMIT = 15.5
+
+# Hand list to produce useful output right now (designations!).
+# You can freely add e.g. "C/2024 S4", "C/2025 A1", "P/2021 A3", etc.
 COMETS: List[str] = [
     "2P",
+    "12P",
     "13P",
     "C/2023 A3",
-    # "12P",  # enable if you want; resolver handles ambiguity
+    # add more designations below if you like
+    # "C/2024 S4",
+    # "C/2025 A1",
 ]
 # ---------------------------
 
@@ -239,11 +251,23 @@ def main():
         results.append(fetch_one(cid, OBSERVER))
         time.sleep(PAUSE_S)
 
+    # Optional: filter on predicted brightness so your UI shows likely-visible comets
+    if BRIGHT_LIMIT is not None:
+        filtered = []
+        for it in results:
+            vpred = it.get("v_pred")
+            # keep if we have a prediction and it's bright enough
+            if (vpred is not None) and (vpred <= BRIGHT_LIMIT):
+                filtered.append(it)
+        results = filtered
+
     payload = {
         "generated_utc": now_iso(),
         "observer": OBSERVER,
         "years_window": YEARS_WINDOW,
         "script_version": SCRIPT_VERSION,
+        "bright_limit": BRIGHT_LIMIT,
+        "count": len(results),
         "items": results,
     }
     with open(OUTPATH, "w", encoding="utf-8") as f:
