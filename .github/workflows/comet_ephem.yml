@@ -48,13 +48,13 @@ jobs:
 
       - name: Fallback via Worker if file tiny
         run: |
+          set -e
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "$BYTES" -lt 30 ]; then
             echo "Direct fetch small ($BYTES), trying Worker…"
-            PYCODE="import urllib.parse, os; \
-url='https://cobs.si/api/planner.api?lat='+os.environ['COBS_LAT']+'&long='+os.environ['COBS_LON']+'&alt='+os.environ['COBS_ALT']+'&lim_mag='+os.environ['COBS_LIM_MAG']+'&min_alt='+os.environ['COBS_MIN_ALT']+'&min_sol='+os.environ['COBS_MIN_SOL']+'&min_moon='+os.environ['COBS_MIN_MOON']; \
-print(urllib.parse.quote(url, safe=''))"
-            ENCODED_URL=$(python -c "$PYCODE")
+            URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
+            export URL
+            ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
@@ -86,7 +86,7 @@ print(urllib.parse.quote(url, safe=''))"
             if not s: return None
             s = str(s)
             m = re.match(r'^\s*(\d+\s*P(?:/[A-Za-z0-9-]+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
-            if m: 
+            if m:
               import re as _re
               return _re.sub(r'\s+', ' ', m.group(1).upper())
             m2 = re.search(r'\(([^)]+)\)', s)
