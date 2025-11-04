@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from typing import List, Dict, Any
 from astroquery.jplhorizons import Horizons
 
-COMETS = ["12P", "2P/Encke", "13P/Olbers", "C/2023 A3"]
-OBSERVER = {"lon": 5.1214, "lat": 52.0907, "elevation": 10}
+COMETS = ["12P", "13P", "2P", "C/2023 A3"]
+OBSERVER = "500"
 OUTPATH = "data/comets_ephem.json"
 QUANTITIES = "1,3,4,20,21,31"  # r, delta, alpha, RA, DEC, V
 
