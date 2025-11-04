@@ -1,7 +1,7 @@
 name: Update comet ephemerides (JPL Horizons)
 
 on:
-  workflow_dispatch: {}          # <-- this makes the "Run workflow" button appear
+  workflow_dispatch: {}          # enables the "Run workflow" button
   schedule:
     - cron: "8 3 * * *"          # daily at 03:08 UTC
 
@@ -25,15 +25,57 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      # Fetch COBS list directly (no Cloudflare Worker needed for Actions)
+      # Fetch COBS list through your Cloudflare Worker (requires ?url=)
       - name: Fetch COBS list (observed mag ≤ 15)
         run: |
           set -e
           mkdir -p data
-          curl -fsSL "https://cobs.si/api/planner.api?lim_mag=15&filter=1&lat=52.0907&long=5.1214&alt=10" -o data/cobs_list.json
-          wc -c data/cobs_list.json || true
-          head -c 400 data/cobs_list.json || true
+          curl -fsSL \
+            "https://cobs-proxy.widooerlemans.workers.dev/?url=https%3A%2F%2Fcobs.si%2Fapi%2Fplanner.api%3Flim_mag%3D15%26filter%3D1%26lat%3D52.0907%26long%3D5.1214%26alt%3D10" \
+            -H "User-Agent: comdistance-bot/1.0" \
+            -o data/cobs_list.json
+          echo "COBS bytes:"; wc -c data/cobs_list.json || true
+          echo "COBS head:"; head -c 500 data/cobs_list.json || true
           echo
+
+      # Quick check: show first lines of your Python to confirm version/placement
+      - name: Show script header (first 40 lines)
+        run: |
+          sed -n '1,40p' horizons_pull.py
+
+      # Quick parser sanity check (should list some designations)
+      - name: Debug parse COBS list (designations count)
+        run: |
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+
+          p = Path("data/cobs_list.json")
+          raw = json.loads(p.read_text()) if p.exists() else []
+          def to_desig(s):
+              if not s: return None
+              s = str(s)
+              m = re.match(r'^\s*(\d+\s*P(?:/\w+)?|[PCADX]/\d{4}\s+[A-Z]\d+)', s, re.I)
+              if m:
+                  return re.sub(r'\s+', ' ', m.group(1).upper())
+              m2 = re.search(r'\(([^)]+)\)', s)
+              return to_desig(m2.group(1)) if m2 else None
+
+          items = raw
+          if isinstance(raw, dict):
+              for k in ("comets","objects","data","items","list"):
+                  if isinstance(raw.get(k), list):
+                      items = raw[k]; break
+              if items is raw and all(isinstance(k, str) for k in raw.keys()):
+                  items = [{ "name": k, "mag": raw[k] } for k in raw.keys()]
+
+          desigs = set()
+          for o in (items if isinstance(items, list) else []):
+              name = (o.get("designation") or o.get("mpc_name") or o.get("fullname") or o.get("name"))
+              d = to_desig(name)
+              if d: desigs.add(d)
+          print(f"Parsed COBS designations: {len(desigs)} ->", sorted(list(desigs))[:10])
+          PY
 
       - name: Run pull (create JSON)
         run: |
