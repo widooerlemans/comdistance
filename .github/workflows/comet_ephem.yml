@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # Tune these without touching code
+    # Tweak these without touching code
     env:
       COBS_LAT: "52.09"      # Utrecht-ish
       COBS_LON: "5.12"
@@ -48,7 +48,7 @@ jobs:
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
-      # (Optional fallback via your Cloudflare Worker if direct ever fails)
+      # Fallback via your Cloudflare Worker if direct ever fails
       - name: Fallback via Worker if file tiny
         run: |
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
