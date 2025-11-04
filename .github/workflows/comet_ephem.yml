@@ -30,7 +30,7 @@ jobs:
         run: |
           python - <<'PY'
           from astroquery.jplhorizons import Horizons
-          obj = Horizons(id='12P', id_type='designation', location='500')  # geocenter
+          obj = Horizons(id='2P', id_type='designation', location='500')  # geocenter
           eph = obj.ephemerides(quantities='1,3')
           print(eph.pformat(max_width=120))
           PY
