@@ -2,12 +2,12 @@
 """
 Fetch comet distances from JPL Horizons and write data/comets_ephem.json
 
-- Query at 'now' using a list with one Julian Date: epochs=[JD].
-- If a periodic comet designation is ambiguous, parse the ambiguity table and
-  choose the most recent apparition (preferably within last N years), then
-  retry using the unique numeric record id.
-- Column access is robust: we map ephemeris column names case-insensitively and
-  include available column names in errors if something is missing.
+SCRIPT_VERSION = 4
+- Uses epochs=[JD] (list) to avoid TLIST/WLDINI.
+- Resolves ambiguous P/ designations by selecting the most recent apparition
+  (preferring last N years) and re-querying by numeric record id.
+- Never indexes columns directly; maps column names case-insensitively and
+  includes the returned column list on errors for debugging.
 """
 
 import json
@@ -19,10 +19,12 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
+SCRIPT_VERSION = 4
+
 # ---------- CONFIG ----------
 OBSERVER = "500"                 # geocenter
 YEARS_WINDOW = 6                 # prefer apparitions within this many years
-QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V
+QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V  (Horizons codes)
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 
@@ -30,7 +32,7 @@ COMETS: List[str] = [
     "2P",
     "13P",
     "C/2023 A3",
-    # "12P",  # you can re-enable; resolver will handle it
+    # "12P",  # enable if you want; resolver will handle it
 ]
 # ---------------------------
 
@@ -90,10 +92,9 @@ def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again
     """One-shot query with a tiny retry if Horizons glitches."""
     try:
         obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=[jd_now])
-        eph = obj.ephemerides(quantities=QUANTITIES)
-        return eph
+        return obj.ephemerides(quantities=QUANTITIES)
     except Exception as e:
-        # Retry once after a short pause if it's the TLIST/WLDINI kind of hiccup
+        # Retry once if it's the TLIST/WLDINI hiccup
         msg = str(e)
         if try_again and ("no TLIST" in msg or "WLDINI" in msg):
             time.sleep(0.8)
@@ -119,17 +120,17 @@ def _get_float(row, cmap: Dict[str, str], key_lower: str) -> Optional[float]:
 
 
 def _row_to_payload(row) -> Dict[str, Any]:
-    cols = getattr(row, "colnames", None) or row.table.colnames  # astropy table row
+    # Works with astropy Table Row
+    cols = getattr(row, "colnames", None) or row.table.colnames
     cmap = _colmap(cols)
     out = {
-        "r_au":    _get_float(row, cmap, "r"),
-        "delta_au":_get_float(row, cmap, "delta"),
+        "r_au":     _get_float(row, cmap, "r"),
+        "delta_au": _get_float(row, cmap, "delta"),
         "phase_deg":_get_float(row, cmap, "alpha"),
-        "ra_deg":  _get_float(row, cmap, "ra"),
-        "dec_deg": _get_float(row, cmap, "dec"),
-        "vmag":    _get_float(row, cmap, "v"),
+        "ra_deg":   _get_float(row, cmap, "ra"),
+        "dec_deg":  _get_float(row, cmap, "dec"),
+        "vmag":     _get_float(row, cmap, "v"),
     }
-    # If some keys are missing, include what columns we actually got (debug aid)
     if any(v is None for v in out.values()):
         out["_cols"] = list(cmap.values())
     return out
@@ -170,6 +171,7 @@ def main():
         "generated_utc": now_iso(),
         "observer": OBSERVER,
         "years_window": YEARS_WINDOW,
+        "script_version": SCRIPT_VERSION,
         "items": results,
     }
     with open(OUTPATH, "w", encoding="utf-8") as f:
