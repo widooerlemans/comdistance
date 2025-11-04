@@ -12,16 +12,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # Tweak these without touching code
     env:
-      COBS_LAT: "52.09"      # Utrecht-ish
+      COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
-      COBS_LIM_MAG: "15"     # observed mag cutoff
+      COBS_LIM_MAG: "15"
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
-      BRIGHT_LIMIT: ""       # e.g. "17.5" to filter; empty disables
+      BRIGHT_LIMIT: ""     # "17.5" to filter; empty disables
 
     steps:
       - name: Checkout
@@ -37,7 +36,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      # Fetch COBS directly (Planner API returns comet_list)
       - name: Fetch COBS planner list (direct)
         run: |
           set -e
@@ -48,7 +46,6 @@ jobs:
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
-      # Fallback via your Cloudflare Worker if direct ever fails
       - name: Fallback via Worker if file tiny
         run: |
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
