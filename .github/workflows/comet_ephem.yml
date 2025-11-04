@@ -25,12 +25,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      # Optional sanity check
+      # Sanity check: must use id_type='designation'
       - name: Debug single Horizons query
         run: |
           python - <<'PY'
           from astroquery.jplhorizons import Horizons
-          obj = Horizons(id='12P/Pons-Brooks', id_type='smallbody', location='500')
+          obj = Horizons(id='12P', id_type='designation', location='500')  # geocenter
           eph = obj.ephemerides(quantities='1,3')
           print(eph.pformat(max_width=120))
           PY
