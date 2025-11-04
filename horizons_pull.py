@@ -2,10 +2,10 @@
 """
 Fetch comet distances from JPL Horizons and write data/comets_ephem.json
 
-- Query at 'now' using epochs=[JD].
-- Resolve ambiguous periodic comet designations by picking the most recent
-  apparition (favor last N years) and retry via numeric record id.
-- Use observer ephemeris for RA/DEC/Δ. Compute r (heliocentric) and phase
+- Query at 'now' using epochs=[JD] (list) to avoid TLIST/WLDINI issues.
+- Resolve ambiguous periodic comet designations (2P/12P/13P...) by selecting
+  the most recent apparition (favor last N years) and retry via numeric record id.
+- Use observer ephemeris for RA/DEC/Δ. Compute r (heliocentric) and phase angle
   from state vectors so we always have values even if Horizons omits r/alpha.
 - If V is missing, compute predicted magnitude v_pred = M1 + 5*log10(Δ) + k1*log10(r).
 """
@@ -21,20 +21,21 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 6
+SCRIPT_VERSION = 6  # bump when you update this file
 
 # ---------- CONFIG ----------
-OBSERVER = "500"                 # geocenter
-YEARS_WINDOW = 6                 # prefer apparitions within this many years
+OBSERVER = "500"                 # geocenter; you can swap to your site dict later
+YEARS_WINDOW = 6                 # choose most recent apparition, prefer within N years
 QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V (we still compute r/alpha ourselves)
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 
+# Minimal fixed list to validate pipeline; we’ll swap to a COBS-driven list later.
 COMETS: List[str] = [
     "2P",
     "13P",
     "C/2023 A3",
-    # "12P",
+    # "12P",  # enable if you want; resolver handles ambiguity
 ]
 # ---------------------------
 
@@ -48,9 +49,12 @@ _ROW = re.compile(r"^\s*(?P<rec>9\d{7})\s+(?P<epoch>\d{4})\s+")
 
 
 def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
+    """Choose the most recent acceptable record id from Horizons' ambiguity table."""
     now_year = datetime.utcnow().year
     best = None
     best_epoch = -1
+
+    # Prefer within the window first
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
         if not m:
@@ -61,6 +65,8 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
             best, best_epoch = rec, epoch
     if best:
         return best
+
+    # Else: newest overall
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
         if not m:
@@ -73,11 +79,12 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
 
 
 def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
+    """If designation is ambiguous, pick the most recent apparition's numeric record id."""
     try:
         jd_now = Time.now().jd
         Horizons(id=designation, id_type="designation", location=OBSERVER, epochs=[jd_now])\
             .ephemerides(quantities="1")
-        return None
+        return None  # not ambiguous
     except Exception as e:
         msg = str(e)
         if "Ambiguous target name" not in msg:
@@ -86,6 +93,7 @@ def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
 
 
 def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again: bool = True):
+    """Observer ephemeris query with a tiny retry for Horizons hiccups."""
     try:
         obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=[jd_now])
         return obj.ephemerides(quantities=QUANTITIES)
@@ -99,6 +107,7 @@ def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again
 
 
 def _query_vectors(location: str, id_value: str, id_type: str, jd_now: float):
+    """Vectors query (returns state vectors). location '@10'=Sun, '@399'=Earth geocenter."""
     obj = Horizons(id=id_value, id_type=id_type, location=location, epochs=[jd_now])
     return obj.vectors()
 
@@ -108,10 +117,11 @@ def _vec_norm(x, y, z):
 
 
 def _phase_from_vectors(v_sun_row, v_earth_row):
-    sx, sy, sz = float(v_sun_row["x"]), float(v_sun_row["y"]), float(v_sun_row["z"])
-    ex, ey, ez = float(v_earth_row["x"]), float(v_earth_row["y"]), float(v_earth_row["z"])
-    rn = _vec_norm(sx, sy, sz)      # r (AU)
-    dn = _vec_norm(ex, ey, ez)      # Δ (AU)
+    # Both rows have x,y,z in AU for comet position relative to the center body
+    sx, sy, sz = float(v_sun_row["x"]), float(v_sun_row["y"]), float(v_sun_row["z"])     # Sun->comet
+    ex, ey, ez = float(v_earth_row["x"]), float(v_earth_row["y"]), float(v_earth_row["z"])  # Earth->comet
+    rn = _vec_norm(sx, sy, sz)      # heliocentric distance r (AU)
+    dn = _vec_norm(ex, ey, ez)      # geocentric distance Δ (AU)
     dot = sx*ex + sy*ey + sz*ez
     c = max(-1.0, min(1.0, dot / (rn * dn)))
     return degrees(acos(c)), rn, dn
@@ -132,38 +142,42 @@ def _get_optional_float(row, cmap: Dict[str, str], key_lower: str) -> Optional[f
 
 
 def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Optional[float]) -> Dict[str, Any]:
-    # astropy Table Row
+    """
+    Build a payload from an ephemeris row, case-insensitively reading columns.
+    If ephemeris 'delta' is missing, fall back to vector delta.
+    If 'V' is missing but M1/k1 are present, compute v_pred = M1 + 5*log10(Δ) + k1*log10(r).
+    """
     cols = getattr(row, "colnames", None) or row.table.colnames
     cmap = _colmap(cols)
 
-    ra = _get_optional_float(row, cmap, "ra")
-    dec = _get_optional_float(row, cmap, "dec")
-    delta_ephem = _get_optional_float(row, cmap, "delta")
-    alpha = _get_optional_float(row, cmap, "alpha")
+    ra   = _get_optional_float(row, cmap, "ra")
+    dec  = _get_optional_float(row, cmap, "dec")
+    delt = _get_optional_float(row, cmap, "delta")
+    alpha= _get_optional_float(row, cmap, "alpha")
     vmag = _get_optional_float(row, cmap, "v")
-    M1 = _get_optional_float(row, cmap, "m1")
-    k1 = _get_optional_float(row, cmap, "k1")
+    M1   = _get_optional_float(row, cmap, "m1")
+    k1   = _get_optional_float(row, cmap, "k1")
 
     # prefer ephemeris delta if present; else use vector delta
-    delta = delta_ephem if delta_ephem is not None else delta_vec_au
+    delta_au = delt if delt is not None else delta_vec_au
 
     out = {
         "r_au": r_au,
-        "delta_au": delta,
-        "phase_deg": alpha,   # might be None; vectors path can fill it
+        "delta_au": delta_au,
+        "phase_deg": alpha,  # may be None; we fill from vectors if needed
         "ra_deg": ra,
         "dec_deg": dec,
-        "vmag": vmag,         # may be None
+        "vmag": vmag,        # may be None
     }
 
-    # If we have M1/k1 and r,Δ, compute predicted magnitude
-    if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta is not None):
+    # If V is missing but M1/k1 are present, compute predicted magnitude
+    if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta_au is not None):
         try:
-            out["v_pred"] = M1 + 5.0*math.log10(delta) + k1*math.log10(r_au)
+            out["v_pred"] = M1 + 5.0*math.log10(delta_au) + k1*math.log10(r_au)
         except ValueError:
             pass
 
-    # Debug aid: list columns if something critical is missing
+    # Debug aid: if critical bits are missing, expose available columns
     if any(out.get(k) is None for k in ("delta_au", "ra_deg", "dec_deg")):
         out["_cols"] = list(cmap.values())
 
@@ -171,7 +185,7 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
 
 
 def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
-    """Fetch RA/DEC/delta from ephemeris; compute r and phase from vectors; compute v_pred if needed."""
+    """Fetch RA/DEC/delta from ephemeris; compute r & phase from vectors; compute v_pred if needed."""
     jd_now = Time.now().jd
 
     # 1) Try by designation
@@ -179,7 +193,7 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
         eph = _query_ephem(comet_id, "designation", observer, jd_now)
         row = eph[0]
 
-        # vectors for r & phase (try designation, fall back to record id)
+        # vectors for r & phase (try designation, fall back to record id if needed)
         try:
             v_sun = _query_vectors("@10", comet_id, "designation", jd_now)[0]
             v_earth = _query_vectors("@399", comet_id, "designation", jd_now)[0]
@@ -201,7 +215,7 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
 
     except Exception as e1:
-        # 2) If ephemeris itself failed, resolve and retry entirely by record id
+        # 2) If ephemeris failed, resolve and retry entirely by record id
         rec_id = resolve_ambiguous_to_record_id(comet_id)
         if rec_id is None:
             return {"id": comet_id, "epoch_utc": now_iso(), "error": str(e1)}
