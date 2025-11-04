@@ -1,342 +1,52 @@
-#!/usr/bin/env python3
-"""
-Fetch comet distances / geometry from JPL Horizons and (optionally) merge
-observed magnitudes from a COBS list pulled by the workflow.
+name: Update comet ephemerides (JPL Horizons)
 
-- Queries "now" using epochs=[JD] (list) to avoid TLIST/WLDINI issues.
-- Resolves ambiguous periodic designations (e.g., 2P/12P/13P) by selecting
-  the most recent apparition (favor last N years) and re-querying by record id.
-- Uses observer ephemeris for RA/DEC/Δ. Computes r (heliocentric) and phase
-  from state vectors so values exist even if Horizons omits r/alpha columns.
-- If V is missing, computes predicted magnitude:
-      v_pred = M1 + 5*log10(Δ) + k1*log10(r)
-- If data/cobs_list.json exists, uses it as the comet driving set and
-  merges observed mag as `cobs_mag`. Otherwise falls back to COMETS list.
-"""
+on:
+  workflow_dispatch: {}          # <-- this makes the "Run workflow" button appear
+  schedule:
+    - cron: "8 3 * * *"          # daily at 03:08 UTC
 
-import json
-import time
-import re
-import math
-from math import acos, degrees
-from pathlib import Path
-from datetime import datetime, timezone
-from typing import List, Dict, Any, Optional
+permissions:
+  contents: write
 
-from astropy.time import Time
-from astroquery.jplhorizons import Horizons
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-SCRIPT_VERSION = 9
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-# ---------- CONFIG ----------
-OBSERVER = "500"                 # geocenter; swap to site dict later if desired
-YEARS_WINDOW = 6                 # choose most recent apparition, prefer within N years
-QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V
-PAUSE_S = 0.3
-OUTPATH = "data/comets_ephem.json"
-COBS_PATH = Path("data/cobs_list.json")  # written by the workflow step
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy astropy astroquery
 
-# Fallback hand list (only used if COBS file missing/empty)
-COMETS: List[str] = [
-    "2P",
-    "12P",
-    "13P",
-    "C/2023 A3",
-]
-# ---------------------------
+      # Fetch COBS list directly (no Cloudflare Worker needed for Actions)
+      - name: Fetch COBS list (observed mag ≤ 15)
+        run: |
+          set -e
+          mkdir -p data
+          curl -fsSL "https://cobs.si/api/planner.api?lim_mag=15&filter=1&lat=52.0907&long=5.1214&alt=10" -o data/cobs_list.json
+          wc -c data/cobs_list.json || true
+          head -c 400 data/cobs_list.json || true
+          echo
 
+      - name: Run pull (create JSON)
+        run: |
+          set -e
+          ls -la
+          test -f horizons_pull.py
+          mkdir -p data
+          python horizons_pull.py
 
-def now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-# -------- COBS name normalization --------
-# Accepts things like:
-#   "2P", "12P", "2P/Encke", "C/2023 A3", "C/2023 A3 (Tsuchinshan-ATLAS)", etc.
-_DESIG = re.compile(r"""
-    ^\s*(
-        \d+\s*P(?:/\w+)?                            # e.g. 2P or 2P/Encke
-        |[PCADX]/\d{4}\s+[A-Z]\d+(?:\s*\([^)]+\))?  # e.g. C/2023 A3 or with (Name)
-    )
-""", re.IGNORECASE | re.VERBOSE)
-
-def to_designation(s: str) -> Optional[str]:
-    if not s:
-        return None
-    s = s.strip()
-    m = _DESIG.match(s)
-    if m:
-        d = m.group(1)
-        d = re.sub(r"\s*\([^)]+\)\s*$", "", d)      # drop trailing (Name)
-        return re.sub(r"\s+", " ", d).upper()
-    m2 = re.search(r"\(([^)]+)\)", s)               # sometimes designation inside ()
-    if m2:
-        return to_designation(m2.group(1))
-    return None
-
-def load_cobs_designations(path: Path) -> Dict[str, float]:
-    """
-    Read data/cobs_list.json and return {designation: observed_mag}.
-    Accepts a few possible shapes:
-      { "comets": [ {"designation":"C/2023 A3","mag":14.2}, ... ] }
-      [ {"mpc_name":"C/2023 A3","mag":14.2}, ... ]
-      { "data":[...]} / {"objects":[...]} variants
-    """
-    if not path.exists():
-        return {}
-    try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
-
-    # normalize container to an iterable of comet dicts
-    if isinstance(raw, dict):
-        for key in ("comets", "objects", "data", "items", "list"):
-            if key in raw and isinstance(raw[key], list):
-                raw_list = raw[key]
-                break
-        else:
-            if all(isinstance(k, str) for k in raw.keys()):  # mapping {designation: mag}
-                out = {}
-                for k, v in raw.items():
-                    try:
-                        desig = to_designation(k)
-                        if desig:
-                            out[desig] = float(v)
-                    except Exception:
-                        pass
-                return {k: v for k, v in out.items() if k}
-            raw_list = []
-    elif isinstance(raw, list):
-        raw_list = raw
-    else:
-        raw_list = []
-
-    result: Dict[str, float] = {}
-    for o in raw_list:
-        if not isinstance(o, dict):
-            continue
-        # magnitude field candidates
-        mag = None
-        for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag"):
-            if k in o:
-                try:
-                    mag = float(o[k]); break
-                except Exception:
-                    pass
-        name = o.get("designation") or o.get("mpc_name") or o.get("fullname") or o.get("name")
-        desig = to_designation(str(name)) if name else None
-        if desig and (mag is not None):
-            if desig not in result or mag < result[desig]:  # keep brightest if duplicates
-                result[desig] = mag
-    return result
-# ----------------------------------------
-
-
-# -------- Horizons plumbing --------
-_ROW = re.compile(r"^\s*(?P<rec>9\d{7})\s+(?P<epoch>\d{4})\s+")
-
-def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
-    now_year = datetime.utcnow().year
-    best = None
-    best_epoch = -1
-    for line in ambig_text.splitlines():
-        m = _ROW.match(line)
-        if not m:
-            continue
-        rec = m.group("rec")
-        epoch = int(m.group("epoch"))
-        if epoch >= now_year - years_window and epoch > best_epoch:
-            best, best_epoch = rec, epoch
-    if best:
-        return best
-    for line in ambig_text.splitlines():
-        m = _ROW.match(line)
-        if not m:
-            continue
-        rec = m.group("rec")
-        epoch = int(m.group("epoch"))
-        if epoch > best_epoch:
-            best, best_epoch = rec, epoch
-    return best
-
-def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
-    try:
-        jd_now = Time.now().jd
-        Horizons(id=designation, id_type="designation", location=OBSERVER, epochs=[jd_now])\
-            .ephemerides(quantities="1")
-        return None
-    except Exception as e:
-        msg = str(e)
-        if "Ambiguous target name" not in msg:
-            return None
-        return _pick_recent_record(msg, YEARS_WINDOW)
-
-def _query_ephem(id_value: str, id_type: str, observer, jd_now: float, try_again: bool = True):
-    try:
-        obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=[jd_now])
-        return obj.ephemerides(quantities=QUANTITIES)
-    except Exception as e:
-        msg = str(e)
-        if try_again and ("no TLIST" in msg or "WLDINI" in msg):
-            time.sleep(0.8)
-            obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=[jd_now])
-            return obj.ephemerides(quantities=QUANTITIES)
-        raise
-
-def _query_vectors(location: str, id_value: str, id_type: str, jd_now: float):
-    obj = Horizons(id=id_value, id_type=id_type, location=location, epochs=[jd_now])
-    return obj.vectors()
-
-def _vec_norm(x, y, z):
-    return (x*x + y*y + z*z) ** 0.5
-
-def _phase_from_vectors(v_sun_row, v_earth_row):
-    sx, sy, sz = float(v_sun_row["x"]), float(v_sun_row["y"]), float(v_sun_row["z"])
-    ex, ey, ez = float(v_earth_row["x"]), float(v_earth_row["y"]), float(v_earth_row["z"])
-    rn = _vec_norm(sx, sy, sz)      # r (AU)
-    dn = _vec_norm(ex, ey, ez)      # Δ (AU)
-    dot = sx*ex + sy*ey + sz*ez
-    c = max(-1.0, min(1.0, dot / (rn * dn)))
-    return degrees(acos(c)), rn, dn
-
-def _colmap(cols) -> Dict[str, str]:
-    return {c.lower(): c for c in cols}
-
-def _get_optional_float(row, cmap: Dict[str, str], key_lower: str) -> Optional[float]:
-    k = cmap.get(key_lower)
-    if not k:
-        return None
-    try:
-        return float(row[k])
-    except Exception:
-        return None
-
-def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Optional[float]) -> Dict[str, Any]:
-    cols = getattr(row, "colnames", None) or row.table.colnames
-    cmap = _colmap(cols)
-
-    ra   = _get_optional_float(row, cmap, "ra")
-    dec  = _get_optional_float(row, cmap, "dec")
-    delt = _get_optional_float(row, cmap, "delta")
-    alpha= _get_optional_float(row, cmap, "alpha")
-    vmag = _get_optional_float(row, cmap, "v")
-    M1   = _get_optional_float(row, cmap, "m1")
-    k1   = _get_optional_float(row, cmap, "k1")
-
-    delta_au = delt if delt is not None else delta_vec_au
-
-    out = {
-        "r_au": r_au,
-        "delta_au": delta_au,
-        "phase_deg": alpha,  # may be None; fill from vectors if needed
-        "ra_deg": ra,
-        "dec_deg": dec,
-        "vmag": vmag,        # may be None
-    }
-
-    # If V is missing but M1/k1 are present, compute predicted magnitude
-    if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta_au is not None):
-        try:
-            out["v_pred"] = M1 + 5.0*math.log10(delta_au) + k1*math.log10(r_au)
-        except ValueError:
-            pass
-
-    if any(out.get(k) is None for k in ("delta_au", "ra_deg", "dec_deg")):
-        out["_cols"] = list(cmap.values())
-
-    return out
-# -----------------------------------
-
-
-def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
-    """Fetch RA/DEC/delta from ephemeris; compute r & phase from vectors; compute v_pred if needed."""
-    jd_now = Time.now().jd
-
-    # 1) Try by designation
-    try:
-        eph = _query_ephem(comet_id, "designation", observer, jd_now)
-        row = eph[0]
-
-        # vectors for r & phase (try designation, fall back to record id if needed)
-        try:
-            v_sun = _query_vectors("@10", comet_id, "designation", jd_now)[0]
-            v_earth = _query_vectors("@399", comet_id, "designation", jd_now)[0]
-            alpha_deg, r_au, delta_vec_au = _phase_from_vectors(v_sun, v_earth)
-            core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
-            if core.get("phase_deg") is None:
-                core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "epoch_utc": now_iso(), **core}
-        except Exception:
-            rec_id = resolve_ambiguous_to_record_id(comet_id)
-            if rec_id is None:
-                raise
-            v_sun = _query_vectors("@10", rec_id, "smallbody", jd_now)[0]
-            v_earth = _query_vectors("@399", rec_id, "smallbody", jd_now)[0]
-            alpha_deg, r_au, delta_vec_au = _phase_from_vectors(v_sun, v_earth)
-            core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
-            if core.get("phase_deg") is None:
-                core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
-
-    except Exception as e1:
-        # 2) If ephemeris failed, resolve and retry entirely by record id
-        rec_id = resolve_ambiguous_to_record_id(comet_id)
-        if rec_id is None:
-            return {"id": comet_id, "epoch_utc": now_iso(), "error": str(e1)}
-        try:
-            eph = _query_ephem(rec_id, "smallbody", observer, jd_now)
-            row = eph[0]
-            v_sun = _query_vectors("@10", rec_id, "smallbody", jd_now)[0]
-            v_earth = _query_vectors("@399", rec_id, "smallbody", jd_now)[0]
-            alpha_deg, r_au, delta_vec_au = _phase_from_vectors(v_sun, v_earth)
-            core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
-            if core.get("phase_deg") is None:
-                core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
-        except Exception as e2:
-            return {"id": comet_id, "epoch_utc": now_iso(), "error": f"{e1} | retry:{e2}"}
-
-
-def main():
-    # 0) Try to load COBS designations (observed ≤ threshold prepared by your Worker or direct fetch)
-    cobs_map = load_cobs_designations(COBS_PATH)  # {designation: observed_mag}
-    if cobs_map:
-        comet_ids: List[str] = sorted(cobs_map.keys())
-    else:
-        comet_ids = COMETS
-
-    results: List[Dict[str, Any]] = []
-    for cid in comet_ids:
-        item = fetch_one(cid, OBSERVER)
-        # Merge observed mag if available
-        if cid in cobs_map:
-            item["cobs_mag"] = cobs_map[cid]
-            vpred = item.get("v_pred") or item.get("vmag")
-            if vpred is not None:
-                try:
-                    item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_map[cid]), 2)
-                except Exception:
-                    pass
-        results.append(item)
-        time.sleep(PAUSE_S)
-
-    payload = {
-        "generated_utc": now_iso(),
-        "observer": OBSERVER,
-        "years_window": YEARS_WINDOW,
-        "script_version": SCRIPT_VERSION,
-        "source": {
-            "observations": "COBS (downloaded in workflow) if present",
-            "theory": "JPL Horizons",
-        },
-        "count": len(results),
-        "items": results,
-    }
-    with open(OUTPATH, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
-    print(f"Wrote {OUTPATH} with {len(results)} comets.")
-
-
-if __name__ == "__main__":
-    main()
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/comets_ephem.json data/cobs_list.json || true
+          git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes"
+          git push
