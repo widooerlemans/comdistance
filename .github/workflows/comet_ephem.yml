@@ -1,9 +1,9 @@
 name: Update comet ephemerides (JPL Horizons)
 
-'on':
-  workflow_dispatch: {}
+on:
+  workflow_dispatch:
   schedule:
-    - cron: '8 3 * * *'   # daily 03:08 UTC
+    - cron: "8 3 * * *"   # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -14,18 +14,18 @@ jobs:
 
     env:
       # Location for planner.api (Utrecht-ish)
-      COBS_LAT: '52.09'
-      COBS_LON: '5.12'
-      COBS_ALT: '10'
+      COBS_LAT: "52.09"
+      COBS_LON: "5.12"
+      COBS_ALT: "10"
 
       # Fetch a bit deeper than 15 so we can locally filter to <= 15
-      COBS_LIM_MAG: '19'
-      COBS_MIN_ALT: '0'
-      COBS_MIN_SOL: '0'
-      COBS_MIN_MOON: '0'
+      COBS_LIM_MAG: "19"
+      COBS_MIN_ALT: "0"
+      COBS_MIN_SOL: "0"
+      COBS_MIN_MOON: "0"
 
       # Local filter in your Python (observed magnitude ≤ this)
-      BRIGHT_LIMIT: '15'
+      BRIGHT_LIMIT: "15"
 
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install deps
         shell: bash
@@ -60,7 +60,7 @@ jobs:
           set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small ($BYTES), trying Worker…"
+            echo "Direct fetch small (${BYTES}), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
             export URL
             ENCODED_URL=$(python - <<'PY'
@@ -96,20 +96,18 @@ if not outp.exists():
     raise SystemExit("Missing data/comets_ephem.json")
 data = json.loads(outp.read_text(encoding="utf-8"))
 
-# Build a mapping from designation -> fullname/suffix using COBS list if present
+# Build a mapping from designation -> (fullname, suffix) using COBS list
 cobs_map = {}
 if cobs.exists():
     try:
         j = json.loads(cobs.read_text(encoding="utf-8"))
         for it in (j.get("comet_list") or []):
-            # COBS fields: comet_name like 'C/2025 A6', comet_fullname like 'C/2025 A6 (Lemmon)'
             desig = (it.get("comet_name") or "").strip()
             fullname = (it.get("comet_fullname") or "").strip()
             if desig and fullname:
-                # extract suffix: '(Lemmon)' -> 'Lemmon', '24P/Schaumasse' -> 'Schaumasse'
                 suf = None
                 m = re.search(r"\(([^)]+)\)\s*$", fullname)
-                if m:  # C/… (Name)
+                if m:
                     suf = m.group(1).strip()
                 else:
                     m2 = re.search(r"/\s*([A-Za-z0-9\-\s]+)$", fullname)
@@ -119,31 +117,22 @@ if cobs.exists():
     except Exception:
         pass
 
-# Now augment each item in-place, keeping all existing fields
+# Augment each item, keep everything your script already wrote
 items = data.get("items") or []
 for it in items:
-    desig = it.get("id") or it.get("desig") or ""
-    desig = desig.strip()
+    desig = (it.get("id") or it.get("desig") or "").strip()
     name_full = None
     name_suffix = None
-
     if desig in cobs_map:
         name_full, name_suffix = cobs_map[desig]
     else:
-        # derive basic forms when COBS wasn't available
-        # e.g. 24P -> keep as is; C/2025 A6 -> keep; try to avoid duplicates
-        # (no suffix if we can't be sure)
         if desig:
             name_full = desig
-
-    # display_name preference
     display_name = name_full or desig
-
     if name_suffix: it["name_suffix"] = name_suffix
     if name_full:   it["name_full"]   = name_full
     if display_name:it["display_name"]= display_name
 
-# write back with same compact separators to match your original style
 outp.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 print("Augmented names for", sum(1 for it in items if "display_name" in it), "items")
 PY
