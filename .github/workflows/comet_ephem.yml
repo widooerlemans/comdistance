@@ -1,9 +1,9 @@
 name: Update comet ephemerides (JPL Horizons)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   schedule:
-    - cron: '8 3 * * *'  # daily 03:08 UTC
+    - cron: "8 3 * * *"   # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -13,19 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Location for planner.api (Utrecht)
-      COBS_LAT: '52.09'
-      COBS_LON: '5.12'
-      COBS_ALT: '10'
+      # Location for planner.api (Utrecht-ish)
+      COBS_LAT: "52.09"
+      COBS_LON: "5.12"
+      COBS_ALT: "10"
 
-      # Fetch deeper so Python can filter to <= 15 later
-      COBS_LIM_MAG: '19'
-      COBS_MIN_ALT: '0'
-      COBS_MIN_SOL: '0'
-      COBS_MIN_MOON: '0'
+      # Fetch a bit deeper than 15 so we can locally filter to <= 15
+      COBS_LIM_MAG: "19"
+      COBS_MIN_ALT: "0"
+      COBS_MIN_SOL: "0"
+      COBS_MIN_MOON: "0"
 
       # Local filter in Python (observed magnitude ≤ this)
-      BRIGHT_LIMIT: '15'
+      BRIGHT_LIMIT: "15"
 
     steps:
       - name: Checkout
@@ -34,19 +34,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install deps
-        shell: bash
         run: |
-          set -euo pipefail
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
       - name: Fetch COBS planner list (direct)
-        shell: bash
         run: |
-          set -euo pipefail
+          set -e
           mkdir -p data
           URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
           echo "GET $URL"
@@ -55,12 +52,10 @@ jobs:
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
-        shell: bash
         run: |
-          set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
-          if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small (${BYTES}), trying Worker"
+          if [ "$BYTES" -lt 30 ]; then
+            echo "Direct fetch small ($BYTES), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
             export URL
             ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
@@ -77,37 +72,63 @@ jobs:
           path: data/cobs_list.json
 
       - name: Show script header (first 40 lines)
-        shell: bash
         run: sed -n '1,40p' horizons_pull.py
 
+      - name: Debug parse COBS list (designations count)
+        run: |
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+          p = Path("data/cobs_list.json")
+          try:
+            raw = json.loads(p.read_text())
+          except Exception as e:
+            print("JSON parse error:", e)
+            raw = {}
+          def to_desig(s):
+            if not s: return None
+            s = str(s).strip()
+            m = re.match(r'^\s*0*(\d+)\s*P(?:\s*/.*)?\s*$', s, re.I)
+            if m: return f"{int(m.group(1))}P"
+            m = re.match(r'^\s*([PCDAXI])\s*/\s*(\d{4})\s+([A-Z]\d+)', s, re.I)
+            if m: return f"{m.group(1).upper()}/{m.group(2)} {m.group(3).upper()}"
+            m = re.match(r'^\s*(\d+)\s*I(?:\s*/.*)?\s*$', s, re.I)
+            if m: return f"{int(m.group(1))}I"
+            m = re.search(r'\(([^)]+)\)', s)
+            return to_desig(m.group(1)) if m else None
+          items = []
+          if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
+            items = raw["comet_list"]
+          elif isinstance(raw, dict):
+            for k in ("comets","objects","data","items","list"):
+              if isinstance(raw.get(k), list):
+                items = raw[k]; break
+          elif isinstance(raw, list):
+            items = raw
+          desigs = []
+          for o in items:
+            if not isinstance(o, dict): continue
+            name = o.get("mpc_name") or o.get("comet_name") or o.get("comet_fullname") or o.get("designation") or o.get("name") or o.get("fullname")
+            d = to_desig(name)
+            if d and d not in desigs:
+              desigs.append(d)
+          print(f"Parsed COBS designations: {len(desigs)} -> {desigs[:20]}")
+          PY
+
       - name: Run pull (create JSON)
-        shell: bash
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
-          set -euo pipefail
+          set -e
+          ls -la
           test -f horizons_pull.py
           mkdir -p data
           python horizons_pull.py
 
-      - name: Peek at names in output
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-import json, pathlib
-p = pathlib.Path("data/comets_ephem.json")
-d = json.loads(p.read_text())
-for it in d.get("items", [])[:20]:
-    print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
-PY
-
       - name: Commit & push
-        shell: bash
         run: |
-          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/comets_ephem.json data/cobs_list.json || true
           git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes"
-          git push || echo "No changes to push"
+          git push
