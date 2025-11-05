@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# horizons_pull.py
+# horizons_pull.py — preserves your original fields; adds display_name built from COBS fullname
 
 from __future__ import annotations
 import os, json, sys, re
@@ -29,14 +29,23 @@ def suffix_from_full(full: Optional[str]) -> Optional[str]:
         s = (m.group(1) or "").strip()
         return s or None
     if "/" in full and "(" not in full:
+        # handle "3I/ATLAS" → "ATLAS"
         return full.split("/", 1)[1].strip() or None
     return None
 
 def canonical_full(desig: str, full: Optional[str]) -> str:
+    """
+    Build the user-facing full name with the designation first:
+    - if full = "C/2025 A6 (Lemmon)" → return "C/2025 A6 (Lemmon)"
+    - if full = "3I/ATLAS"            → return "3I/ATLAS"
+    - if full missing but suffix known → "C/2025 A6 (Suffix)" or "3I/Suffix"
+    - else fallback to desig
+    """
     if full:
         suf = suffix_from_full(full)
         if suf:
-            if ("/" in desig) and ("(" not in desig):
+            if "/" in desig and "(" not in desig:
+                # e.g., "3I" + "ATLAS" → "3I/ATLAS"
                 return f"{desig}/{suf}"
             else:
                 return f"{desig} ({suf})"
@@ -107,11 +116,13 @@ def main() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     cobs_map = load_cobs()
 
+    # Build candidate list using your brightness filter
     candidates: List[str] = []
     for desig, info in cobs_map.items():
         m = info.get("cobs_mag")
         if isinstance(m, (int, float)) and m <= BRIGHT_LIMIT:
             candidates.append(desig)
+
     candidates.sort(key=lambda d: ((cobs_map[d].get("cobs_mag") if isinstance(cobs_map[d].get("cobs_mag"), (int, float)) else 99.0), d))
 
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -147,16 +158,14 @@ def main() -> None:
             "v_pred": eph.get("v_pred") if eph else None,
             "cobs_mag": cobs_mag,
             "mag_diff_pred_minus_obs": ((eph.get("v_pred") - cobs_mag) if (eph and isinstance(cobs_mag, (int, float)) and isinstance(eph.get("v_pred"), (int, float))) else None),
+            "trend": info.get("trend"),
+            "constellation": info.get("constellation"),
         }
 
         if eph and eph.get("horizons_id"):
             item["horizons_id"] = eph["horizons_id"]
 
-        item.update({
-            "trend": info.get("trend"),
-            "constellation": info.get("constellation"),
-        })
-
+        # Names (from COBS full name)
         full_from_cobs = info.get("cobs_fullname")
         display = canonical_full(desig, full_from_cobs)
         suf = suffix_from_full(full_from_cobs)
