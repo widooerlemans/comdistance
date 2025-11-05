@@ -5,10 +5,11 @@ Build data/comets_ephem.json by merging:
 - Geometry/brightness from JPL Horizons
 
 Highlights
-- Converts MPC packed codes like CK25A060 -> C/2025 A6 (and drops fragment suffixes, e.g., 141P-B -> 141P).
+- Converts MPC packed codes like CK25A060 -> C/2025 A6 (divide ddd by 10; strips fragment suffixes).
 - Queries "now" with epochs=[JD] to avoid TLIST/WLDINI.
-- Resolves ambiguous periodic designations (2P/12P/13P...) to most recent apparition.
+- Resolves ambiguous periodic designations to most recent apparition.
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
+- Sorts output by observed brightness (cobs_mag asc), then by v_pred.
 
 Optional filter: set env BRIGHT_LIMIT (e.g., 15.0) to keep only comets with cobs_mag<=limit OR v_pred<=limit.
 """
@@ -21,7 +22,7 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 16  # bump when you update this file
+SCRIPT_VERSION = 17  # bump when you update this file
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                 # geocenter
@@ -44,13 +45,7 @@ def _norm_spaces(s: str) -> str:
     return s.strip()
 
 # MPC packed provisional comet code: e.g., CK25A060 → C/2025 A6
-# Format we support: [C|D|P|A|X] K yy L ddd (optional -Fragment)
-#   fam = C/D/P/A/X
-#   K   = literal 'K'
-#   yy  = two-digit year
-#   L   = half-month letter (A..Y, skipping I)
-#   ddd = 3-digit sequence -> drop leading zeros
-# We map yy -> 19yy if yy >= 50 else 20yy (covers modern comets).
+# Format: [C|D|P|A|X] K yy L ddd  (ddd = N*10; divide by 10 to get N)
 _PACKED = re.compile(r"^\s*([CDPAX])K(\d{2})([A-Z])(\d{3})(?:-[A-Z])?\s*$", re.IGNORECASE)
 
 def unpack_mpc_packed(name_like: str) -> Optional[str]:
@@ -63,9 +58,10 @@ def unpack_mpc_packed(name_like: str) -> Optional[str]:
     fam = m.group(1).upper()
     yy  = int(m.group(2))
     half = m.group(3).upper()
-    num = int(m.group(4))  # strips leading zeros
+    ddd = int(m.group(4))
+    n = ddd // 10            # <- the crucial fix: 060 -> 6, 010 -> 1, 020 -> 2
     year = 1900 + yy if yy >= 50 else 2000 + yy
-    return f"{fam}/{year} {half}{num}"
+    return f"{fam}/{year} {half}{n}"
 
 # Accept conventional designs:
 _PAT_PERIODIC = re.compile(r"^\s*(\d+)\s*P(?:/.*)?\s*$", re.IGNORECASE)   # 24P, 240P/Name -> 24P
@@ -73,10 +69,8 @@ _PAT_INTERSTELLAR = re.compile(r"^\s*(\d+)\s*I(?:/.*)?\s*$", re.IGNORECASE)  # 3
 _PAT_C_PROV = re.compile(r"^\s*([PCADX])\s*/\s*(\d{4})\s+([A-Z]{1,2}\d{1,3})", re.IGNORECASE)
 
 def strip_fragment(desig: str) -> str:
-    # 141P-B -> 141P, "141P / MACHHOLZ 2 - B" -> 141P
     s = _norm_spaces(desig)
     s = re.sub(r"[-\s]?[A-Z]$", "", s) if re.match(r"^\d+\s*[PI]\s*[-\s]?[A-Z]$", s, re.I) else s
-    # also handle "141P-B/..." etc by chopping at first non-ID char
     s = re.split(r"[^\dPI/]", s, 1, flags=re.I)[0]
     return s
 
@@ -85,25 +79,20 @@ def to_designation(name_like: str) -> Optional[str]:
         return None
     s = _norm_spaces(str(name_like))
 
-    # Try MPC packed first (COBS often uses it)
     unpacked = unpack_mpc_packed(s)
     if unpacked:
         return unpacked
 
-    # Remove trailing "(Name)" for parsing, but keep for fallback search
     s_no_paren = re.sub(r"\s*\([^)]+\)\s*$", "", s)
 
-    # 24P, 240P, 2P/Encke -> "24P"
     m = _PAT_PERIODIC.match(s_no_paren)
     if m:
         return strip_fragment(f"{int(m.group(1))}P")
 
-    # 3I/ATLAS -> "3I"
     m = _PAT_INTERSTELLAR.match(s_no_paren)
     if m:
         return f"{int(m.group(1))}I"
 
-    # C/2025 A6 (…)
     m = _PAT_C_PROV.match(s)
     if m:
         fam = m.group(1).upper()
@@ -111,7 +100,6 @@ def to_designation(name_like: str) -> Optional[str]:
         code = m.group(3).upper()
         return f"{fam}/{year} {code}"
 
-    # designation inside parentheses e.g. "... (C/2025 A6)"
     m2 = re.search(r"\(([PCADX]/\s*\d{4}\s+[A-Za-z]{1,2}\d{1,3})\)", s, re.IGNORECASE)
     if m2:
         inner = _norm_spaces(m2.group(1))
@@ -119,7 +107,6 @@ def to_designation(name_like: str) -> Optional[str]:
         if mm:
             return f"{mm.group(1).upper()}/{mm.group(2)} {mm.group(3).upper()}"
 
-    # very compact "C/2025A6"
     m3 = re.match(r"^\s*([PCADX])\s*/\s*(\d{4})([A-Za-z]{1,2}\d{1,3})\s*$", s, re.IGNORECASE)
     if m3:
         return f"{m3.group(1).upper()}/{m3.group(2)} {m3.group(3).upper()}"
@@ -127,11 +114,6 @@ def to_designation(name_like: str) -> Optional[str]:
     return None
 
 def load_cobs_designations(path: Path) -> Dict[str, float]:
-    """
-    Return {designation: observed_mag}; understands:
-      {"comet_list":[ {...}, ... ]} or {"comets":[...]}, {"objects":[...]}, {"items":[...]}, {"data":[...]} or a list
-    Magnitude keys: mag / magnitude / current_mag / peak_mag / estimated_mag / cur_mag
-    """
     if not path.exists():
         return {}
     try:
@@ -177,7 +159,6 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
                     pass
 
         desig = None
-        # Detect if it's packed first
         if name and _PACKED.match(_norm_spaces(str(name))):
             unpacked = unpack_mpc_packed(name)
             if unpacked:
@@ -189,7 +170,6 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
                 desig = d0
                 dbg_counts["plain"] += 1
 
-        # Strip fragment suffix like "141P-B"
         if desig and re.match(r"^\d+\s*[PI]\s*[-\s]?[A-Z]$", desig, re.I):
             desig = strip_fragment(desig)
             dbg_counts["fragments"] += 1
@@ -198,7 +178,6 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
             if desig not in result or mag < result[desig]:
                 result[desig] = mag
 
-    # debug helpers
     result["_debug_first_names"] = dbg_first
     result["_debug_counts"] = dbg_counts
     return result
@@ -212,8 +191,7 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
     best_epoch = -1
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
-        if not m:
-            continue
+        if not m: continue
         rec = m.group("rec"); epoch = int(m.group("epoch"))
         if epoch >= now_year - years_window and epoch > best_epoch:
             best, best_epoch = rec, epoch
@@ -351,10 +329,17 @@ def try_float_env(name: str) -> Optional[float]:
     except Exception:
         return None
 
+def _sort_key(it: Dict[str, Any]):
+    cm = it.get("cobs_mag")
+    vp = it.get("v_pred")
+    cm_key = cm if isinstance(cm, (int, float)) else 1e9
+    vp_key = vp if isinstance(vp, (int, float)) else 1e9
+    return (cm_key, vp_key)
+
 def main():
     bright_limit = try_float_env(BRIGHT_LIMIT_ENV)
 
-    cobs_map = load_cobs_designations(COBS_PATH)  # contains _debug_first_names/_debug_counts
+    cobs_map = load_cobs_designations(COBS_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
     comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
@@ -383,12 +368,16 @@ def main():
                 filtered.append(it)
         results = filtered
 
+    # Sort by observed brightness, then predicted
+    results.sort(key=_sort_key)
+
     payload = {
         "generated_utc": now_iso(),
         "observer": OBSERVER,
         "years_window": YEARS_WINDOW,
         "script_version": SCRIPT_VERSION,
         "bright_limit": bright_limit,
+        "sorted_by": "cobs_mag asc, then v_pred asc",
         "source": {"observations": "COBS (file or direct fetch)", "theory": "JPL Horizons"},
         "cobs_designations": len(comet_ids),
         "cobs_used": bool(comet_ids),
