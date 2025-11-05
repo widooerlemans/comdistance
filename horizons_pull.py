@@ -364,18 +364,25 @@ def _sort_key(it: Dict[str, Any]):
 def main():
     bright_limit = try_float_env(BRIGHT_LIMIT_ENV)
 
-    cobs_map = load_cobs_designations(COBS_PATH)
-    debug_first_names = cobs_map.pop("_debug_first_names", [])
-    debug_counts = cobs_map.pop("_debug_counts", {})
-    fullname_map = cobs_map.pop("_fullname_map", {})  # NEW
-    comet_ids: List[str] = sorted(set(cobs_map.keys()) | set(fullname_map.keys()))
+    # --- Build list from COBS, enrich via Horizons, then write JSON ---
+
+cobs_map = load_cobs_designations(COBS_PATH)
+
+# pull debugging/meta fields out of the dict
+debug_first_names = cobs_map.pop("_debug_first_names", [])
+debug_counts      = cobs_map.pop("_debug_counts", {})
+fullname_map      = cobs_map.pop("_fullname_map", {})  # pretty full names (if present)
+
+# create the list of comet ids AFTER we've popped meta-keys
+comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
 print(f"Loaded {len(comet_ids)} COBS designations; sample: {comet_ids[:10]}")
 
 results: List[Dict[str, Any]] = []
+
 for cid in comet_ids:
     item = fetch_one(cid, OBSERVER)
 
-    # Attach COBS magnitude (if we have it) and diff vs. predicted
+    # attach COBS mag and Δmag if possible
     if cid in cobs_map:
         item["cobs_mag"] = cobs_map[cid]
         vpred = item.get("v_pred") or item.get("vmag")
@@ -385,25 +392,58 @@ for cid in comet_ids:
             except Exception:
                 pass
 
-    # Attach pretty full name from COBS if available
-    if cid in fullname_map and fullname_map[cid]:
-        item["name_full"] = fullname_map[cid]  # e.g., "C/2025 A6 (Lemmon)" or "210P/Christensen"
+    # attach pretty full name if we have it
+    if cid in fullname_map:
+        item["name_full"] = fullname_map[cid]  # e.g. "C/2025 A6 (Lemmon)" or "210P/Christensen"
 
     results.append(item)
     time.sleep(PAUSE_S)
 
-    # Existing filter/limit logic (unchanged)
-    if bright_limit is not None:
-        results = [r for r in results if try_float(r.get("v_pred") or r.get("vmag")) is None
-                   or try_float(r.get("v_pred") or r.get("vmag")) <= bright_limit]
+# --- tolerant brightness filter (keeps item if either mag passes; keeps if both unknown) ---
+def try_float(x):
+    try:
+        return float(x)
+    except Exception:
+        return None
 
-    out = {"generated_utc": datetime.utcnow().isoformat(timespec="seconds") + "Z",
-           "observer": OBSERVER, "items": results,
-           "_debug_first_names": debug_first_names, "_debug_counts": debug_counts}
+bright_limit_env = os.environ.get(BRIGHT_LIMIT_ENV)
+bright_limit = try_float(bright_limit_env) if bright_limit_env is not None else None
+if bright_limit is not None:
+    before = len(results)
+    kept = []
+    for r in results:
+        vp = try_float(r.get("v_pred"))
+        cp = try_float(r.get("cobs_mag"))
+        if (
+            (vp is None and cp is None) or
+            (vp is not None and vp <= bright_limit) or
+            (cp is not None and cp <= bright_limit)
+        ):
+            kept.append(r)
+    results = kept
+    print(f"Brightness filter {bright_limit}: kept {len(results)}/{before}")
 
-    OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_JSON_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
+# sort: observed brightness first (cobs_mag asc), then predicted v
+def sort_key(r):
+    cp = try_float(r.get("cobs_mag"))
+    vp = try_float(r.get("v_pred"))
+    return (
+        (0, cp) if cp is not None else (1, float('inf')),
+        (0, vp) if vp is not None else (1, float('inf')),
+    )
+results.sort(key=sort_key)
+
+# write JSON
+OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+payload = {
+    "generated_utc": now_iso(),
+    "observer": OBSERVER,
+    "items": results,
+    "_debug_first_names": debug_first_names,
+    "_debug_counts": debug_counts,
+}
+OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
+print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
 
 if __name__ == "__main__":
     main()
