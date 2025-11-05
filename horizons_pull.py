@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-# horizons_pull.py — preserves your original fields; adds display_name built from COBS fullname
-
 from __future__ import annotations
 import os, json, sys, re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
 from astroquery.jplhorizons import Horizons
 from astropy.coordinates import Angle
 
@@ -29,23 +26,14 @@ def suffix_from_full(full: Optional[str]) -> Optional[str]:
         s = (m.group(1) or "").strip()
         return s or None
     if "/" in full and "(" not in full:
-        # handle "3I/ATLAS" → "ATLAS"
         return full.split("/", 1)[1].strip() or None
     return None
 
 def canonical_full(desig: str, full: Optional[str]) -> str:
-    """
-    Build the user-facing full name with the designation first:
-    - if full = "C/2025 A6 (Lemmon)" → return "C/2025 A6 (Lemmon)"
-    - if full = "3I/ATLAS"            → return "3I/ATLAS"
-    - if full missing but suffix known → "C/2025 A6 (Suffix)" or "3I/Suffix"
-    - else fallback to desig
-    """
     if full:
         suf = suffix_from_full(full)
         if suf:
             if "/" in desig and "(" not in desig:
-                # e.g., "3I" + "ATLAS" → "3I/ATLAS"
                 return f"{desig}/{suf}"
             else:
                 return f"{desig} ({suf})"
@@ -115,35 +103,26 @@ def horizons_ephem_for(desig: str) -> Optional[Dict[str, Any]]:
 def main() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     cobs_map = load_cobs()
-
-    # Build candidate list using your brightness filter
     candidates: List[str] = []
     for desig, info in cobs_map.items():
         m = info.get("cobs_mag")
         if isinstance(m, (int, float)) and m <= BRIGHT_LIMIT:
             candidates.append(desig)
-
     candidates.sort(key=lambda d: ((cobs_map[d].get("cobs_mag") if isinstance(cobs_map[d].get("cobs_mag"), (int, float)) else 99.0), d))
-
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
     items_out: List[Dict[str, Any]] = []
     debug_first = []
     packed_unpacked = fragments = plain = 0
-
     for desig in candidates:
         info = cobs_map[desig]
         cobs_mag = info.get("cobs_mag")
-
         if "-" in desig and desig.endswith(("-A", "-B", "-C")):
             fragments += 1
         elif any(k in desig for k in ("P/", "C/", "I/")) or "/" in desig:
             packed_unpacked += 1
         else:
             plain += 1
-
         eph = horizons_ephem_for(desig)
-
         item: Dict[str, Any] = {
             "id": desig,
             "epoch_utc": now_utc,
@@ -161,26 +140,20 @@ def main() -> None:
             "trend": info.get("trend"),
             "constellation": info.get("constellation"),
         }
-
         if eph and eph.get("horizons_id"):
             item["horizons_id"] = eph["horizons_id"]
-
-        # Names (from COBS full name)
         full_from_cobs = info.get("cobs_fullname")
         display = canonical_full(desig, full_from_cobs)
         suf = suffix_from_full(full_from_cobs)
         if not suf and isinstance(full_from_cobs, str) and "/" in full_from_cobs and "(" not in full_from_cobs:
             suf = full_from_cobs.split("/", 1)[1].strip() or None
-
         if suf is not None:
             item["name_suffix"] = suf
         item["name_full"] = display
         item["display_name"] = display
-
         items_out.append(item)
         if len(debug_first) < 12:
             debug_first.append(info.get("cobs_mpc_name") or desig)
-
     out: Dict[str, Any] = {
         "generated_utc": now_utc,
         "observer": OBSERVER_CODE,
@@ -203,7 +176,6 @@ def main() -> None:
         "count": len(items_out),
         "items": items_out,
     }
-
     OUT_FILE.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote {OUT_FILE} with {len(items_out)} items")
 
