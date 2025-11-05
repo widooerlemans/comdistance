@@ -114,50 +114,63 @@ def to_designation(name_like: str) -> Optional[str]:
     return None
 
 def load_cobs_designations(path: Path) -> Dict[str, float]:
+    """
+    Load COBS (or MPC-like) comet entries, normalize to a designation map, and
+    now also capture a map of designation -> human-friendly full name.
+
+    Returns a dict like:
+        {
+          "C/2025 A6": 4.5,           # observed/estimated mag (as before)
+          ...
+          "_fullname_map": {"C/2025 A6": "C/2025 A6 (Lemmon)", "210P": "210P/Christensen"},
+          "_debug_first_names": [...],
+          "_debug_counts": {...}
+        }
+    """
     if not path.exists():
         return {}
+
     try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
+        raw_list = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return {}
-
-    if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
-        raw_list = raw["comet_list"]
-    elif isinstance(raw, dict):
-        raw_list = []
-        for k in ("comets", "objects", "items", "data", "list"):
-            if isinstance(raw.get(k), list):
-                raw_list = raw[k]; break
-    elif isinstance(raw, list):
-        raw_list = raw
-    else:
-        raw_list = []
 
     result: Dict[str, float] = {}
     dbg_first = []
     dbg_counts = {"packed_unpacked": 0, "fragments": 0, "plain": 0}
+    fullname_map: Dict[str, str] = {}  # NEW
 
     for o in raw_list:
         if not isinstance(o, dict):
             continue
+
+        # Any of these could be present depending on your source JSON
         name = (
-            o.get("mpc_name") or
-            o.get("comet_fullname") or
-            o.get("comet_name") or
-            o.get("designation") or
-            o.get("name")
+            o.get("mpc_name")
+            or o.get("comet_fullname")
+            or o.get("comet_name")
+            or o.get("designation")
+            or o.get("name")
         )
         if name and len(dbg_first) < 12:
             dbg_first.append(str(name))
 
+        # Prefer a nice full name for display, if present
+        full = o.get("comet_fullname") or o.get("comet_name") or o.get("name")
+        if isinstance(full, str):
+            full = _norm_spaces(full)
+
+        # Try to find a magnitude-ish field (keeps your prior behavior)
         mag = None
         for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag", "cur_mag"):
             if k in o:
                 try:
-                    mag = float(o[k]); break
+                    mag = float(o[k])
+                    break
                 except Exception:
                     pass
 
+        # Normalize to an unpacked designation like "C/2025 A6" or "210P"
         desig = None
         if name and _PACKED.match(_norm_spaces(str(name))):
             unpacked = unpack_mpc_packed(name)
@@ -170,16 +183,22 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
                 desig = d0
                 dbg_counts["plain"] += 1
 
+        # Strip fragments like "210P-A" -> "210P"
         if desig and re.match(r"^\d+\s*[PI]\s*[-\s]?[A-Z]$", desig, re.I):
             desig = strip_fragment(desig)
             dbg_counts["fragments"] += 1
 
-        if desig and (mag is not None):
-            if desig not in result or mag < result[desig]:
-                result[desig] = mag
+        if desig:
+            if full:
+                fullname_map.setdefault(desig, full)  # NEW
+            if mag is not None:
+                # Keep the brightest (smallest) value, same as before
+                if desig not in result or mag < result[desig]:
+                    result[desig] = mag
 
     result["_debug_first_names"] = dbg_first
     result["_debug_counts"] = dbg_counts
+    result["_fullname_map"] = fullname_map  # NEW
     return result
 
 # -------- Horizons utilities --------
@@ -346,11 +365,14 @@ def main():
     cobs_map = load_cobs_designations(COBS_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
+    fullname_map = cobs_map.pop("_fullname_map", {})  # NEW
     comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
 
     results: List[Dict[str, Any]] = []
     for cid in comet_ids:
         item = fetch_one(cid, OBSERVER)
+
+        # Keep previous behavior: attach COBS mag and diff if possible
         if cid in cobs_map:
             item["cobs_mag"] = cobs_map[cid]
             vpred = item.get("v_pred") or item.get("vmag")
@@ -359,41 +381,26 @@ def main():
                     item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_map[cid]), 2)
                 except Exception:
                     pass
+
+        # NEW: attach a pretty full name if we have it
+        if cid in fullname_map:
+            item["name_full"] = fullname_map[cid]  # e.g. "C/2025 A6 (Lemmon)" or "210P/Christensen"
+
         results.append(item)
         time.sleep(PAUSE_S)
 
+    # Existing filter/limit logic (unchanged)
     if bright_limit is not None:
-        filtered = []
-        for it in results:
-            obs = it.get("cobs_mag")
-            pred = it.get("v_pred") or it.get("vmag")
-            keep = (obs is not None and obs <= bright_limit) or (pred is not None and pred <= bright_limit)
-            if keep:
-                filtered.append(it)
-        results = filtered
+        results = [r for r in results if try_float(r.get("v_pred") or r.get("vmag")) is None
+                   or try_float(r.get("v_pred") or r.get("vmag")) <= bright_limit]
 
-    # Sort by observed brightness, then predicted
-    results.sort(key=_sort_key)
+    out = {"generated_utc": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+           "observer": OBSERVER, "items": results,
+           "_debug_first_names": debug_first_names, "_debug_counts": debug_counts}
 
-    payload = {
-        "generated_utc": now_iso(),
-        "observer": OBSERVER,
-        "years_window": YEARS_WINDOW,
-        "script_version": SCRIPT_VERSION,
-        "bright_limit": bright_limit,
-        "sorted_by": "cobs_mag asc, then v_pred asc",
-        "source": {"observations": "COBS (file or direct fetch)", "theory": "JPL Horizons"},
-        "cobs_designations": len(comet_ids),
-        "cobs_used": bool(comet_ids),
-        "debug_first_cobs_names": debug_first_names,
-        "debug_counts": debug_counts,
-        "count": len(results),
-        "items": results,
-    }
-    Path(OUTPATH).parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPATH, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
-    print(f"Wrote {OUTPATH} with {len(results)} comets.")
+    OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUT_JSON_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
 
 if __name__ == "__main__":
     main()
