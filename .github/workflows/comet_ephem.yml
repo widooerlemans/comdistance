@@ -37,13 +37,16 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
+        shell: bash
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
       - name: Fetch COBS planner list (direct)
+        shell: bash
         run: |
-          set -e
+          set -euo pipefail
           mkdir -p data
           URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
           echo "GET $URL"
@@ -52,17 +55,24 @@ jobs:
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
+        shell: bash
         run: |
+          set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
-          if [ "$BYTES" -lt 30 ]; then
+          if [ "${BYTES:-0}" -lt 30 ]; then
             echo "Direct fetch small ($BYTES), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
             export URL
-            ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
+            ENCODED_URL=$(python3 - <<'PY'
+import os, urllib.parse
+print(urllib.parse.quote(os.environ['URL'], safe=''))
+PY
+)
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
             echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
+          fi
 
       - name: Upload COBS JSON artifact
         uses: actions/upload-artifact@v4
@@ -71,33 +81,39 @@ jobs:
           path: data/cobs_list.json
 
       - name: Show script header (first 40 lines)
+        shell: bash
         run: sed -n '1,40p' horizons_pull.py
 
       - name: Run pull (create JSON)
+        shell: bash
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
-          set -e
+          set -euo pipefail
           ls -la
           test -f horizons_pull.py
           mkdir -p data
           python horizons_pull.py
 
       - name: Peek at names in output
+        shell: bash
         run: |
+          set -euo pipefail
           python - <<'PY'
-          import json, pathlib
-          p = pathlib.Path("data/comets_ephem.json")
-          d = json.loads(p.read_text())
-          items = d.get("items", [])[:15]
-          for it in items:
-            print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
-          PY
+import json, pathlib
+p = pathlib.Path("data/comets_ephem.json")
+d = json.loads(p.read_text())
+items = d.get("items", [])[:20]
+for it in items:
+    print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
+PY
 
       - name: Commit & push
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/comets_ephem.json data/cobs_list.json || true
           git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes"
-          git push
+          git push || echo "No changes to push"
