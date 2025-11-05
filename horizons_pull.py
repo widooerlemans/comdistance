@@ -9,13 +9,13 @@ Highlights
 - Queries "now" with epochs=[JD] to avoid TLIST/WLDINI.
 - Resolves ambiguous periodic designations to most recent apparition.
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
-- Sorts output by observed brightness (cobs_mag asc), then by v_pred.
+- Sorts output by observed brightness (cobs_mag asc), then by v_pred (fallback vmag).
 
-Filter: BRIGHT_LIMIT (default 15.0) keeps comets if (cobs_mag ≤ limit) OR (predicted v ≤ limit).
+Filter:
+  BRIGHT_LIMIT (default 15.0) keeps a comet if (cobs_mag <= limit) OR (v_pred/vmag <= limit).
 """
 
-import os
-import json, time, re, math
+import os, json, time, re, math
 from math import acos, degrees
 from pathlib import Path
 from datetime import datetime, timezone
@@ -23,16 +23,16 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 19  # bump when you update this file
+SCRIPT_VERSION = 19
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                  # geocenter
-YEARS_WINDOW = 6                  # prefer most recent apparition within N years
+YEARS_WINDOW = 6                  # most recent apparition within N years
 QUANTITIES = "1,3,4,20,21,31"     # r, delta, alpha, RA, DEC, V
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 OUT_JSON_PATH = Path(OUTPATH)
-COBS_PATH = Path("data/cobs_list.json")  # workflow writes this
+COBS_PATH = Path("data/cobs_list.json")  # produced elsewhere
 BRIGHT_LIMIT_ENV = "BRIGHT_LIMIT"
 BRIGHT_LIMIT_DEFAULT = 15.0
 
@@ -47,9 +47,7 @@ def _norm_spaces(s: str) -> str:
     return s.strip()
 
 # MPC packed provisional comet code: e.g., CK25A060 → C/2025 A6
-# Format: [C|D|P|A|X] K yy L ddd  (ddd = N*10; divide by 10 to get N)
 _PACKED = re.compile(r"^\s*([CDPAX])K(\d{2})([A-Z])(\d{3})(?:-[A-Z])?\s*$", re.IGNORECASE)
-
 def unpack_mpc_packed(name_like: str) -> Optional[str]:
     if not name_like:
         return None
@@ -65,9 +63,9 @@ def unpack_mpc_packed(name_like: str) -> Optional[str]:
     year = 1900 + yy if yy >= 50 else 2000 + yy
     return f"{fam}/{year} {half}{n}"
 
-# Accept conventional designs:
-_PAT_PERIODIC = re.compile(r"^\s*(\d+)\s*P(?:/.*)?\s*$", re.IGNORECASE)      # 24P, 240P/Name -> 24P
-_PAT_INTERSTELLAR = re.compile(r"^\s*(\d+)\s*I(?:/.*)?\s*$", re.IGNORECASE)  # 3I/ATLAS -> 3I
+# Accept conventional designs
+_PAT_PERIODIC = re.compile(r"^\s*(\d+)\s*P(?:/.*)?\s*$", re.IGNORECASE)
+_PAT_INTERSTELLAR = re.compile(r"^\s*(\d+)\s*I(?:/.*)?\s*$", re.IGNORECASE)
 _PAT_C_PROV = re.compile(r"^\s*([PCADX])\s*/\s*(\d{4})\s+([A-Z]{1,2}\d{1,3})", re.IGNORECASE)
 
 def strip_fragment(desig: str) -> str:
@@ -80,7 +78,6 @@ def to_designation(name_like: str) -> Optional[str]:
     if not name_like:
         return None
     s = _norm_spaces(str(name_like))
-
     unpacked = unpack_mpc_packed(s)
     if unpacked:
         return unpacked
@@ -117,8 +114,14 @@ def to_designation(name_like: str) -> Optional[str]:
 
 def load_cobs_designations(path: Path) -> Dict[str, float]:
     """
-    Load COBS (or MPC-like) comet entries, normalize to a designation map,
-    and also capture a map of designation -> human-friendly full name.
+    Return:
+      {
+        "<designation>": <cobs_mag float>,
+        ...
+        "_fullname_map": { "<designation>": "Pretty full name" },
+        "_debug_first_names": [...],
+        "_debug_counts": {...}
+      }
     """
     if not path.exists():
         return {}
@@ -128,7 +131,7 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
     except Exception:
         return {}
 
-    # COBS can return either a dict with "comet_list" or a plain list
+    # accept either dict-with-comet_list or plain list
     items = []
     if isinstance(raw, dict):
         if isinstance(raw.get("comet_list"), list):
@@ -163,13 +166,12 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
         if isinstance(full, str):
             full = _norm_spaces(full)
 
-        # try common magnitude keys in COBS payload
+        # magnitude from common COBS keys
         mag = None
         for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag", "cur_mag"):
             if k in o:
                 try:
-                    mag = float(o[k])
-                    break
+                    mag = float(o[k]); break
                 except Exception:
                     pass
 
@@ -291,7 +293,7 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
     delta_au = delt if delt is not None else delta_vec_au
     out = {"r_au": r_au, "delta_au": delta_au, "phase_deg": alpha, "ra_deg": ra, "dec_deg": dec, "vmag": vmag}
 
-    # Of-date RA/Dec are effectively JNow for pointing convenience
+    # Mirror of-date RA/Dec as JNow for pointing convenience
     out["ra_jnow_deg"] = ra
     out["dec_jnow_deg"] = dec
 
@@ -355,37 +357,17 @@ def try_float_env(name: str) -> Optional[float]:
     except Exception:
         return None
 
-# -------- combined magnitude filter (COBS OR predicted) --------
-def _safe_float(x):
-    try:
-        return float(x)
-    except Exception:
-        return None
-
-def _combined_mag_filter(results: List[Dict[str, Any]], limit: float) -> List[Dict[str, Any]]:
-    """
-    Keep item if (COBS observed ≤ limit) OR (predicted v ≤ limit).
-    Predicted v uses v_pred if computed, else Horizons 'vmag'.
-    """
-    kept = []
-    for r in results:
-        obs  = _safe_float(r.get("cobs_mag"))
-        pred = _safe_float(r.get("v_pred") or r.get("vmag"))
-        if (obs is not None and obs <= limit) or (pred is not None and pred <= limit):
-            kept.append(r)
-    return kept
-
 def _sort_key(r: Dict[str, Any]):
-    # sort by observed cobs_mag first; tie-breaker by predicted v (as before)
+    # sort by observed cobs_mag first; tie-breaker by predicted (fallback vmag)
     def tf(x):
         try:
             return float(x)
         except Exception:
             return float("inf")
-    return (tf(r.get("cobs_mag")), tf(r.get("v_pred")))
+    return (tf(r.get("cobs_mag")), tf(r.get("v_pred") or r.get("vmag")))
 
 def main():
-    # ---------- build list of IDs from COBS ----------
+    # ---------- build list from COBS ----------
     cobs_map = load_cobs_designations(COBS_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts      = cobs_map.pop("_debug_counts", {})
@@ -409,20 +391,35 @@ def main():
                 except Exception:
                     pass
 
-        # attach pretty full name when available (keep your existing key)
+        # attach pretty full name if present in COBS
         if cid in fullname_map:
-            item["name_full"] = fullname_map[cid]  # e.g. "C/2025 A6 (Lemmon)" or "210P/Christensen"
+            item["name_full"] = fullname_map[cid]
 
         results.append(item)
         time.sleep(PAUSE_S)
 
-    # ---------- brightness filter: COBS OR predicted ----------
+    # ---------- brightness filter: COBS OR Horizons ----------
     limit = try_float_env(BRIGHT_LIMIT_ENV)
     if limit is None:
         limit = BRIGHT_LIMIT_DEFAULT
+
     before = len(results)
-    results = _combined_mag_filter(results, float(limit))
-    print(f"Brightness filter (COBS or predicted) <= {limit}: kept {len(results)}/{before}")
+    filtered: List[Dict[str, Any]] = []
+    for it in results:
+        obs  = it.get("cobs_mag")
+        pred = it.get("v_pred") or it.get("vmag")
+        try:
+            obs_ok  = (obs  is not None) and (float(obs)  <= limit)
+        except Exception:
+            obs_ok = False
+        try:
+            pred_ok = (pred is not None) and (float(pred) <= limit)
+        except Exception:
+            pred_ok = False
+        if obs_ok or pred_ok:
+            filtered.append(it)
+    results = filtered
+    print(f"Brightness filter (<= {limit}) by COBS OR Horizons: kept {len(results)}/{before}")
 
     # ---------- sort and write ----------
     results.sort(key=_sort_key)
@@ -436,6 +433,7 @@ def main():
         "_debug_counts": debug_counts,
         "script_version": SCRIPT_VERSION,
         "filter": {"mode": "cobs_or_pred", "bright_limit": limit},
+        "sorted_by": "cobs_mag asc, then v_pred/vmag asc",
     }
     OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
