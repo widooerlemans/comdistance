@@ -63,7 +63,6 @@ jobs:
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
             echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
-          fi
 
       - name: Upload COBS JSON artifact
         uses: actions/upload-artifact@v4
@@ -74,47 +73,6 @@ jobs:
       - name: Show script header (first 40 lines)
         run: sed -n '1,40p' horizons_pull.py
 
-      - name: Debug parse COBS list (designations count)
-        run: |
-          python - <<'PY'
-          import json, re
-          from pathlib import Path
-          p = Path("data/cobs_list.json")
-          try:
-            raw = json.loads(p.read_text())
-          except Exception as e:
-            print("JSON parse error:", e)
-            raw = {}
-          def to_desig(s):
-            if not s: return None
-            s = str(s).strip()
-            m = re.match(r'^\s*0*(\d+)\s*P(?:\s*/.*)?\s*$', s, re.I)
-            if m: return f"{int(m.group(1))}P"
-            m = re.match(r'^\s*([PCDAXI])\s*/\s*(\d{4})\s+([A-Z]\d+)', s, re.I)
-            if m: return f"{m.group(1).upper()}/{m.group(2)} {m.group(3).upper()}"
-            m = re.match(r'^\s*(\d+)\s*I(?:\s*/.*)?\s*$', s, re.I)
-            if m: return f"{int(m.group(1))}I"
-            m = re.search(r'\(([^)]+)\)', s)
-            return to_desig(m.group(1)) if m else None
-          items = []
-          if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
-            items = raw["comet_list"]
-          elif isinstance(raw, dict):
-            for k in ("comets","objects","data","items","list"):
-              if isinstance(raw.get(k), list):
-                items = raw[k]; break
-          elif isinstance(raw, list):
-            items = raw
-          desigs = []
-          for o in items:
-            if not isinstance(o, dict): continue
-            name = o.get("mpc_name") or o.get("comet_name") or o.get("comet_fullname") or o.get("designation") or o.get("name") or o.get("fullname")
-            d = to_desig(name)
-            if d and d not in desigs:
-              desigs.append(d)
-          print(f"Parsed COBS designations: {len(desigs)} -> {desigs[:20]}")
-          PY
-
       - name: Run pull (create JSON)
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
@@ -124,6 +82,17 @@ jobs:
           test -f horizons_pull.py
           mkdir -p data
           python horizons_pull.py
+
+      - name: Peek at names in output
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("data/comets_ephem.json")
+          d = json.loads(p.read_text())
+          items = d.get("items", [])[:15]
+          for it in items:
+            print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
+          PY
 
       - name: Commit & push
         run: |
