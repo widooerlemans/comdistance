@@ -11,7 +11,7 @@ Highlights
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
 - Sorts output by observed brightness (cobs_mag asc), then by v_pred.
 
-Filter: BRIGHT_LIMIT (default 15.0) keeps only comets with cobs_mag <= limit (strictly COBS-based).
+Filter: BRIGHT_LIMIT (default 15.0) keeps comets if (cobs_mag ≤ limit) OR (predicted v ≤ limit).
 """
 
 import os
@@ -23,7 +23,7 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 18  # bump when you update this file
+SCRIPT_VERSION = 19  # bump when you update this file
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                  # geocenter
@@ -34,7 +34,7 @@ OUTPATH = "data/comets_ephem.json"
 OUT_JSON_PATH = Path(OUTPATH)
 COBS_PATH = Path("data/cobs_list.json")  # workflow writes this
 BRIGHT_LIMIT_ENV = "BRIGHT_LIMIT"
-BRIGHT_LIMIT_DEFAULT = 15.0       # << you wanted < 15 by COBS; we use <= 15.0 here
+BRIGHT_LIMIT_DEFAULT = 15.0
 
 # ---------- small helpers ----------
 def now_iso() -> str:
@@ -119,15 +119,6 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
     """
     Load COBS (or MPC-like) comet entries, normalize to a designation map,
     and also capture a map of designation -> human-friendly full name.
-
-    Returns a dict like:
-        {
-          "C/2025 A6": 4.5,  # observed/estimated mag from COBS-like field
-          ...
-          "_fullname_map": {"C/2025 A6": "C/2025 A6 (Lemmon)", "210P": "210P/Christensen"},
-          "_debug_first_names": [...],
-          "_debug_counts": {...}
-        }
     """
     if not path.exists():
         return {}
@@ -364,21 +355,28 @@ def try_float_env(name: str) -> Optional[float]:
     except Exception:
         return None
 
-def _only_cobs_filter(results: List[Dict[str, Any]], limit: float) -> List[Dict[str, Any]]:
-    """Keep items ONLY if cobs_mag exists and cobs_mag < limit (strict COBS-based)."""
+# -------- combined magnitude filter (COBS OR predicted) --------
+def _safe_float(x):
+    try:
+        return float(x)
+    except Exception:
+        return None
+
+def _combined_mag_filter(results: List[Dict[str, Any]], limit: float) -> List[Dict[str, Any]]:
+    """
+    Keep item if (COBS observed ≤ limit) OR (predicted v ≤ limit).
+    Predicted v uses v_pred if computed, else Horizons 'vmag'.
+    """
     kept = []
     for r in results:
-        cm = r.get("cobs_mag")
-        try:
-            cmf = float(cm) if cm is not None else None
-        except Exception:
-            cmf = None
-        if cmf is not None and cmf < limit:   # strictly less than
+        obs  = _safe_float(r.get("cobs_mag"))
+        pred = _safe_float(r.get("v_pred") or r.get("vmag"))
+        if (obs is not None and obs <= limit) or (pred is not None and pred <= limit):
             kept.append(r)
     return kept
 
 def _sort_key(r: Dict[str, Any]):
-    # sort by observed cobs_mag first; tie-breaker by predicted v
+    # sort by observed cobs_mag first; tie-breaker by predicted v (as before)
     def tf(x):
         try:
             return float(x)
@@ -411,20 +409,20 @@ def main():
                 except Exception:
                     pass
 
-        # attach pretty full name when available
+        # attach pretty full name when available (keep your existing key)
         if cid in fullname_map:
             item["name_full"] = fullname_map[cid]  # e.g. "C/2025 A6 (Lemmon)" or "210P/Christensen"
 
         results.append(item)
         time.sleep(PAUSE_S)
 
-    # ---------- STRICT brightness filter: COBS only ----------
+    # ---------- brightness filter: COBS OR predicted ----------
     limit = try_float_env(BRIGHT_LIMIT_ENV)
     if limit is None:
         limit = BRIGHT_LIMIT_DEFAULT
     before = len(results)
-    results = _only_cobs_filter(results, float(limit))
-    print(f"COBS-only brightness filter <= {limit}: kept {len(results)}/{before}")
+    results = _combined_mag_filter(results, float(limit))
+    print(f"Brightness filter (COBS or predicted) <= {limit}: kept {len(results)}/{before}")
 
     # ---------- sort and write ----------
     results.sort(key=_sort_key)
@@ -437,7 +435,7 @@ def main():
         "_debug_first_names": debug_first_names,
         "_debug_counts": debug_counts,
         "script_version": SCRIPT_VERSION,
-        "filter": {"mode": "cobs_only", "bright_limit": limit},
+        "filter": {"mode": "cobs_or_pred", "bright_limit": limit},
     }
     OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
