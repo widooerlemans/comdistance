@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2025-11-05T08:36:22Z",
+  "generated_utc": "2025-11-05T08:43:04Z",
   "source": {
     "cobs": true,
     "jpl_horizons": true
@@ -59,8 +59,8 @@
     {
       "desig": "3I",
       "name_suffix": "ATLAS",
-      "name_full": "3I (ATLAS)",
-      "display_name": "3I (ATLAS)",
+      "name_full": "3I/ATLAS",
+      "display_name": "3I/ATLAS",
       "magnitude": 11.2,
       "best_time": "2025-11-06 06:25",
       "best_ra": "13:13:51.84",
