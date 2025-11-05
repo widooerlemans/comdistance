@@ -365,7 +365,7 @@ def try_float_env(name: str) -> Optional[float]:
         return None
 
 def _only_cobs_filter(results: List[Dict[str, Any]], limit: float) -> List[Dict[str, Any]]:
-    """Keep items ONLY if cobs_mag exists and cobs_mag <= limit."""
+    """Keep items ONLY if cobs_mag exists and cobs_mag < limit (strict COBS-based)."""
     kept = []
     for r in results:
         cm = r.get("cobs_mag")
@@ -373,7 +373,7 @@ def _only_cobs_filter(results: List[Dict[str, Any]], limit: float) -> List[Dict[
             cmf = float(cm) if cm is not None else None
         except Exception:
             cmf = None
-        if cmf is not None and cmf <= limit:
+        if cmf is not None and cmf < limit:   # strictly less than
             kept.append(r)
     return kept
 
