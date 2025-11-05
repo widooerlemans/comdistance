@@ -1,7 +1,7 @@
 name: Update comet ephemerides (JPL Horizons)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "8 3 * * *"   # daily 03:08 UTC
 
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Location for planner.api (Utrecht-ish)
+      # Location for planner.api (Utrecht area)
       COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
@@ -60,14 +60,10 @@ jobs:
           set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small ($BYTES), trying Worker…"
-            URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            export URL
-            ENCODED_URL=$(python3 - <<'PY'
-import os, urllib.parse
-print(urllib.parse.quote(os.environ['URL'], safe=''))
-PY
-)
+            echo "Direct fetch small (${BYTES}), trying Worker"
+            URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moON=${COBS_MIN_MOON}"
+            # URL-encode without heredoc
+            ENCODED_URL=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$URL''', safe=''))")
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
@@ -103,8 +99,7 @@ PY
 import json, pathlib
 p = pathlib.Path("data/comets_ephem.json")
 d = json.loads(p.read_text())
-items = d.get("items", [])[:20]
-for it in items:
+for it in d.get("items", [])[:20]:
     print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
 PY
 
