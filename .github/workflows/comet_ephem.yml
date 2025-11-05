@@ -1,9 +1,10 @@
+# NOTE: Plain ASCII, no tabs, no BOM.
 name: Update comet ephemerides (JPL Horizons)
 
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "8 3 * * *"    # daily at 03:08 UTC
+    - cron: "8 3 * * *"  # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -13,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Utrecht-ish location for the COBS planner query
+      # Utrecht-ish location for COBS planner
       COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
 
-      # Fetch deeper than your visible limit, then filter in Python
+      # Fetch deeper than your visible limit; we filter locally in Python
       COBS_LIM_MAG: "19"
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
 
-      # Local filter in Python (observed magnitude ≤ this)
+      # Local bright-limit filter (observed magnitude ≤ this)
       BRIGHT_LIMIT: "15"
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -36,23 +37,23 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      - name: Fetch COBS planner list (direct)
+      - name: Fetch COBS planner (direct)
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p data
           URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-          echo "GET $URL"
+          echo "GET ${URL}"
           curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
-      - name: Fallback via Worker if file tiny
+      - name: Fallback via Worker if tiny
         shell: bash
         run: |
           set -euo pipefail
@@ -71,7 +72,7 @@ PY
             echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
           fi
 
-      - name: Run horizons_pull.py (build JSON)
+      - name: Build ephemerides JSON (your script)
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
