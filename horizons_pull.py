@@ -10,6 +10,7 @@ Highlights
 - Resolves ambiguous periodic designations to most recent apparition.
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
 - Sorts output by observed brightness (cobs_mag asc), then by v_pred.
+- NEW: Adds nice naming fields from Horizons targetname (e.g., "C/2025 A6 (Lemmon)") with COBS fallback.
 
 Optional filter: set env BRIGHT_LIMIT (e.g., 15.0) to keep only comets with cobs_mag<=limit OR v_pred<=limit.
 """
@@ -22,7 +23,7 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 17  # bump when you update this file
+SCRIPT_VERSION = 18  # bump when you update this file
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                 # geocenter
@@ -59,12 +60,12 @@ def unpack_mpc_packed(name_like: str) -> Optional[str]:
     yy  = int(m.group(2))
     half = m.group(3).upper()
     ddd = int(m.group(4))
-    n = ddd // 10            # <- the crucial fix: 060 -> 6, 010 -> 1, 020 -> 2
+    n = ddd // 10            # 060 -> 6, 010 -> 1, 020 -> 2
     year = 1900 + yy if yy >= 50 else 2000 + yy
     return f"{fam}/{year} {half}{n}"
 
-# Accept conventional designs:
-_PAT_PERIODIC = re.compile(r"^\s*(\d+)\s*P(?:/.*)?\s*$", re.IGNORECASE)   # 24P, 240P/Name -> 24P
+# Accept conventional designations:
+_PAT_PERIODIC = re.compile(r"^\s*(\d+)\s*P(?:/.*)?\s*$", re.IGNORECASE)      # 24P, 240P/Name -> 24P
 _PAT_INTERSTELLAR = re.compile(r"^\s*(\d+)\s*I(?:/.*)?\s*$", re.IGNORECASE)  # 3I/ATLAS -> 3I
 _PAT_C_PROV = re.compile(r"^\s*([PCADX])\s*/\s*(\d{4})\s+([A-Z]{1,2}\d{1,3})", re.IGNORECASE)
 
@@ -113,7 +114,9 @@ def to_designation(name_like: str) -> Optional[str]:
 
     return None
 
+# ---------- COBS parsing ----------
 def load_cobs_designations(path: Path) -> Dict[str, float]:
+    """Return {designation -> observed mag} (best/brightest per desig)."""
     if not path.exists():
         return {}
     try:
@@ -181,6 +184,54 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
     result["_debug_first_names"] = dbg_first
     result["_debug_counts"] = dbg_counts
     return result
+# (based on your existing loader)  # :contentReference[oaicite:3]{index=3}
+
+def load_cobs_fullnames(path: Path) -> Dict[str, str]:
+    """
+    Map canonical designation -> human 'fullname' string from COBS if present,
+    e.g. 'C/2025 A6 (Lemmon)' or '210P/Christensen'.
+    """
+    out: Dict[str, str] = {}
+    if not path.exists():
+        return out
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return out
+
+    if isinstance(raw, dict) and isinstance(raw.get("comet_list"), list):
+        raw_list = raw["comet_list"]
+    elif isinstance(raw, dict):
+        raw_list = []
+        for k in ("comets", "objects", "items", "data", "list"):
+            if isinstance(raw.get(k), list):
+                raw_list = raw[k]; break
+    elif isinstance(raw, list):
+        raw_list = raw
+    else:
+        raw_list = []
+
+    for o in raw_list:
+        if not isinstance(o, dict):
+            continue
+        name = (
+            o.get("comet_fullname") or
+            o.get("fullname") or
+            o.get("mpc_name") or
+            o.get("comet_name") or
+            o.get("designation") or
+            o.get("name")
+        )
+        if not name:
+            continue
+        desig = to_designation(name)
+        if not desig:
+            continue
+        s = _norm_spaces(str(name))
+        # Prefer forms that already include a suffix like '(Lemmon)' or '/Christensen'
+        if "(" in s or "/" in s:
+            out.setdefault(desig, s)
+    return out
 
 # -------- Horizons utilities --------
 _ROW = re.compile(r"^\s*(?P<rec>9\d{7})\s+(?P<epoch>\d{4})\s+")
@@ -205,6 +256,7 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
     return best
 
 def resolve_ambiguous_to_record_id(designation: str) -> Optional[str]:
+    """If Horizons says 'Ambiguous target name', choose the most recent apparition record id."""
     try:
         jd_now = Time.now().jd
         Horizons(id=designation, id_type="designation", location=OBSERVER, epochs=[jd_now]).ephemerides(quantities="1")
@@ -283,6 +335,39 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
         out["_cols"] = list(cmap.values())
     return out
 
+# ---- Name helpers (NEW) ----
+def _get_targetname(row) -> Optional[str]:
+    try:
+        tn = row["targetname"]
+        return _norm_spaces(str(tn)) if tn is not None else None
+    except Exception:
+        return None
+
+_NAME_SUFFIX_PAT = re.compile(r"\(([^)]+)\)")
+
+def _make_name_fields(row, desig_fallback: str) -> Dict[str, Any]:
+    """
+    Build display/name fields from Horizons targetname, with sensible fallbacks.
+    """
+    tn = _get_targetname(row)
+    if tn:
+        m = _NAME_SUFFIX_PAT.search(tn)
+        suffix = m.group(1) if m else None
+        # Derive designation from targetname if possible; else use provided fallback
+        des = to_designation(tn) or desig_fallback
+        return {
+            "desig": des,
+            "name_full": tn,
+            "display_name": tn,
+            "name_suffix": suffix
+        }
+    return {
+        "desig": desig_fallback,
+        "name_full": desig_fallback,
+        "display_name": desig_fallback,
+        "name_suffix": None
+    }
+
 def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
     jd_now = Time.now().jd
     try:
@@ -295,7 +380,12 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "epoch_utc": now_iso(), **core}
+            return {
+                "id": comet_id,
+                **_make_name_fields(row, comet_id),
+                "epoch_utc": now_iso(),
+                **core
+            }
         except Exception:
             rec_id = resolve_ambiguous_to_record_id(comet_id)
             if rec_id is None:
@@ -306,7 +396,13 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            return {
+                "id": comet_id,
+                **_make_name_fields(row, comet_id),
+                "horizons_id": rec_id,
+                "epoch_utc": now_iso(),
+                **core
+            }
     except Exception as e1:
         rec_id = resolve_ambiguous_to_record_id(comet_id)
         if rec_id is None:
@@ -320,7 +416,13 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            return {
+                "id": comet_id,
+                **_make_name_fields(row, comet_id),
+                "horizons_id": rec_id,
+                "epoch_utc": now_iso(),
+                **core
+            }
         except Exception as e2:
             return {"id": comet_id, "epoch_utc": now_iso(), "error": f"{e1} | retry:{e2}"}
 
@@ -343,22 +445,35 @@ def _sort_key(it: Dict[str, Any]):
 def main():
     bright_limit = try_float_env(BRIGHT_LIMIT_ENV)
 
-    cobs_map = load_cobs_designations(COBS_PATH)
-    debug_first_names = cobs_map.pop("_debug_first_names", [])
-    debug_counts = cobs_map.pop("_debug_counts", {})
-    comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
+    # COBS observed magnitudes + names
+    cobs_mag_map = load_cobs_designations(COBS_PATH)
+    debug_first_names = cobs_mag_map.pop("_debug_first_names", [])
+    debug_counts = cobs_mag_map.pop("_debug_counts", {})
+    comet_ids: List[str] = sorted(cobs_mag_map.keys()) if cobs_mag_map else []
+    cobs_names = load_cobs_fullnames(COBS_PATH)  # NEW: fullname fallback
 
     results: List[Dict[str, Any]] = []
     for cid in comet_ids:
         item = fetch_one(cid, OBSERVER)
-        if cid in cobs_map:
-            item["cobs_mag"] = cobs_map[cid]
+
+        # add COBS magnitude + delta
+        if cid in cobs_mag_map:
+            item["cobs_mag"] = cobs_mag_map[cid]
             vpred = item.get("v_pred") or item.get("vmag")
             if vpred is not None:
                 try:
-                    item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_map[cid]), 2)
+                    item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_mag_map[cid]), 2)
                 except Exception:
                     pass
+
+        # If no nice suffix from Horizons, try COBS fullname
+        if (not item.get("name_suffix")) and cobs_names.get(cid):
+            s = cobs_names[cid]
+            item["name_full"] = s
+            item["display_name"] = s
+            m = _NAME_SUFFIX_PAT.search(s)
+            item["name_suffix"] = m.group(1) if m else item.get("name_suffix")
+
         results.append(item)
         time.sleep(PAUSE_S)
 
