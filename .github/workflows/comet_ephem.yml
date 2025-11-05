@@ -1,4 +1,4 @@
-name: Update JPL ephemerides (COBS + Horizons)
+name: Update comet ephemerides (JPL Horizons)
 
 on:
   workflow_dispatch:
@@ -11,14 +11,20 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     env:
+      # Location for planner.api (Utrecht)
       COBS_LAT: '52.09'
       COBS_LON: '5.12'
       COBS_ALT: '10'
+
+      # Fetch deeper so Python can filter to <= 15 later
       COBS_LIM_MAG: '19'
       COBS_MIN_ALT: '0'
       COBS_MIN_SOL: '0'
       COBS_MIN_MOON: '0'
+
+      # Local filter in Python (observed magnitude ≤ this)
       BRIGHT_LIMIT: '15'
 
     steps:
@@ -31,12 +37,14 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
+        shell: bash
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
       - name: Fetch COBS planner list (direct)
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p data
@@ -47,17 +55,15 @@ jobs:
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
+        shell: bash
         run: |
           set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small ($BYTES), trying Worker…"
+            echo "Direct fetch small (${BYTES}), trying Worker"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            ENCODED_URL=$(python3 - <<'PY'
-import os, urllib.parse
-print(urllib.parse.quote(os.environ['URL'], safe=''))
-PY
-)
+            export URL
+            ENCODED_URL=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
@@ -71,9 +77,11 @@ PY
           path: data/cobs_list.json
 
       - name: Show script header (first 40 lines)
+        shell: bash
         run: sed -n '1,40p' horizons_pull.py
 
       - name: Run pull (create JSON)
+        shell: bash
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
@@ -83,6 +91,7 @@ PY
           python horizons_pull.py
 
       - name: Peek at names in output
+        shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -94,6 +103,7 @@ for it in d.get("items", [])[:20]:
 PY
 
       - name: Commit & push
+        shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
