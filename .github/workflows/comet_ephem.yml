@@ -1,9 +1,9 @@
-name: Update JPL ephemerides
+name: Update comet ephemerides (JPL + COBS)
 
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "8 3 * * *"
+    - cron: "8 3 * * *"   # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -13,13 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      # Location for planner.api (Utrecht-ish)
       COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
+
+      # Fetch deeper than 15 so we can locally filter to <= 15
       COBS_LIM_MAG: "19"
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
+
+      # Local filter in Python (observed magnitude ≤ this)
       BRIGHT_LIMIT: "15"
 
     steps:
@@ -47,7 +52,7 @@ jobs:
           echo "GET $URL"
           curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
-          echo "COBS head:"; head -c 300 data/cobs_list.json || true; echo
+          echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
         shell: bash
@@ -55,14 +60,24 @@ jobs:
           set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small (${BYTES}), trying Worker"
+            echo "Direct fetch small ($BYTES), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            ENCODED_URL=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$URL', safe=''))")
+            ENCODED_URL=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))" )
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
-            echo "COBS head after Worker:"; head -c 300 data/cobs_list.json || true; echo
+            echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
           fi
+
+      - name: Upload COBS JSON artifact (debug)
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-cobs-json
+          path: data/cobs_list.json
+
+      - name: Show script header (first 40 lines)
+        shell: bash
+        run: sed -n '1,40p' horizons_pull.py
 
       - name: Run pull (create JSON)
         shell: bash
@@ -74,7 +89,19 @@ jobs:
           mkdir -p data
           python horizons_pull.py
 
-      - name: Commit & push
+      - name: Quick peek at names in output (debug)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+import json, pathlib
+p = pathlib.Path("data/comets_ephem.json")
+d = json.loads(p.read_text())
+for it in d.get("items", [])[:20]:
+    print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
+PY
+
+      - name: Commit & push data
         shell: bash
         run: |
           set -euo pipefail
