@@ -30,8 +30,10 @@ YEARS_WINDOW = 6                 # prefer most recent apparition within N years
 QUANTITIES = "1,3,4,20,21,31"    # r, delta, alpha, RA, DEC, V
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
+OUT_JSON_PATH = Path(OUTPATH)    # <-- add this line
 COBS_PATH = Path("data/cobs_list.json")  # workflow writes this
 BRIGHT_LIMIT_ENV = "BRIGHT_LIMIT"
+
 # ----------------------------
 
 def now_iso() -> str:
