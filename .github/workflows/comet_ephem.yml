@@ -3,7 +3,7 @@ name: Update comet ephemerides (JPL Horizons)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "8 3 * * *"   # daily 03:08 UTC
+    - cron: '8 3 * * *'  # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -13,19 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Location for planner.api (Utrecht-ish)
-      COBS_LAT: "52.09"
-      COBS_LON: "5.12"
-      COBS_ALT: "10"
-
-      # Fetch a bit deeper than 15 so we can locally filter to <= 15
-      COBS_LIM_MAG: "19"
-      COBS_MIN_ALT: "0"
-      COBS_MIN_SOL: "0"
-      COBS_MIN_MOON: "0"
-
-      # Local filter in your Python (observed magnitude ≤ this)
-      BRIGHT_LIMIT: "15"
+      COBS_LAT: '52.09'
+      COBS_LON: '5.12'
+      COBS_ALT: '10'
+      COBS_LIM_MAG: '19'
+      COBS_MIN_ALT: '0'
+      COBS_MIN_SOL: '0'
+      COBS_MIN_MOON: '0'
+      BRIGHT_LIMIT: '15'
 
     steps:
       - name: Checkout
@@ -34,113 +29,56 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install deps
-        shell: bash
         run: |
-          set -euo pipefail
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
-      - name: Fetch COBS planner list (direct)
-        shell: bash
+      - name: Fetch COBS planner (direct)
         run: |
-          set -euo pipefail
           mkdir -p data
           URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-          echo "GET $URL"
+          echo "GET ${URL}"
           curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
-          echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
+          echo "COBS head:"; head -c 300 data/cobs_list.json || true; echo
 
-      - name: Fallback via Worker if file tiny
-        shell: bash
+      - name: Fallback via Worker if tiny
         run: |
-          set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
-            echo "Direct fetch small (${BYTES}), trying Worker…"
+            echo "Direct fetch small (${BYTES}), trying Worker"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            export URL
-            ENCODED_URL=$(python - <<'PY'
-import os, urllib.parse
-print(urllib.parse.quote(os.environ['URL'], safe=''))
-PY
-)
-            curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
-              -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
+            ENCODED_URL=$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))")
+            curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}"                   -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
-            echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
+            echo "COBS head after Worker:"; head -c 300 data/cobs_list.json || true; echo
           fi
 
-      - name: Run horizons_pull.py (build JSON)
-        shell: bash
+      - name: Run horizons_pull.py (your original)
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
-          set -euo pipefail
-          test -f horizons_pull.py
           mkdir -p data
+          test -f horizons_pull.py
           python horizons_pull.py
 
-      - name: Augment names from COBS into JSON (non-destructive)
-        shell: bash
+      - name: Augment names (post-process, keeps all original fields)
         run: |
-          set -euo pipefail
+          python augment_names.py
+          echo "Preview of display_name fields:"
           python - <<'PY'
-import json, re, pathlib
-outp = pathlib.Path("data/comets_ephem.json")
-cobs = pathlib.Path("data/cobs_list.json")
-if not outp.exists():
-    raise SystemExit("Missing data/comets_ephem.json")
-data = json.loads(outp.read_text(encoding="utf-8"))
-
-# Build a mapping from designation -> (fullname, suffix) using COBS list
-cobs_map = {}
-if cobs.exists():
-    try:
-        j = json.loads(cobs.read_text(encoding="utf-8"))
-        for it in (j.get("comet_list") or []):
-            desig = (it.get("comet_name") or "").strip()
-            fullname = (it.get("comet_fullname") or "").strip()
-            if desig and fullname:
-                suf = None
-                m = re.search(r"\(([^)]+)\)\s*$", fullname)
-                if m:
-                    suf = m.group(1).strip()
-                else:
-                    m2 = re.search(r"/\s*([A-Za-z0-9\-\s]+)$", fullname)
-                    if m2:
-                        suf = m2.group(1).strip()
-                cobs_map[desig] = (fullname, suf)
-    except Exception:
-        pass
-
-# Augment each item, keep everything your script already wrote
-items = data.get("items") or []
-for it in items:
-    desig = (it.get("id") or it.get("desig") or "").strip()
-    name_full = None
-    name_suffix = None
-    if desig in cobs_map:
-        name_full, name_suffix = cobs_map[desig]
-    else:
-        if desig:
-            name_full = desig
-    display_name = name_full or desig
-    if name_suffix: it["name_suffix"] = name_suffix
-    if name_full:   it["name_full"]   = name_full
-    if display_name:it["display_name"]= display_name
-
-outp.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-print("Augmented names for", sum(1 for it in items if "display_name" in it), "items")
+import json, pathlib
+p = pathlib.Path("data/comets_ephem.json")
+d = json.loads(p.read_text(encoding="utf-8"))
+for it in (d.get("items") or [])[:12]:
+    print("-", it.get("display_name") or it.get("name_full") or it.get("id") or it.get("desig"))
 PY
 
       - name: Commit & push
-        shell: bash
         run: |
-          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/comets_ephem.json data/cobs_list.json || true
