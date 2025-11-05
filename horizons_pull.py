@@ -22,7 +22,7 @@ from typing import List, Dict, Any, Optional
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 17  # bump when you update this file
+SCRIPT_VERSION = 18  # bump when you update this file
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                 # geocenter
@@ -267,7 +267,7 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
     k1   = _get_optional_float(row, cmap, "k1")
 
     delta_au = delt if delt is not None else delta_vec_au
-    out = {"r_au": r_au, "delta_au": delta_au, "phase_deg": alpha, "ra_deg": ra, "dec_deg": dec, "vmag": vmag}
+    out = {"r_au": r_au, "delta_au": delta_au, "phase_deg": alpha, "ra_deg": ra, "dec_deg": dec, "vmag": vmag, \"ra_jnow_deg\": ra, \"dec_jnow_deg\": dec}
 
     if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta_au is not None):
         try:
