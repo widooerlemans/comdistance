@@ -43,6 +43,7 @@ jobs:
           echo "GET ${URL}"
           curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
           echo "COBS bytes:"; wc -c data/cobs_list.json || true
+          echo "COBS head:"; head -c 400 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if tiny
         run: |
@@ -50,6 +51,7 @@ jobs:
           if [ "${BYTES:-0}" -lt 30 ]; then
             echo "Direct fetch small (${BYTES}), trying Worker"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
+            export URL
             ENCODED_URL=$(python - <<'PY'
 import os, urllib.parse
 print(urllib.parse.quote(os.environ['URL'], safe=''))
@@ -58,6 +60,7 @@ PY
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
+            echo "COBS head after Worker:"; head -c 400 data/cobs_list.json || true; echo
           fi
 
       - name: Run horizons_pull.py (build JSON)
@@ -65,6 +68,7 @@ PY
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
           mkdir -p data
+          test -f horizons_pull.py
           python horizons_pull.py
 
       - name: Commit & push
