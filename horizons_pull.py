@@ -368,28 +368,29 @@ def main():
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
     fullname_map = cobs_map.pop("_fullname_map", {})  # NEW
-    comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
+    comet_ids: List[str] = sorted(set(cobs_map.keys()) | set(fullname_map.keys()))
+print(f"Loaded {len(comet_ids)} COBS designations; sample: {comet_ids[:10]}")
 
-    results: List[Dict[str, Any]] = []
-    for cid in comet_ids:
-        item = fetch_one(cid, OBSERVER)
+results: List[Dict[str, Any]] = []
+for cid in comet_ids:
+    item = fetch_one(cid, OBSERVER)
 
-        # Keep previous behavior: attach COBS mag and diff if possible
-        if cid in cobs_map:
-            item["cobs_mag"] = cobs_map[cid]
-            vpred = item.get("v_pred") or item.get("vmag")
-            if vpred is not None:
-                try:
-                    item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_map[cid]), 2)
-                except Exception:
-                    pass
+    # Attach COBS magnitude (if we have it) and diff vs. predicted
+    if cid in cobs_map:
+        item["cobs_mag"] = cobs_map[cid]
+        vpred = item.get("v_pred") or item.get("vmag")
+        if vpred is not None:
+            try:
+                item["mag_diff_pred_minus_obs"] = round(float(vpred) - float(cobs_map[cid]), 2)
+            except Exception:
+                pass
 
-        # NEW: attach a pretty full name if we have it
-        if cid in fullname_map:
-            item["name_full"] = fullname_map[cid]  # e.g. "C/2025 A6 (Lemmon)" or "210P/Christensen"
+    # Attach pretty full name from COBS if available
+    if cid in fullname_map and fullname_map[cid]:
+        item["name_full"] = fullname_map[cid]  # e.g., "C/2025 A6 (Lemmon)" or "210P/Christensen"
 
-        results.append(item)
-        time.sleep(PAUSE_S)
+    results.append(item)
+    time.sleep(PAUSE_S)
 
     # Existing filter/limit logic (unchanged)
     if bright_limit is not None:
