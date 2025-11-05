@@ -1,93 +1,91 @@
-# augment_names.py
-from pathlib import Path
-import json, re
+name: Update comet ephemerides (JPL Horizons)
 
-OUT = Path("data/comets_ephem.json")
-COBS = Path("data/cobs_list.json")
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "8 3 * * *"  # daily 03:08 UTC
 
-if not OUT.exists():
-    raise SystemExit("data/comets_ephem.json not found (run horizons_pull.py first)")
+permissions:
+  contents: write
 
-# Load your output (we won't change anything except the 3 name fields)
-data = json.loads(OUT.read_text(encoding="utf-8"))
-items = data.get("items", [])
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# Build a map from COBS designation -> full name string
-cobs_map = {}
-if COBS.exists():
-    c = json.loads(COBS.read_text(encoding="utf-8"))
-    for o in c.get("comet_list", []):
-        desig = (o.get("comet_name") or "").strip()      # e.g. "C/2025 A6" or "24P" or "141P-B"
-        full  = (o.get("comet_fullname") or "").strip()  # e.g. "C/2025 A6 (Lemmon)" or "24P/Schaumasse"
-        if desig and full:
-            cobs_map[desig] = full
+    env:
+      # Location for COBS planner (Utrecht-ish)
+      COBS_LAT: "52.09"
+      COBS_LON: "5.12"
+      COBS_ALT: "10"
 
-# Helpers
-PAREN = re.compile(r"\(([^)]+)\)\s*$")
+      # Fetch deeper than bright limit; Python script filters to BRIGHT_LIMIT
+      COBS_LIM_MAG: "19"
+      COBS_MIN_ALT: "0"
+      COBS_MIN_SOL: "0"
+      COBS_MIN_MOON: "0"
 
-def suffix_from_full(full: str | None) -> str | None:
-    """Return 'Lemmon' from 'C/2025 A6 (Lemmon)', or 'Schaumasse' from '24P/Schaumasse'."""
-    if not full:
-        return None
-    m = PAREN.search(full)
-    if m:
-        return m.group(1).strip() or None
-    if "/" in full:
-        tail = full.split("/", 1)[1].strip()
-        return tail or None
-    return None
+      # Used inside horizons_pull.py
+      BRIGHT_LIMIT: "15"
 
-def get_desig(it: dict) -> str | None:
-    """Find the designation in your item (works with your old schema)."""
-    for k in ("desig", "designation", "id", "desig_str", "comet_name"):
-        v = it.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-    # Fallback from a COBS fullname if present in the item already
-    cf = it.get("cobs_fullname")
-    if isinstance(cf, str) and cf.strip():
-        s = cf.strip()
-        # "24P/Schaumasse" -> "24P"
-        if "/" in s and "(" not in s:
-            return s.split("/", 1)[0].strip()
-        # "C/2025 A6 (Lemmon)" -> "C/2025 A6"
-        m = PAREN.search(s)
-        if m:
-            return s[:m.start()].strip()
-    return None
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-updated = 0
-for it in items:
-    desig = get_desig(it) or ""
-    # If the item doesn't already have a COBS fullname, try to attach one from the planner
-    if not it.get("cobs_fullname") and desig in cobs_map:
-        it["cobs_fullname"] = cobs_map[desig]
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    full = it.get("cobs_fullname")
-    suf = suffix_from_full(full)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy astropy astroquery
 
-    # Build canonical name_full / display_name
-    if suf:
-        # Periodic short forms often use slash: "24P/Schaumasse", "3I/ATLAS"
-        if ("/" in desig) and ("(" not in desig):
-            name_full = f"{desig}/{suf}"
-        else:
-            name_full = f"{desig} ({suf})"
-    else:
-        # If we couldn't extract a suffix, fall back gracefully
-        name_full = full or (desig or None)
+      - name: Fetch COBS planner (direct)
+        run: |
+          mkdir -p data
+          URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
+          echo "GET ${URL}"
+          curl -fsSL --compressed "$URL" -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json || true
+          echo "COBS bytes:"; wc -c data/cobs_list.json || true
 
-    # Only set the three name fields; leave all other fields (distances, v_pred, etc.) intact
-    if "name_suffix" not in it and suf is not None:
-        it["name_suffix"] = suf
-        updated += 1
-    if "name_full" not in it and name_full is not None:
-        it["name_full"] = name_full
-        updated += 1
-    if "display_name" not in it and name_full is not None:
-        it["display_name"] = name_full
-        updated += 1
+      - name: Fallback via Worker if tiny
+        run: |
+          BYTES=$(wc -c < data/cobs_list.json || echo 0)
+          if [ "${BYTES:-0}" -lt 30 ]; then
+            echo "Direct fetch small (${BYTES}), trying Worker"
+            URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
+            ENCODED_URL=$(python - <<'PY'
+import os, urllib.parse
+print(urllib.parse.quote(os.environ['URL'], safe=''))
+PY
+)
+            curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
+              -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
+            echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
+          fi
 
-# Write back compact JSON (unchanged fields preserved verbatim)
-OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-print(f"Augmented fields: {updated}")
+      - name: Run horizons_pull.py (build JSON)
+        env:
+          BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
+        run: |
+          mkdir -p data
+          python horizons_pull.py
+
+      - name: Preview names
+        run: |
+          python - <<'PY'
+import json, pathlib
+p = pathlib.Path("data/comets_ephem.json")
+d = json.loads(p.read_text())
+for it in d.get("items", [])[:15]:
+    print((it.get("display_name") or it.get("name_full") or it.get("id") or it.get("desig")), "| v_pred:", it.get("v_pred"), "| cobs_mag:", it.get("cobs_mag"))
+PY
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/comets_ephem.json data/cobs_list.json || true
+          git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes"
+          git push || echo "No changes to push"
