@@ -3,7 +3,7 @@ name: Update comet ephemerides (JPL Horizons)
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "8 3 * * *"  # daily 03:08 UTC
+    - cron: "8 3 * * *"
 
 permissions:
   contents: write
@@ -13,18 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Location for COBS planner (Utrecht-ish)
       COBS_LAT: "52.09"
       COBS_LON: "5.12"
       COBS_ALT: "10"
-
-      # Fetch deeper than bright limit; Python script filters to BRIGHT_LIMIT
       COBS_LIM_MAG: "19"
       COBS_MIN_ALT: "0"
       COBS_MIN_SOL: "0"
       COBS_MIN_MOON: "0"
-
-      # Used inside horizons_pull.py
       BRIGHT_LIMIT: "15"
 
     steps:
@@ -71,16 +66,6 @@ PY
         run: |
           mkdir -p data
           python horizons_pull.py
-
-      - name: Preview names
-        run: |
-          python - <<'PY'
-import json, pathlib
-p = pathlib.Path("data/comets_ephem.json")
-d = json.loads(p.read_text())
-for it in d.get("items", [])[:15]:
-    print((it.get("display_name") or it.get("name_full") or it.get("id") or it.get("desig")), "| v_pred:", it.get("v_pred"), "| cobs_mag:", it.get("cobs_mag"))
-PY
 
       - name: Commit & push
         run: |
