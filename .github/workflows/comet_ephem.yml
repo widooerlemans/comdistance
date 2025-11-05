@@ -1,9 +1,9 @@
-name: Update comet ephemerides (JPL + COBS)
+name: Update JPL ephemerides (COBS + Horizons)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
-    - cron: "8 3 * * *"   # daily 03:08 UTC
+    - cron: '8 3 * * *'  # daily 03:08 UTC
 
 permissions:
   contents: write
@@ -11,21 +11,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
-      # Location for planner.api (Utrecht-ish)
-      COBS_LAT: "52.09"
-      COBS_LON: "5.12"
-      COBS_ALT: "10"
-
-      # Fetch deeper than 15 so we can locally filter to <= 15
-      COBS_LIM_MAG: "19"
-      COBS_MIN_ALT: "0"
-      COBS_MIN_SOL: "0"
-      COBS_MIN_MOON: "0"
-
-      # Local filter in Python (observed magnitude ≤ this)
-      BRIGHT_LIMIT: "15"
+      COBS_LAT: '52.09'
+      COBS_LON: '5.12'
+      COBS_ALT: '10'
+      COBS_LIM_MAG: '19'
+      COBS_MIN_ALT: '0'
+      COBS_MIN_SOL: '0'
+      COBS_MIN_MOON: '0'
+      BRIGHT_LIMIT: '15'
 
     steps:
       - name: Checkout
@@ -34,17 +28,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install deps
-        shell: bash
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
           pip install numpy astropy astroquery
 
       - name: Fetch COBS planner list (direct)
-        shell: bash
         run: |
           set -euo pipefail
           mkdir -p data
@@ -55,32 +47,33 @@ jobs:
           echo "COBS head:"; head -c 800 data/cobs_list.json || true; echo
 
       - name: Fallback via Worker if file tiny
-        shell: bash
         run: |
           set -euo pipefail
           BYTES=$(wc -c < data/cobs_list.json || echo 0)
           if [ "${BYTES:-0}" -lt 30 ]; then
             echo "Direct fetch small ($BYTES), trying Worker…"
             URL="https://cobs.si/api/planner.api?lat=${COBS_LAT}&long=${COBS_LON}&alt=${COBS_ALT}&lim_mag=${COBS_LIM_MAG}&min_alt=${COBS_MIN_ALT}&min_sol=${COBS_MIN_SOL}&min_moon=${COBS_MIN_MOON}"
-            ENCODED_URL=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['URL'], safe=''))" )
+            ENCODED_URL=$(python3 - <<'PY'
+import os, urllib.parse
+print(urllib.parse.quote(os.environ['URL'], safe=''))
+PY
+)
             curl -fsSL --compressed "https://cobs-proxy.widooerlemans.workers.dev/?url=${ENCODED_URL}" \
               -H "User-Agent: comdistance-bot/1.0" -o data/cobs_list.json
             echo "COBS bytes after Worker:"; wc -c data/cobs_list.json || true
             echo "COBS head after Worker:"; head -c 800 data/cobs_list.json || true; echo
           fi
 
-      - name: Upload COBS JSON artifact (debug)
+      - name: Upload COBS JSON artifact
         uses: actions/upload-artifact@v4
         with:
           name: debug-cobs-json
           path: data/cobs_list.json
 
       - name: Show script header (first 40 lines)
-        shell: bash
         run: sed -n '1,40p' horizons_pull.py
 
       - name: Run pull (create JSON)
-        shell: bash
         env:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
@@ -89,8 +82,7 @@ jobs:
           mkdir -p data
           python horizons_pull.py
 
-      - name: Quick peek at names in output (debug)
-        shell: bash
+      - name: Peek at names in output
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -101,8 +93,7 @@ for it in d.get("items", [])[:20]:
     print(it.get("display_name") or it.get("name_full") or it.get("desig") or it.get("id"))
 PY
 
-      - name: Commit & push data
-        shell: bash
+      - name: Commit & push
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
