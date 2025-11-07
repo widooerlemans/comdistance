@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "8 3 * * *"   # daily 03:08 UTC
 
+concurrency:
+  group: comets
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -30,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,7 +45,7 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install numpy astropy astroquery
+          pip install numpy astropy astroquery requests skyfield jplephem
 
       - name: Fetch COBS planner list (direct)
         run: |
@@ -120,15 +126,136 @@ jobs:
           BRIGHT_LIMIT: ${{ env.BRIGHT_LIMIT }}
         run: |
           set -e
-          ls -la
-          test -f horizons_pull.py
           mkdir -p data
           python horizons_pull.py
+          test -f data/comets_ephem.json
+          echo "Current comets_ephem.json size: $(wc -c < data/comets_ephem.json)"
 
-      - name: Commit & push
+      - name: Augment JSON with orbital elements (JPL/MPC)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          python - <<'PY'
+          import json, math, re, sys, time
+          from pathlib import Path
+          import requests
+          from astroquery.jplhorizons import Horizons
+
+          IN = Path("data/comets_ephem.json")
+          data = json.loads(IN.read_text())
+
+          def jd_from_iso8601(iso):
+            # Simple JD converter using algorithm (UTC close enough for epoch tagging)
+            from datetime import datetime, timezone
+            dt = datetime.fromisoformat(iso.replace('Z','+00:00')).astimezone(timezone.utc)
+            # JD algorithm:
+            y,m = dt.year, dt.month
+            d = dt.day + (dt.hour + (dt.minute + dt.second/60)/60)/24
+            if m <= 2:
+              y -= 1; m += 12
+            A = y//100; B = 2 - A + A//4
+            jd = int(365.25*(y+4716)) + int(30.6001*(m+1)) + d + B - 1524.5
+            return float(jd)
+
+          def try_horizons_elements(obj):
+            try:
+              if obj.get("horizons_id"):
+                idspec = obj["horizons_id"]
+              else:
+                # fall back to designation (e.g., "C/2025 A6")
+                idspec = obj.get("id") or obj.get("name_full")
+              if not idspec: return None
+              eph_time = data.get("generated_utc") or obj.get("epoch_utc")
+              epoch = jd_from_iso8601(eph_time) if eph_time else None
+              # Use elements (el) table
+              q = Horizons(id=idspec, id_type='smallbody', location='500', epochs=epoch)
+              el = q.elements()
+              if el is None or len(el)==0:
+                return None
+              row = el[0]
+              # Prefer comet-style if available, else asteroid-style
+              out = {"epoch_jd_tdb": float(row["datetime_jd"])}
+              # If perihelion time (Tp) exists, treat as cometary
+              Tp = row.get("Tp_jd")
+              if Tp is not None and not math.isnan(Tp):
+                out.update({
+                  "frame": "ecliptic J2000",
+                  "type": "comet",
+                  "q_au": float(row["q"]),
+                  "e": float(row["e"]),
+                  "i_deg": float(row["incl"]),
+                  "Omega_deg": float(row["Omega"]),
+                  "omega_deg": float(row["w"]),
+                  "Tp_jd_tdb": float(Tp)
+                })
+              else:
+                # asteroid-style set
+                out.update({
+                  "frame": "ecliptic J2000",
+                  "type": "asteroid",
+                  "a_au": float(row["a"]),
+                  "e": float(row["e"]),
+                  "i_deg": float(row["incl"]),
+                  "Omega_deg": float(row["Omega"]),
+                  "omega_deg": float(row["w"]),
+                  "M_deg": float(row["M"])
+                })
+              return out
+            except Exception as e:
+              print("Horizons fail for", obj.get("id"), "->", e)
+              return None
+
+          def try_mpc_comet_elements(desig):
+            # MPC comet elements text; returns cometary element dict or None
+            try:
+              url = "https://minorplanetcenter.net/iau/MPCORB/CometEls.txt"
+              r = requests.get(url, timeout=20)
+              if r.status_code != 200: return None
+              txt = r.text.splitlines()
+              # very simple scan — you can optimize later by caching
+              pat = re.compile(r'^\s*([PCDXAI]/\d{4}\s+[A-Z]\d+|\d+P|\d+I)\b.*$', re.I)
+              for line in txt:
+                m = pat.match(line)
+                if not m: continue
+                if desig.upper() not in line.upper(): continue
+                # crude parse; proper MPC parsing can be added later
+                # Example format has q, e, i, w, Node, Tp(AU days) — varies.
+                # Here we do a conservative "skip if unsure".
+                return None
+              return None
+            except Exception:
+              return None
+
+          def norm_desig(obj):
+            x = obj.get("id") or obj.get("name_full") or ""
+            x = re.sub(r'\s+', ' ', x).strip()
+            return x
+
+          items = data.get("items", [])
+          added = 0
+          for o in items:
+            if "elements" in o: 
+              continue
+            el = try_horizons_elements(o)
+            if not el:
+              d = norm_desig(o)
+              el = try_mpc_comet_elements(d)
+            if el:
+              o["elements"] = el
+              added += 1
+
+          data["elements_source"] = "JPL Horizons (astroquery); MPC fallback attempted"
+          IN.write_text(json.dumps(data, indent=2))
+          print(f"Added elements to {added}/{len(items)} objects.")
+          PY
+
+      - name: Commit & push (only if changed)
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/comets_ephem.json data/cobs_list.json || true
-          git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update comet ephemerides $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            git push
+          fi
