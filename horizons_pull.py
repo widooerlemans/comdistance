@@ -3,12 +3,14 @@
 Build data/comets_ephem.json by merging:
 - Observed list from COBS (prefer data/cobs_list.json if present; supports 'comet_list')
 - Geometry/brightness from JPL Horizons
+- Orbital elements from JPL SBDB (fallback: Horizons elements)
 
 Highlights
 - Converts MPC packed codes like CK25A060 -> C/2025 A6 (divide ddd by 10; strips fragment suffixes).
 - Queries "now" with epochs=[JD] to avoid TLIST/WLDINI.
 - Resolves ambiguous periodic designations to most recent apparition.
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
+- Adds 'elements' block (comet-style when available, else asteroid-style).
 - Sorts output by observed brightness (cobs_mag asc), then by v_pred (fallback vmag).
 
 Filter:
@@ -20,15 +22,19 @@ from math import acos, degrees
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
+
+import requests
+from urllib.parse import quote
+
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 19
+SCRIPT_VERSION = 20
 
 # ---------- CONFIG ----------
-OBSERVER = "500"                  # geocenter
+OBSERVER = "500"                  # geocenter for ephemerides (ok for ephem, not for elements)
 YEARS_WINDOW = 6                  # most recent apparition within N years
-QUANTITIES = "1,3,4,20,21,31"     # r, delta, alpha, RA, DEC, V
+QUANTITIES = "1,3,4,20,21,31"     # r, delta, alpha, RA, DEC, V (+ comet photom where available)
 PAUSE_S = 0.3
 OUTPATH = "data/comets_ephem.json"
 OUT_JSON_PATH = Path(OUTPATH)
@@ -36,6 +42,7 @@ COBS_PATH = Path("data/cobs_list.json")  # produced elsewhere
 BRIGHT_LIMIT_ENV = "BRIGHT_LIMIT"
 BRIGHT_LIMIT_DEFAULT = 15.0
 
+SBDB_TIMEOUT_S = 25
 # ---------- small helpers ----------
 def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -203,7 +210,125 @@ def load_cobs_designations(path: Path) -> Dict[str, float]:
     result["_fullname_map"] = fullname_map
     return result
 
-# -------- Horizons utilities --------
+# -------- SBDB/Horizons elements utilities --------
+
+def _sbdb_pick(d: dict, *names):
+    for k in names:
+        if k in d and d[k] is not None:
+            return d[k]
+    return None
+
+def _fnum(x):
+    try:
+        v = float(x)
+        if math.isnan(v):
+            return None
+        return v
+    except Exception:
+        return None
+
+def sbdb_elements(label: str) -> Optional[Dict[str, Any]]:
+    """Query JPL SBDB API for osculating elements and normalize shape."""
+    if not label:
+        return None
+    url = f"https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={quote(label)}&full-prec=true"
+    try:
+        r = requests.get(url, timeout=SBDB_TIMEOUT_S)
+        if r.status_code != 200:
+            return None
+        js = r.json()
+
+        # Accept either js["orbit"] or js["orbit"]["elements"]
+        orb = js.get("orbit") or {}
+        if isinstance(orb, dict) and isinstance(orb.get("elements"), dict):
+            orb = orb["elements"]
+        if not isinstance(orb, dict):
+            return None
+
+        e    = _fnum(_sbdb_pick(orb, "e"))
+        q    = _fnum(_sbdb_pick(orb, "q"))
+        a    = _fnum(_sbdb_pick(orb, "a"))
+        inc  = _fnum(_sbdb_pick(orb, "incl", "i"))
+        node = _fnum(_sbdb_pick(orb, "node", "om", "Omega"))
+        argp = _fnum(_sbdb_pick(orb, "argp", "w", "omega"))
+        M    = _fnum(_sbdb_pick(orb, "ma", "M", "mean_anomaly"))
+        tp   = _fnum(_sbdb_pick(orb, "tp_tdb", "tp"))
+        ep   = _fnum(_sbdb_pick(orb, "epoch_tdb", "epoch", "epoch_jd"))
+
+        if ep is None or e is None or inc is None or node is None or argp is None:
+            return None
+
+        out = {"epoch_jd_tdb": ep, "frame": "ecliptic J2000"}
+        if q is not None and tp is not None:
+            out.update({
+                "type":"comet",
+                "q_au": q,
+                "e": e,
+                "i_deg": inc,
+                "Omega_deg": node,
+                "omega_deg": argp,
+                "Tp_jd_tdb": tp,
+            })
+            return out
+        if a is not None and M is not None:
+            out.update({
+                "type":"asteroid",
+                "a_au": a,
+                "e": e,
+                "i_deg": inc,
+                "Omega_deg": node,
+                "omega_deg": argp,
+                "M_deg": M,
+            })
+            return out
+        return None
+    except Exception:
+        return None
+
+def horizons_elements(idspec: str) -> Optional[Dict[str, Any]]:
+    """
+    Fallback: Horizons elements(). IMPORTANT: use Sun '@10' as central body (not geocenter '500').
+    """
+    if not idspec:
+        return None
+    try:
+        q = Horizons(id=idspec, id_type='smallbody', location='@10')  # Sun as center
+        el = q.elements()
+        if el is None or len(el) == 0:
+            return None
+        row = el[0]
+        out = {"epoch_jd_tdb": _fnum(row.get("datetime_jd")), "frame":"ecliptic J2000"}
+        Tp = row.get("Tp_jd")
+        if Tp is not None:
+            out.update({
+                "type":"comet",
+                "q_au": _fnum(row.get("q")),
+                "e": _fnum(row.get("e")),
+                "i_deg": _fnum(row.get("incl")),
+                "Omega_deg": _fnum(row.get("Omega")),
+                "omega_deg": _fnum(row.get("w")),
+                "Tp_jd_tdb": _fnum(Tp),
+            })
+            if None in (out["epoch_jd_tdb"], out["q_au"], out["e"], out["i_deg"], out["Omega_deg"], out["omega_deg"], out["Tp_jd_tdb"]):
+                return None
+            return out
+        # asteroid-style
+        out.update({
+            "type":"asteroid",
+            "a_au": _fnum(row.get("a")),
+            "e": _fnum(row.get("e")),
+            "i_deg": _fnum(row.get("incl")),
+            "Omega_deg": _fnum(row.get("Omega")),
+            "omega_deg": _fnum(row.get("w")),
+            "M_deg": _fnum(row.get("M")),
+        })
+        if None in (out["epoch_jd_tdb"], out["a_au"], out["e"], out["i_deg"], out["Omega_deg"], out["omega_deg"], out["M_deg"]):
+            return None
+        return out
+    except Exception:
+        return None
+
+# -------- Horizons ephemerides utilities --------
 _ROW = re.compile(r"^\s*(?P<rec>9\d{7})\s+(?P<epoch>\d{4})\s+")
 
 def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
@@ -212,7 +337,7 @@ def _pick_recent_record(ambig_text: str, years_window: int) -> Optional[str]:
     best_epoch = -1
     for line in ambig_text.splitlines():
         m = _ROW.match(line)
-        if not m: 
+        if not m:
             continue
         rec = m.group("rec"); epoch = int(m.group("epoch"))
         if epoch >= now_year - years_window and epoch > best_epoch:
@@ -307,6 +432,16 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
         out["_cols"] = list(cmap.values())
     return out
 
+def _attach_elements(item: Dict[str, Any], idpref: str) -> None:
+    """Attach 'elements' via SBDB, fallback to Horizons elements(@10)."""
+    el = sbdb_elements(idpref)
+    if not el:
+        # Prefer Horizons numeric rec if we have it; else try the same label
+        idspec = item.get("horizons_id") or idpref
+        el = horizons_elements(idspec)
+    if el:
+        item["elements"] = el
+
 def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
     jd_now = Time.now().jd
     try:
@@ -319,7 +454,9 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "epoch_utc": now_iso(), **core}
+            out = {"id": comet_id, "epoch_utc": now_iso(), **core}
+            _attach_elements(out, comet_id)
+            return out
         except Exception:
             rec_id = resolve_ambiguous_to_record_id(comet_id)
             if rec_id is None:
@@ -330,7 +467,9 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            out = {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            _attach_elements(out, comet_id)
+            return out
     except Exception as e1:
         rec_id = resolve_ambiguous_to_record_id(comet_id)
         if rec_id is None:
@@ -344,7 +483,9 @@ def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
             core = _row_to_payload_with_photometry(row, r_au, delta_vec_au)
             if core.get("phase_deg") is None:
                 core["phase_deg"] = alpha_deg
-            return {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            out = {"id": comet_id, "horizons_id": rec_id, "epoch_utc": now_iso(), **core}
+            _attach_elements(out, comet_id)
+            return out
         except Exception as e2:
             return {"id": comet_id, "epoch_utc": now_iso(), "error": f"{e1} | retry:{e2}"}
 
@@ -376,7 +517,7 @@ def main():
     comet_ids: List[str] = sorted(cobs_map.keys()) if cobs_map else []
     print(f"Loaded {len(comet_ids)} COBS designations; sample: {comet_ids[:10]}")
 
-    # ---------- query Horizons ----------
+    # ---------- query Horizons (+ attach elements) ----------
     results: List[Dict[str, Any]] = []
     for cid in comet_ids:
         item = fetch_one(cid, OBSERVER)
@@ -434,6 +575,7 @@ def main():
         "script_version": SCRIPT_VERSION,
         "filter": {"mode": "cobs_or_pred", "bright_limit": limit},
         "sorted_by": "cobs_mag asc, then v_pred/vmag asc",
+        "elements_source": "JPL SBDB → Horizons fallback(@10)"
     }
     OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
