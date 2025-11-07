@@ -131,120 +131,164 @@ jobs:
           test -f data/comets_ephem.json
           echo "Current comets_ephem.json size: $(wc -c < data/comets_ephem.json)"
 
-      - name: Augment JSON with orbital elements (JPL/MPC)
+      - name: Augment JSON with orbital elements (SBDB → Horizons)
         run: |
           python - <<'PY'
-          import json, math, re, sys, time
+          import json, math, re
           from pathlib import Path
           import requests
-          from astroquery.jplhorizons import Horizons
+          from urllib.parse import quote
 
           IN = Path("data/comets_ephem.json")
           data = json.loads(IN.read_text())
+          items = data.get("items", [])
 
-          def jd_from_iso8601(iso):
-            # Simple JD converter using algorithm (UTC close enough for epoch tagging)
-            from datetime import datetime, timezone
-            dt = datetime.fromisoformat(iso.replace('Z','+00:00')).astimezone(timezone.utc)
-            # JD algorithm:
-            y,m = dt.year, dt.month
-            d = dt.day + (dt.hour + (dt.minute + dt.second/60)/60)/24
-            if m <= 2:
-              y -= 1; m += 12
-            A = y//100; B = 2 - A + A//4
-            jd = int(365.25*(y+4716)) + int(30.6001*(m+1)) + d + B - 1524.5
-            return float(jd)
+          def norm_id(o):
+            # Prefer explicit Horizons ID if present
+            if o.get("horizons_id"):
+              return {"idspec": o["horizons_id"], "label": o["horizons_id"]}
+            # Otherwise try common designation strings
+            for k in ("id","name_full"):
+              if o.get(k):
+                return {"idspec": str(o[k]).strip(), "label": str(o[k]).strip()}
+            return {"idspec": None, "label": None}
 
-          def try_horizons_elements(obj):
+          def sbdb_elements(label):
+            """
+            Query JPL SBDB API for osculating elements.
+            Returns a dict compatible with our 'elements' block, or None.
+            """
+            if not label: return None
+            url = f"https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={quote(label)}&full-prec=true"
             try:
-              if obj.get("horizons_id"):
-                idspec = obj["horizons_id"]
-              else:
-                # fall back to designation (e.g., "C/2025 A6")
-                idspec = obj.get("id") or obj.get("name_full")
+              r = requests.get(url, timeout=25)
+              if r.status_code != 200:
+                return None
+              js = r.json()
+              orb = js.get("orbit") or {}
+              if not orb:
+                return None
+              # Try to extract comet-style parameters; fall back to asteroid-style
+              e  = orb.get("e")
+              q  = orb.get("q")
+              a  = orb.get("a")
+              inc= orb.get("incl")
+              node= orb.get("node")
+              argp= orb.get("argp")
+              M   = orb.get("ma")
+              tp  = orb.get("tp_tdb") or orb.get("tp")
+              ep  = orb.get("epoch_tdb") or orb.get("epoch")  # JD
+              def f(x):
+                if x is None: return None
+                try: return float(x)
+                except: return None
+              e, q, a, inc, node, argp, M = map(f, (e,q,a,inc,node,argp,M))
+              ep = f(ep)
+              tp = f(tp)
+              if ep is None or e is None or inc is None or node is None or argp is None:
+                return None
+              out = {"epoch_jd_tdb": ep, "frame":"ecliptic J2000"}
+              if q is not None and tp is not None:
+                out.update({
+                  "type":"comet",
+                  "q_au": q,
+                  "e": e,
+                  "i_deg": inc,
+                  "Omega_deg": node,
+                  "omega_deg": argp,
+                  "Tp_jd_tdb": tp
+                })
+                return out
+              if a is not None and M is not None:
+                out.update({
+                  "type":"asteroid",
+                  "a_au": a,
+                  "e": e,
+                  "i_deg": inc,
+                  "Omega_deg": node,
+                  "omega_deg": argp,
+                  "M_deg": M
+                })
+                return out
+              return None
+            except Exception as e:
+              print("SBDB error for", label, "->", e)
+              return None
+
+          def horizons_elements(idspec):
+            # Optional Horizons fallback only if SBDB fails
+            try:
+              from astroquery.jplhorizons import Horizons
+            except Exception:
+              return None
+            try:
               if not idspec: return None
-              eph_time = data.get("generated_utc") or obj.get("epoch_utc")
-              epoch = jd_from_iso8601(eph_time) if eph_time else None
-              # Use elements (el) table
-              q = Horizons(id=idspec, id_type='smallbody', location='500', epochs=epoch)
+              # Do NOT force an epoch; let Horizons pick a reference epoch to improve hit rate
+              q = Horizons(id=idspec, id_type='smallbody', location='500')
               el = q.elements()
               if el is None or len(el)==0:
                 return None
               row = el[0]
-              # Prefer comet-style if available, else asteroid-style
-              out = {"epoch_jd_tdb": float(row["datetime_jd"])}
-              # If perihelion time (Tp) exists, treat as cometary
+              out = {"epoch_jd_tdb": float(row["datetime_jd"]), "frame":"ecliptic J2000"}
               Tp = row.get("Tp_jd")
-              if Tp is not None and not math.isnan(Tp):
+              def f(x):
+                try:
+                  v = float(x)
+                  if math.isnan(v): return None
+                  return v
+                except Exception:
+                  return None
+              if Tp is not None:
                 out.update({
-                  "frame": "ecliptic J2000",
-                  "type": "comet",
-                  "q_au": float(row["q"]),
-                  "e": float(row["e"]),
-                  "i_deg": float(row["incl"]),
-                  "Omega_deg": float(row["Omega"]),
-                  "omega_deg": float(row["w"]),
-                  "Tp_jd_tdb": float(Tp)
+                  "type":"comet",
+                  "q_au": f(row.get("q")),
+                  "e": f(row.get("e")),
+                  "i_deg": f(row.get("incl")),
+                  "Omega_deg": f(row.get("Omega")),
+                  "omega_deg": f(row.get("w")),
+                  "Tp_jd_tdb": f(Tp)
                 })
+                if None in (out["q_au"], out["e"], out["i_deg"], out["Omega_deg"], out["omega_deg"], out["Tp_jd_tdb"]):
+                  return None
+                return out
               else:
-                # asteroid-style set
                 out.update({
-                  "frame": "ecliptic J2000",
-                  "type": "asteroid",
-                  "a_au": float(row["a"]),
-                  "e": float(row["e"]),
-                  "i_deg": float(row["incl"]),
-                  "Omega_deg": float(row["Omega"]),
-                  "omega_deg": float(row["w"]),
-                  "M_deg": float(row["M"])
+                  "type":"asteroid",
+                  "a_au": f(row.get("a")),
+                  "e": f(row.get("e")),
+                  "i_deg": f(row.get("incl")),
+                  "Omega_deg": f(row.get("Omega")),
+                  "omega_deg": f(row.get("w")),
+                  "M_deg": f(row.get("M"))
                 })
-              return out
+                if None in (out["a_au"], out["e"], out["i_deg"], out["Omega_deg"], out["omega_deg"], out["M_deg"]):
+                  return None
+                return out
             except Exception as e:
-              print("Horizons fail for", obj.get("id"), "->", e)
+              print("Horizons error for", idspec, "->", e)
               return None
 
-          def try_mpc_comet_elements(desig):
-            # MPC comet elements text; returns cometary element dict or None
-            try:
-              url = "https://minorplanetcenter.net/iau/MPCORB/CometEls.txt"
-              r = requests.get(url, timeout=20)
-              if r.status_code != 200: return None
-              txt = r.text.splitlines()
-              # very simple scan — you can optimize later by caching
-              pat = re.compile(r'^\s*([PCDXAI]/\d{4}\s+[A-Z]\d+|\d+P|\d+I)\b.*$', re.I)
-              for line in txt:
-                m = pat.match(line)
-                if not m: continue
-                if desig.upper() not in line.upper(): continue
-                # crude parse; proper MPC parsing can be added later
-                # Example format has q, e, i, w, Node, Tp(AU days) — varies.
-                # Here we do a conservative "skip if unsure".
-                return None
-              return None
-            except Exception:
-              return None
-
-          def norm_desig(obj):
-            x = obj.get("id") or obj.get("name_full") or ""
-            x = re.sub(r'\s+', ' ', x).strip()
-            return x
-
-          items = data.get("items", [])
           added = 0
           for o in items:
-            if "elements" in o: 
+            if "elements" in o and isinstance(o["elements"], dict):
               continue
-            el = try_horizons_elements(o)
+            ids = norm_id(o)
+            el = sbdb_elements(ids["label"] or ids["idspec"])
             if not el:
-              d = norm_desig(o)
-              el = try_mpc_comet_elements(d)
+              el = horizons_elements(ids["idspec"] or ids["label"])
             if el:
               o["elements"] = el
               added += 1
 
-          data["elements_source"] = "JPL Horizons (astroquery); MPC fallback attempted"
+          data["elements_source"] = "JPL SBDB → Horizons fallback"
           IN.write_text(json.dumps(data, indent=2))
           print(f"Added elements to {added}/{len(items)} objects.")
+          shown = 0
+          for o in items:
+            if "elements" in o:
+              print(o.get("id"), "->", o["elements"])
+              shown += 1
+              if shown >= 3: break
           PY
 
       - name: Commit & push (only if changed)
