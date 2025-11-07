@@ -11,6 +11,7 @@ Highlights
 - Resolves ambiguous periodic designations to most recent apparition.
 - Returns RA/DEC/Δ; computes r & phase from state vectors; predicts v if Horizons doesn’t supply it.
 - Adds 'elements' block (comet-style when available, else asteroid-style).
+- Adds units and display_name for robust UI rendering.
 - Sorts output by observed brightness (cobs_mag asc), then by v_pred (fallback vmag).
 
 Filter:
@@ -29,7 +30,7 @@ from urllib.parse import quote
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-SCRIPT_VERSION = 20
+SCRIPT_VERSION = 21
 
 # ---------- CONFIG ----------
 OBSERVER = "500"                  # geocenter for ephemerides (ok for ephem, not for elements)
@@ -43,6 +44,7 @@ BRIGHT_LIMIT_ENV = "BRIGHT_LIMIT"
 BRIGHT_LIMIT_DEFAULT = 15.0
 
 SBDB_TIMEOUT_S = 25
+
 # ---------- small helpers ----------
 def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -422,6 +424,15 @@ def _row_to_payload_with_photometry(row, r_au: Optional[float], delta_vec_au: Op
     out["ra_jnow_deg"] = ra
     out["dec_jnow_deg"] = dec
 
+    # Always expose photometry inputs if available (even if vmag exists)
+    if (M1 is not None) and (k1 is not None):
+        out["photometry"] = {
+            "M1": M1,
+            "K1": k1,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+        }
+
+    # Compute v_pred only if Horizons didn't give V directly
     if (vmag is None) and (M1 is not None) and (k1 is not None) and (r_au is not None) and (delta_au is not None):
         try:
             out["v_pred"] = M1 + 5.0*math.log10(delta_au) + k1*math.log10(r_au)
@@ -440,6 +451,9 @@ def _attach_elements(item: Dict[str, Any], idpref: str) -> None:
         idspec = item.get("horizons_id") or idpref
         el = horizons_elements(idspec)
     if el:
+        # Default labels for clarity in UI/tooltips
+        el["solution"] = el.get("solution", "osculating")
+        el["reference"] = el.get("reference", "JPL SBDB (via Horizons)")
         item["elements"] = el
 
 def fetch_one(comet_id: str, observer) -> Dict[str, Any]:
@@ -536,6 +550,9 @@ def main():
         if cid in fullname_map:
             item["name_full"] = fullname_map[cid]
 
+        # display_name fallback for cards
+        item["display_name"] = item.get("name_full") or item["id"]
+
         results.append(item)
         time.sleep(PAUSE_S)
 
@@ -575,7 +592,14 @@ def main():
         "script_version": SCRIPT_VERSION,
         "filter": {"mode": "cobs_or_pred", "bright_limit": limit},
         "sorted_by": "cobs_mag asc, then v_pred/vmag asc",
-        "elements_source": "JPL SBDB → Horizons fallback(@10)"
+        "elements_source": "JPL SBDB → Horizons fallback(@10)",
+        # New: units block so the UI never hardcodes
+        "units": {
+            "angles": "deg",
+            "dist": "au",
+            "epoch_time_scale": "TDB",
+            "frame": "ecliptic J2000"
+        }
     }
     OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
     print(f"Wrote {OUT_JSON_PATH} with {len(results)} items")
