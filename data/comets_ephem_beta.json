@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "33 3 * * *"
+
 jobs:
   build-beta:
     runs-on: ubuntu-24.04
@@ -12,20 +13,175 @@ jobs:
       EPHEM_SPAN_DAYS: "2"
       EPHEM_STEP_MIN: "60"
       LIMIT_N: "0"
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+
       - name: Install deps
-        run: pip install astroquery astropy requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install astroquery astropy requests
+
+      - name: Write augment_tracks_beta.py
+        shell: bash
+        run: |
+          cat > augment_tracks_beta.py <<'PY'
+          #!/usr/bin/env python3
+          # -*- coding: utf-8 -*-
+          """
+          augment_tracks_beta.py (v2.0.3, inline)
+
+          Builds ±EPHEM_SPAN_DAYS hourly tracks for comets using JPL Horizons and
+          writes data/comets_ephem_beta.json.
+
+          Fixes:
+          - Do not restrict `quantities` so 'r' and 'delta' are present.
+          - Prefer numeric horizons_id when available to avoid ambiguity.
+          - Clear per-target error messages.
+          """
+
+          from __future__ import annotations
+          import json, os
+          from datetime import datetime, timedelta, timezone
+          from typing import Dict, Any, List
+          from astroquery.jplhorizons import Horizons
+
+          DATA_IN  = "data/comets_ephem.json"
+          DATA_OUT = "data/comets_ephem_beta.json"
+
+          SPAN_DAYS = float(os.getenv("EPHEM_SPAN_DAYS", "2"))
+          STEP_MIN  = int(os.getenv("EPHEM_STEP_MIN", "60"))
+          OBSERVER  = os.getenv("OBSERVER", "500")
+          LIMIT_N   = int(os.getenv("LIMIT_N", "0"))
+
+          def _utc_now_iso() -> str:
+              return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+          def _dtfmt(dt: datetime) -> str:
+              return dt.strftime("%Y-%m-%d %H:%M")
+
+          def _split_span(span_days: float) -> (str, str, str):
+              now = datetime.now(timezone.utc)
+              half = timedelta(days=span_days/2.0)
+              start = now - half
+              stop  = now + half
+              step_str = f"{STEP_MIN}m"
+              return _dtfmt(start), _dtfmt(stop), step_str
+
+          def _target_for(item: Dict[str, Any]) -> Dict[str, Any]:
+              if "horizons_id" in item and item["horizons_id"]:
+                  return {"id": str(item["horizons_id"]), "id_type": "smallbody"}
+              return {"id": item["id"], "id_type": "smallbody"}
+
+          def horizons_ephem(item: Dict[str, Any],
+                             start_utc: str, stop_utc: str, step_str: str,
+                             location: str) -> List[Dict[str, Any]]:
+              tgt = _target_for(item)
+              obj = Horizons(
+                  id=tgt["id"],
+                  id_type=tgt["id_type"],
+                  location=location,
+                  epochs={"start": start_utc, "stop": stop_utc, "step": step_str},
+              )
+              eph = obj.ephemerides(refsystem="J2000")  # default columns
+
+              required = ["datetime_str", "RA", "DEC", "delta", "r"]
+              for col in required:
+                  if col not in eph.colnames:
+                      raise KeyError(f"Missing column '{col}' in Horizons table for {tgt['id']}")
+
+              points: List[Dict[str, Any]] = []
+              for row in eph:
+                  points.append({
+                      "time_utc": str(row["datetime_str"]),
+                      "ra_deg": float(row["RA"]),
+                      "dec_deg": float(row["DEC"]),
+                      "delta_au": float(row["delta"]),
+                      "r_au": float(row["r"]),
+                  })
+              return points
+
+          def build_tracks(base: Dict[str, Any]) -> Dict[str, Any]:
+              out = {
+                  "generated_utc": _utc_now_iso(),
+                  "observer": str(OBSERVER),
+                  "script_version": 203,
+                  "beta": True,
+                  "track_span_days": SPAN_DAYS,
+                  "track_step_min": STEP_MIN,
+                  "items": [],
+              }
+
+              items = base.get("items", [])
+              if LIMIT_N > 0:
+                  items = items[:LIMIT_N]
+
+              start_utc, stop_utc, step_str = _split_span(SPAN_DAYS)
+
+              ok, total = 0, 0
+              for item in items:
+                  total += 1
+                  item_copy = dict(item)
+                  try:
+                      track = horizons_ephem(item_copy, start_utc, stop_utc, step_str, OBSERVER)
+                      item_copy["track"] = track
+                      ok += 1
+                      print(f"[beta v2.0.3] OK: {item_copy.get('display_name', item_copy.get('id'))} → {len(track)} points")
+                  except Exception as e:
+                      msg = str(e)
+                      item_copy["track_error"] = msg
+                      print(f"[beta v2.0.3] ERROR: {item_copy.get('display_name', item_copy.get('id'))}: {msg}")
+
+                  out["items"].append(item_copy)
+
+              print(f"[beta v2.0.3] Wrote {ok}/{total} tracks (span={SPAN_DAYS}d, step={STEP_MIN}m, observer={OBSERVER}).")
+              return out
+
+          def main() -> None:
+              with open(DATA_IN, "r", encoding="utf-8") as f:
+                  base = json.load(f)
+
+              result = build_tracks(base)
+
+              os.makedirs(os.path.dirname(DATA_OUT), exist_ok=True)
+              with open(DATA_OUT, "w", encoding="utf-8") as f:
+                  json.dump(result, f, ensure_ascii=False, indent=2)
+
+          if __name__ == "__main__":
+              main()
+          PY
+          chmod +x augment_tracks_beta.py
+
       - name: Ensure base JSON exists
-        run: bash -lc 'if [ ! -f data/comets_ephem.json ]; then echo "data/comets_ephem.json missing; building a fresh one..."; python horizons_pull.py; else echo "Found existing data/comets_ephem.json"; fi'
+        run: |
+          if [ ! -f data/comets_ephem.json ]; then
+            echo "data/comets_ephem.json missing; building a fresh one..."
+            python horizons_pull.py
+          else
+            echo "Found existing data/comets_ephem.json"
+          fi
+
       - name: Build hourly comet tracks (beta)
         run: python augment_tracks_beta.py
+
       - name: Peek at output
-        run: bash -lc 'head -n 60 data/comets_ephem_beta.json || true; echo "---- any track_error lines ----"; grep -n track_error data/comets_ephem_beta.json || true'
+        run: |
+          head -n 60 data/comets_ephem_beta.json || true
+          echo "---- any track_error lines ----"
+          grep -n track_error data/comets_ephem_beta.json || true
+
       - name: Commit beta file
-        run: bash -lc 'git config user.name "github-actions[bot]" && git config user.email "github-actions[bot]@users.noreply.github.com" && git add data/comets_ephem_beta.json && (git diff --cached --quiet && echo "No changes to commit." || (git commit -m "Beta: comet ephemerides with hourly Horizons tracks (v2.0.3)" && git push))'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/comets_ephem_beta.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Beta: comet ephemerides with hourly Horizons tracks (inline v2.0.3)"
+            git push
+          fi
