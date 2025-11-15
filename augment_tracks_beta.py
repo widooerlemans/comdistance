@@ -31,7 +31,7 @@ LIMIT_N  = int(os.environ.get("LIMIT_N", "0"))  # 0 = all
 QUANTITIES = "1,3,4,20,21,31"  # r, delta, phase(alpha), RA, DEC, V
 
 # When Horizons says "Ambiguous target name", it prints a table like:
-#   90000001 2024  ...  -> we pick the record with the most recent epoch (largest year)
+#   9xxxxxxx 2024 ...  -> we pick the record with the most recent epoch (largest year)
 AMBIG_LINE = re.compile(r"^\s*(9\d{7})\s+(\d{4})\s+", re.MULTILINE)
 
 def horizons_ephem(id_value: str, id_type: Optional[str], start_dt, span_days, step_min):
@@ -94,4 +94,56 @@ def resolve_and_track(item: Dict[str, Any], start_dt):
                         best_id = rec_id
                 if best_id:
                     try:
-                        eph2 = horizons_ephem(_
+                        eph2 = horizons_ephem(best_id, "smallbody", start_dt, SPAN_D, STEP_M)
+                        return build_track_from_eph(eph2)
+                    except Exception as e2:
+                        last_error = f"{msg} | fallback smallbody {best_id} failed: {e2}"
+    raise RuntimeError(last_error or "Unknown Horizons error")
+
+def main():
+    if not ENABLE:
+        print("[beta v2] Tracks disabled via ENABLE_COMET_TRACKS=0; nothing to do.")
+        return
+
+    if not IN_PATH.exists():
+        print(f"[beta v2] ERROR: {IN_PATH} not found. Run your existing daily job first.", file=sys.stderr)
+        sys.exit(1)
+
+    data = json.loads(IN_PATH.read_text(encoding="utf-8"))
+    items = data.get("items", [])
+    if not isinstance(items, list):
+        print("[beta v2] ERROR: Unexpected JSON structure; 'items' must be a list.", file=sys.stderr)
+        sys.exit(1)
+
+    if LIMIT_N and LIMIT_N > 0:
+        items = items[:LIMIT_N]
+
+    start_dt = datetime.now(timezone.utc)
+    updated = 0
+    for item in items:
+        label = item.get("display_name") or item.get("id") or item.get("designation") or "?"
+        print(f"[beta v2] Building track for: {label} ...", flush=True)
+        try:
+            item["track"] = resolve_and_track(item, start_dt)
+            updated += 1
+            print(f"[beta v2]   OK: {len(item['track'])} points", flush=True)
+            time.sleep(0.2)  # courtesy to Horizons
+        except Exception as e:
+            item["track_error"] = str(e)
+            print(f"[beta v2]   ERROR: {item['track_error']}", flush=True)
+
+    out_payload = {
+        **{k: v for k, v in data.items() if k != "items"},
+        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "observer": os.environ.get("OBSERVER", data.get("observer", "500")),
+        "items": items,
+        "beta": True,
+        "track_span_days": SPAN_D,
+        "track_step_min": STEP_M
+    }
+    BETA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    BETA_PATH.write_text(json.dumps(out_payload, indent=2), encoding="utf-8")
+    print(f"[beta v2] Wrote {BETA_PATH} with {updated}/{len(items)} tracks.", flush=True)
+
+if __name__ == "__main__":
+    main()
