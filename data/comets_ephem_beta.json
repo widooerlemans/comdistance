@@ -9,11 +9,11 @@ jobs:
   build-beta:
     runs-on: ubuntu-24.04
     env:
-      OBSERVER: "500"        # geocenter; switch to your topocentric code if desired
+      OBSERVER: "500"
       ENABLE_COMET_TRACKS: "1"
       EPHEM_SPAN_DAYS: "2"
       EPHEM_STEP_MIN: "60"
-      LIMIT_N: "0"           # set to "2" temporarily if you want quick test runs
+      LIMIT_N: "0"
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +44,7 @@ jobs:
           head -n 60 data/comets_ephem_beta.json || true
           echo
           echo "---- any track_error lines ----"
-          grep -n "track_error" -n data/comets_ephem_beta.json || true
+          grep -n "track_error" data/comets_ephem_beta.json || true
 
       - name: Commit beta file
         run: |
