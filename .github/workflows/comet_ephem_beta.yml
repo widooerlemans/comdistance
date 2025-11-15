@@ -1,37 +1,31 @@
-name: Comet ephemerides (beta tracks v2)
-
+name: comet ephemerids beta tracks
 on:
-  workflow_dispatch: {}  # run manually from Actions tab
+  workflow_dispatch:
+  schedule:
+    - cron: "33 3 * * *"
 
 jobs:
   build-beta:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    runs-on: ubuntu-24.04
     env:
-      OBSERVER: "500"            # geocenter; change to your MPC site code if you want
+      OBSERVER: "500"
       ENABLE_COMET_TRACKS: "1"
       EPHEM_SPAN_DAYS: "2"
-      EPHEM_STEP_MIN:  "60"
-      # Optional for first run: uncomment next line to process only 2 comets for clearer logs
-      # LIMIT_N: "2"
+      EPHEM_STEP_MIN: "60"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install astroquery astropy requests
 
-      - name: Ensure daily JSON exists (optional)
+      - name: Ensure base JSON exists
         run: |
           if [ ! -f data/comets_ephem.json ]; then
             echo "data/comets_ephem.json missing; building a fresh one..."
@@ -40,18 +34,10 @@ jobs:
             echo "Found existing data/comets_ephem.json"
           fi
 
-      - name: Build beta tracks JSON
-        run: |
-          python augment_tracks_beta.py
+      - name: Build hourly comet tracks (beta)
+        run: python augment_tracks_beta.py
 
-      - name: Quick sanity check in logs
-        run: |
-          echo "--- First 60 lines of beta JSON ---"
-          head -n 60 data/comets_ephem_beta.json || true
-          echo "--- Any track_error entries? ---"
-          grep -n "track_error" data/comets_ephem_beta.json || echo "No track_error entries."
-
-      - name: Commit & push beta
+      - name: Commit beta file
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -59,6 +45,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Beta: comet ephemerides with hourly Horizons tracks (v2)"
+            git commit -m "Beta: comet ephemerides with hourly Horizons tracks"
             git push
           fi
