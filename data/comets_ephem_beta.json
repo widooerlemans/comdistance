@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2025-11-15T09:35:18Z",
+  "generated_utc": "2025-11-15T09:49:18Z",
   "observer": "500",
   "_debug_first_names": [
     "CK23H050",
@@ -105,7 +105,7 @@
       "mag_diff_pred_minus_obs": 2.72,
       "name_full": "C/2025 K1 (ATLAS)",
       "display_name": "C/2025 K1 (ATLAS)",
-      "track_error": "'r'"
+      "track_error": "Ambiguous target name; provide unique id:\n    Record #  Epoch-yr  >MATCH DESIG<  Primary Desig  Name  \n    --------  --------  -------------  -------------  -------------------------\n    90004909    2025    C/2025 K1      C/2025 K1       ATLAS\n    90004910    2025    C/2025 K1-B    C/2025 K1-B     ATLAS\n | fallback smallbody 90004909 failed: 'r'"
     },
     {
       "id": "C/2025 R2",
@@ -322,7 +322,7 @@
       "mag_diff_pred_minus_obs": 5.23,
       "name_full": "29P/Schwassmann-Wachmann",
       "display_name": "29P/Schwassmann-Wachmann",
-      "track_error": "'r'"
+      "track_error": "Ambiguous target name; provide unique id:\n    Record #  Epoch-yr  >MATCH DESIG<  Primary Desig  Name  \n    --------  --------  -------------  -------------  -------------------------\n    90000389    1908    29P            29P             Schwassmann-Wachmann 1\n    90000390    1925    29P            29P             Schwassmann-Wachmann 1\n    90000391    1941    29P            29P             Schwassmann-Wachmann 1\n    90000392    1957    29P            29P             Schwassmann-Wachmann 1\n    90000393    1974    29P            29P             Schwassmann-Wachmann 1\n    90000394    2007    29P            29P             Schwassmann-Wachmann 1\n    90000395    2022    29P            29P             Schwassmann-Wachmann 1\n | fallback smallbody 90000395 failed: 'r'"
     },
     {
       "id": "240P",
@@ -359,7 +359,7 @@
       "mag_diff_pred_minus_obs": 4.75,
       "name_full": "240P/NEAT",
       "display_name": "240P/NEAT",
-      "track_error": "'r'"
+      "track_error": "Ambiguous target name; provide unique id:\n    Record #  Epoch-yr  >MATCH DESIG<  Primary Desig  Name  \n    --------  --------  -------------  -------------  -------------------------\n    90001201    2014    240P           240P            NEAT\n    90001202    2022    240P           240P            NEAT\n    90001203    2025    240P-B         240P-B          NEAT\n | fallback smallbody 90001203 failed: 'r'"
     },
     {
       "id": "C/2022 N2",
@@ -432,7 +432,7 @@
       "mag_diff_pred_minus_obs": 1.18,
       "name_full": "24P/Schaumasse",
       "display_name": "24P/Schaumasse",
-      "track_error": "'r'"
+      "track_error": "Ambiguous target name; provide unique id:\n    Record #  Epoch-yr  >MATCH DESIG<  Primary Desig  Name  \n    --------  --------  -------------  -------------  -------------------------\n    90000344    1911    24P            24P             Schaumasse\n    90000345    1919    24P            24P             Schaumasse\n    90000346    1927    24P            24P             Schaumasse\n    90000347    1943    24P            24P             Schaumasse\n    90000348    1952    24P            24P             Schaumasse\n    90000349    1960    24P            24P             Schaumasse\n    90000350    1976    24P            24P             Schaumasse\n    90000351    1984    24P            24P             Schaumasse\n    90000352    1993    24P            24P             Schaumasse\n    90000353    2001    24P            24P             Schaumasse\n    90000354    2015    24P            24P             Schaumasse\n    90000355    2018    24P            24P             Schaumasse\n | fallback smallbody 90000355 failed: 'r'"
     },
     {
       "id": "C/2021 G2",
