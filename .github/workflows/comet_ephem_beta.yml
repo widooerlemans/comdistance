@@ -1,7 +1,7 @@
-name: Comet ephemerides (beta tracks)
+name: Comet ephemerides (beta tracks v2)
 
 on:
-  workflow_dispatch: {}  # run manually from the Actions tab
+  workflow_dispatch: {}  # run manually from Actions tab
 
 jobs:
   build-beta:
@@ -10,10 +10,12 @@ jobs:
       contents: write
 
     env:
-      OBSERVER: "500"            # geocenter; set to your MPC site code if desired
+      OBSERVER: "500"            # geocenter; change to your MPC site code if you want
       ENABLE_COMET_TRACKS: "1"
       EPHEM_SPAN_DAYS: "2"
       EPHEM_STEP_MIN:  "60"
+      # Optional for first run: uncomment next line to process only 2 comets for clearer logs
+      # LIMIT_N: "2"
 
     steps:
       - name: Checkout
@@ -29,7 +31,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install astroquery astropy requests
 
-      - name: Ensure daily JSON exists (optional; you may already have it)
+      - name: Ensure daily JSON exists (optional)
         run: |
           if [ ! -f data/comets_ephem.json ]; then
             echo "data/comets_ephem.json missing; building a fresh one..."
@@ -42,6 +44,13 @@ jobs:
         run: |
           python augment_tracks_beta.py
 
+      - name: Quick sanity check in logs
+        run: |
+          echo "--- First 60 lines of beta JSON ---"
+          head -n 60 data/comets_ephem_beta.json || true
+          echo "--- Any track_error entries? ---"
+          grep -n "track_error" data/comets_ephem_beta.json || echo "No track_error entries."
+
       - name: Commit & push beta
         run: |
           git config user.name  "github-actions[bot]"
@@ -50,6 +59,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Beta: comet ephemerides with hourly Horizons tracks"
+            git commit -m "Beta: comet ephemerides with hourly Horizons tracks (v2)"
             git push
           fi
