@@ -1,0 +1,55 @@
+name: Comet ephemerides (beta tracks)
+
+on:
+  workflow_dispatch: {}  # run manually from the Actions tab
+
+jobs:
+  build-beta:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      OBSERVER: "500"            # geocenter; set to your MPC site code if desired
+      ENABLE_COMET_TRACKS: "1"
+      EPHEM_SPAN_DAYS: "2"
+      EPHEM_STEP_MIN:  "60"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install astroquery astropy requests
+
+      - name: Ensure daily JSON exists (optional; you may already have it)
+        run: |
+          if [ ! -f data/comets_ephem.json ]; then
+            echo "data/comets_ephem.json missing; building a fresh one..."
+            python horizons_pull.py
+          else
+            echo "Found existing data/comets_ephem.json"
+          fi
+
+      - name: Build beta tracks JSON
+        run: |
+          python augment_tracks_beta.py
+
+      - name: Commit & push beta
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/comets_ephem_beta.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Beta: comet ephemerides with hourly Horizons tracks"
+            git push
+          fi
