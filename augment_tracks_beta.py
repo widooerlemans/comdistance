@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-augment_tracks_beta.py — earlier runnable version
+augment_tracks_beta.py — v21.1 (safe columns)
 
 Reads data/comets_ephem.json, queries JPL Horizons for hourly RA/Dec tracks
 over ±EPHEM_SPAN_DAYS (default 2 days) with EPHEM_STEP_MIN spacing (default 60m),
 and writes data/comets_ephem_beta.json.
 
-This is the earlier version that *ran* but produced some items with
-track_error like "'r'" (missing column) or ambiguous-name notes.
+Changes from the earlier runnable version:
+- No longer raises KeyError when Horizons omits 'r' or 'delta' (the "'r'" errors you saw).
+- We require only datetime_str, RA, DEC; r/delta are optional.
+- Keeps the same env vars and output shape so your workflow & HTML don’t need edits.
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 def _dtfmt(dt: datetime) -> str:
+    # Horizons expects "YYYY-MM-DD HH:MM"
     return dt.strftime("%Y-%m-%d %H:%M")
 
 def _time_window() -> tuple[str, str, str]:
@@ -45,36 +48,41 @@ def _target_for(item: Dict[str, Any]) -> dict:
     hid = str(item.get("horizons_id") or "").strip()
     if hid:
         return {"id": hid, "id_type": "smallbody"}
+    # Fall back to the comet designation/name string
     return {"id": str(item.get("id") or item.get("name_full") or ""), "id_type": "smallbody"}
 
 def fetch_track(item: Dict[str, Any], start_utc: str, stop_utc: str, step_str: str) -> List[Dict[str, Any]]:
     tgt = _target_for(item)
-    # NOTE: this version intentionally limits columns in a way that can omit 'r'
-    # (this is why some items end up with "'r'" track_error in your old runs).
     obj = Horizons(
         id=tgt["id"],
         id_type=tgt["id_type"],
         location=str(OBSERVER),
         epochs={"start": start_utc, "stop": stop_utc, "step": step_str},
     )
-    # Earlier runs used defaults or a limited set that sometimes missed 'r'
-    eph = obj.ephemerides(refsystem="J2000")  # keep as-is (previous behavior)
 
-    # Expect these; some runs miss 'r' and raise KeyError that we catch upstream.
-    needed = ("datetime_str", "RA", "DEC", "r", "delta")
-    for col in needed:
+    # Default ephemerides often include RA/DEC always; r/delta may be absent for odd cases.
+    eph = obj.ephemerides(refsystem="J2000")
+
+    # Require only datetime_str, RA, DEC
+    for col in ("datetime_str", "RA", "DEC"):
         if col not in eph.colnames:
-            raise KeyError(col)
+            raise KeyError(f"Missing '{col}' for target {tgt['id']}")
+
+    has_r     = "r" in eph.colnames
+    has_delta = "delta" in eph.colnames
 
     out: List[Dict[str, Any]] = []
     for row in eph:
-        out.append({
+        rec = {
             "time_utc": str(row["datetime_str"]),
             "ra_deg": float(row["RA"]),
             "dec_deg": float(row["DEC"]),
-            "r_au": float(row["r"]),
-            "delta_au": float(row["delta"]),
-        })
+        }
+        if has_r:
+            rec["r_au"] = float(row["r"])
+        if has_delta:
+            rec["delta_au"] = float(row["delta"])
+        out.append(rec)
     return out
 
 def main() -> None:
@@ -90,7 +98,7 @@ def main() -> None:
     result = {
         "generated_utc": _utc_now_iso(),
         "observer": str(OBSERVER),
-        "script_version": 21,  # matches your earlier JSON
+        "script_version": 21,  # keep the same version tag your JSON showed
         "beta": True,
         "track_span_days": SPAN_DAYS,
         "track_step_min": STEP_MIN,
