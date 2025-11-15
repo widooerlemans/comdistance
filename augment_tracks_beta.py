@@ -1,149 +1,145 @@
 #!/usr/bin/env python3
-"""
-augment_tracks_beta.py  (v2)
----------------------------
-Reads:  data/comets_ephem.json        (your current daily file)
-Writes: data/comets_ephem_beta.json   (beta file with hourly 'track' from Horizons)
+# -*- coding: utf-8 -*-
 
-ENV (optional):
-  OBSERVER=500            # geocenter or your MPC site code (e.g. "Z23")
-  ENABLE_COMET_TRACKS=1   # set 0/false to skip adding tracks
-  EPHEM_SPAN_DAYS=2       # how far into the future to sample
-  EPHEM_STEP_MIN=60       # cadence in minutes (e.g., 30 or 60)
-  LIMIT_N=0               # limit number of comets for testing (0 = all)
 """
-import os, json, sys, time, re
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+augment_tracks_beta.py  (v2.0.3)
+
+Build short (±EPHEM_SPAN_DAYS) hourly tracks for comets using JPL Horizons,
+and append them into data/comets_ephem_beta.json.
+
+Hotfixes in this version:
+- Do NOT restrict `quantities`; let astroquery request the full default set,
+  so columns like 'r' and 'delta' are always present.
+- Always prefer `horizons_id` (record number) when available to avoid ambiguity.
+- Robust column access and clear per-target error messages.
+"""
+
+from __future__ import annotations
+import json
+import os
+from datetime import datetime, timedelta, timezone
+from typing import Dict, Any, List
 
 from astroquery.jplhorizons import Horizons
 
-IN_PATH   = Path("data/comets_ephem.json")
-BETA_PATH = Path("data/comets_ephem_beta.json")
+DATA_IN  = "data/comets_ephem.json"
+DATA_OUT = "data/comets_ephem_beta.json"
 
-OBSERVER = os.environ.get("OBSERVER", "500")
-ENABLE   = os.environ.get("ENABLE_COMET_TRACKS", "1").lower() not in ("0","false","no","")
-SPAN_D   = float(os.environ.get("EPHEM_SPAN_DAYS", "2"))
-STEP_M   = int(float(os.environ.get("EPHEM_STEP_MIN", "60")))
-LIMIT_N  = int(os.environ.get("LIMIT_N", "0"))  # 0 = all
+# Env toggles (all optional)
+SPAN_DAYS   = float(os.getenv("EPHEM_SPAN_DAYS", "2"))   # total span in days
+STEP_MIN    = int(os.getenv("EPHEM_STEP_MIN", "60"))     # step size in minutes
+OBSERVER    = os.getenv("OBSERVER", "500")               # '500' = geocenter; can be topocentric code
+LIMIT_N     = int(os.getenv("LIMIT_N", "0"))             # 0 means no limit
 
-QUANTITIES = "1,3,4,20,21,31"  # r, delta, phase(alpha), RA, DEC, V
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-# When Horizons says "Ambiguous target name", it prints a table like:
-#   9xxxxxxx 2024 ...  -> we pick the record with the most recent epoch (largest year)
-AMBIG_LINE = re.compile(r"^\s*(9\d{7})\s+(\d{4})\s+", re.MULTILINE)
+def _dtfmt(dt: datetime) -> str:
+    # Horizons wants UTC calendar strings
+    return dt.strftime("%Y-%m-%d %H:%M")
 
-def horizons_ephem(id_value: str, id_type: Optional[str], start_dt, span_days, step_min):
-    stop_dt = start_dt + timedelta(days=span_days)
-    step_str = f"{step_min} m" if step_min < 60 else f"{int(step_min/60)} h"
+def _split_span(span_days: float) -> (str, str, str):
+    """Return (start_utc, stop_utc, step_str) around 'now' with given span and step."""
+    now = datetime.now(timezone.utc)
+    half = timedelta(days=span_days/2.0)
+    start = now - half
+    stop  = now + half
+    step_str = f"{STEP_MIN}m"
+    return _dtfmt(start), _dtfmt(stop), step_str
+
+def _target_for(item: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Return Horizons target selector dict.
+    Prefer numeric horizons record when available to avoid ambiguity.
+    """
+    if "horizons_id" in item and item["horizons_id"]:
+        # Numeric record number
+        return {"id": str(item["horizons_id"]), "id_type": "smallbody"}
+    # Fall back to item['id'] (e.g., 'C/2025 A6', '29P', etc.)
+    return {"id": item["id"], "id_type": "smallbody"}
+
+def horizons_ephem(item: Dict[str, Any],
+                   start_utc: str, stop_utc: str, step_str: str,
+                   location: str) -> List[Dict[str, Any]]:
+    """
+    Query Horizons and return a list of dict points containing:
+    time_utc, ra_deg, dec_deg, delta_au, r_au
+    """
+    tgt = _target_for(item)
     obj = Horizons(
-        id=id_value,
-        id_type=id_type,
-        location=OBSERVER,
-        epochs={
-            "start": start_dt.strftime("%Y-%m-%d %H:%M"),
-            "stop" : stop_dt.strftime("%Y-%m-%d %H:%M"),
-            "step" : step_str,
-        },
+        id=tgt["id"],
+        id_type=tgt["id_type"],
+        location=location,
+        epochs={"start": start_utc, "stop": stop_utc, "step": step_str},
     )
-    return obj.ephemerides(quantities=QUANTITIES)
 
-def build_track_from_eph(eph):
-    out: List[Dict[str, Any]] = []
+    # IMPORTANT: do not restrict `quantities` – default includes everything we need.
+    eph = obj.ephemerides(refsystem="J2000")  # returns an astropy Table
+
+    # Column names we rely on (astroquery uses simplified names):
+    # 'datetime_str', 'RA', 'DEC', 'delta', 'r'
+    required = ["datetime_str", "RA", "DEC", "delta", "r"]
+    for col in required:
+        if col not in eph.colnames:
+            raise KeyError(f"Missing column '{col}' in Horizons table for {tgt['id']}")
+
+    points: List[Dict[str, Any]] = []
     for row in eph:
-        rec = {
-            "epoch_utc": str(row["datetime_str"]),
-            "ra_deg":    float(row["RA"]),
-            "dec_deg":   float(row["DEC"]),
-            "r_au":      float(row["r"]),
-            "delta_au":  float(row["delta"]),
-            "phase_deg": float(row["alpha"]),
-        }
-        try:
-            rec["vmag"] = float(row["V"])
-        except Exception:
-            pass
-        out.append(rec)
-    return out
+        points.append({
+            "time_utc": str(row["datetime_str"]),
+            "ra_deg": float(row["RA"]),
+            "dec_deg": float(row["DEC"]),
+            "delta_au": float(row["delta"]),
+            "r_au": float(row["r"]),
+        })
+    return points
 
-def resolve_and_track(item: Dict[str, Any], start_dt):
-    # Try several identifiers: designation first, then display name, and let Horizons guess.
-    candidates = []
-    desig = item.get("id") or item.get("designation")
-    name  = item.get("display_name") or item.get("name_full") or item.get("name")
-    if desig: candidates.append((desig, "designation"))
-    if name and name != desig: candidates.append((name, "designation"))
-    if desig: candidates.append((desig, None))  # let Horizons infer
+def build_tracks(base: Dict[str, Any]) -> Dict[str, Any]:
+    out = {
+        "generated_utc": _utc_now_iso(),
+        "observer": str(OBSERVER),
+        "script_version": 203,
+        "beta": True,
+        "track_span_days": SPAN_DAYS,
+        "track_step_min": STEP_MIN,
+        "items": [],
+    }
 
-    last_error = None
-    for id_value, id_type in candidates:
-        try:
-            eph = horizons_ephem(id_value, id_type, start_dt, SPAN_D, STEP_M)
-            return build_track_from_eph(eph)
-        except Exception as e:
-            msg = str(e)
-            last_error = msg
-            if "Ambiguous target name" in msg:
-                # Parse Horizons' ambiguity list and pick the most recent record id.
-                best_id, best_epoch = None, -1
-                for rec_id, epoch in AMBIG_LINE.findall(msg):
-                    ep = int(epoch)
-                    if ep > best_epoch:
-                        best_epoch = ep
-                        best_id = rec_id
-                if best_id:
-                    try:
-                        eph2 = horizons_ephem(best_id, "smallbody", start_dt, SPAN_D, STEP_M)
-                        return build_track_from_eph(eph2)
-                    except Exception as e2:
-                        last_error = f"{msg} | fallback smallbody {best_id} failed: {e2}"
-    raise RuntimeError(last_error or "Unknown Horizons error")
-
-def main():
-    if not ENABLE:
-        print("[beta v2] Tracks disabled via ENABLE_COMET_TRACKS=0; nothing to do.")
-        return
-
-    if not IN_PATH.exists():
-        print(f"[beta v2] ERROR: {IN_PATH} not found. Run your existing daily job first.", file=sys.stderr)
-        sys.exit(1)
-
-    data = json.loads(IN_PATH.read_text(encoding="utf-8"))
-    items = data.get("items", [])
-    if not isinstance(items, list):
-        print("[beta v2] ERROR: Unexpected JSON structure; 'items' must be a list.", file=sys.stderr)
-        sys.exit(1)
-
-    if LIMIT_N and LIMIT_N > 0:
+    items = base.get("items", [])
+    if LIMIT_N > 0:
         items = items[:LIMIT_N]
 
-    start_dt = datetime.now(timezone.utc)
-    updated = 0
-    for item in items:
-        label = item.get("display_name") or item.get("id") or item.get("designation") or "?"
-        print(f"[beta v2] Building track for: {label} ...", flush=True)
-        try:
-            item["track"] = resolve_and_track(item, start_dt)
-            updated += 1
-            print(f"[beta v2]   OK: {len(item['track'])} points", flush=True)
-            time.sleep(0.2)  # courtesy to Horizons
-        except Exception as e:
-            item["track_error"] = str(e)
-            print(f"[beta v2]   ERROR: {item['track_error']}", flush=True)
+    start_utc, stop_utc, step_str = _split_span(SPAN_DAYS)
 
-    out_payload = {
-        **{k: v for k, v in data.items() if k != "items"},
-        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "observer": os.environ.get("OBSERVER", data.get("observer", "500")),
-        "items": items,
-        "beta": True,
-        "track_span_days": SPAN_D,
-        "track_step_min": STEP_M
-    }
-    BETA_PATH.parent.mkdir(parents=True, exist_ok=True)
-    BETA_PATH.write_text(json.dumps(out_payload, indent=2), encoding="utf-8")
-    print(f"[beta v2] Wrote {BETA_PATH} with {updated}/{len(items)} tracks.", flush=True)
+    ok, total = 0, 0
+    for item in items:
+        total += 1
+        item_copy = dict(item)  # don’t mutate original
+        try:
+            track = horizons_ephem(item_copy, start_utc, stop_utc, step_str, OBSERVER)
+            item_copy["track"] = track
+            ok += 1
+            print(f"[beta v2.0.3] OK: {item_copy.get('display_name', item_copy.get('id'))} → {len(track)} points")
+        except Exception as e:
+            # Leave a crisp message
+            msg = str(e)
+            item_copy["track_error"] = msg
+            print(f"[beta v2.0.3] ERROR: {item_copy.get('display_name', item_copy.get('id'))}: {msg}")
+
+        out["items"].append(item_copy)
+
+    print(f"[beta v2.0.3] Wrote {ok}/{total} tracks (span={SPAN_DAYS}d, step={STEP_MIN}m, observer={OBSERVER}).")
+    return out
+
+def main() -> None:
+    with open(DATA_IN, "r", encoding="utf-8") as f:
+        base = json.load(f)
+
+    result = build_tracks(base)
+
+    os.makedirs(os.path.dirname(DATA_OUT), exist_ok=True)
+    with open(DATA_OUT, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     main()
