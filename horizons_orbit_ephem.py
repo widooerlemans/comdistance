@@ -1,352 +1,311 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
-Build comets_orbit_ephem.json from JPL Horizons orbital elements + ephemerides.
+Generate data/comets_orbit_ephem.json for the brightest comets.
 
-Key fixes vs previous version:
-- r_au is now read from Horizons column 'r'
-- phase_deg is now read from Horizons column 'alpha'
-- vmag is actually computed using M1, K1, r_au, and delta_au
+- Uses the same COBS-driven list and brightness filter as horizons_pull.py
+- For each comet:
+    * Fetches osculating elements from JPL SBDB via sbdb_elements()
+      (fallback: Horizons elements()) and augments them with:
+          - a_au, Q_au
+          - period_days, period_years
+          - n_deg_per_day
+    * Builds a 15-day daily ephemeris via JPL Horizons with RA/DEC,
+      r, delta, phase, and predicted magnitude (v_pred).
+
+This script is intentionally separate from horizons_pull.py so the
+existing pipeline remains unchanged.
 """
-
-from __future__ import annotations
 
 import json
 import math
-from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta, timezone
+import time
+from datetime import timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from astroquery.jplhorizons import Horizons
 from astropy.time import Time
+from astroquery.jplhorizons import Horizons
+
+from horizons_pull import (
+    load_cobs_designations,
+    now_iso,
+    OBSERVER,
+    BRIGHT_LIMIT_ENV,
+    BRIGHT_LIMIT_DEFAULT,
+    try_float_env,
+    _sort_key,
+    _row_to_payload_with_photometry,
+    resolve_ambiguous_to_record_id,
+    sbdb_elements,
+    horizons_elements,
+    QUANTITIES,
+)
+
+OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
+DAYS = 15
+PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 
 
-# -------------------------------------------------
-# Configuration
-# -------------------------------------------------
+# ---------- orbit helpers ----------
 
-OBSERVER_CODE = "500"   # Geocenter
-EPHEM_DAYS = 15         # Number of days of ephemeris to generate
-
-
-@dataclass
-class PhotometryModel:
-    M1: Optional[float]
-    K1: Optional[float]
-    model: str = "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-
-
-@dataclass
-class EphemerisPoint:
-    epoch_utc: str
-    r_au: Optional[float]
-    delta_au: Optional[float]
-    phase_deg: Optional[float]
-    ra_deg: Optional[float]
-    dec_deg: Optional[float]
-    vmag: Optional[float]
-    ra_jnow_deg: Optional[float]
-    dec_jnow_deg: Optional[float]
-    photometry: Dict[str, Any]
+def _fnum(x) -> Optional[float]:
+    """Parse a float, returning None on error/NaN."""
+    try:
+        if x is None:
+            return None
+        v = float(x)
+        if math.isnan(v):
+            return None
+        return v
+    except Exception:
+        return None
 
 
-@dataclass
-class OrbitInfo:
-    epoch_jd_tdb: float
-    frame: str
-    type: str
-    q_au: float
-    e: float
-    i_deg: float
-    Omega_deg: float
-    omega_deg: float
-    Tp_jd_tdb: float
-    solution: str
-    reference: str
-    a_au: Optional[float] = None
-    Q_au: Optional[float] = None
-    period_years: Optional[float] = None
-    period_days: Optional[float] = None
-    n_deg_per_day: Optional[float] = None
-
-
-@dataclass
-class CometOutput:
-    id: str
-    epoch_utc: str
-    orbit: Dict[str, Any]
-    ephemeris_15d: List[Dict[str, Any]]
-    cobs_mag: Optional[float]
-    name_full: str
-    display_name: str
-
-
-# -------------------------------------------------
-# Helpers
-# -------------------------------------------------
-
-def today_utc() -> datetime:
-    return datetime.now(timezone.utc).replace(microsecond=0)
-
-
-def utc_iso(dt: datetime) -> str:
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-
-
-def jd_to_utc_iso(jd: float) -> str:
-    t = Time(jd, format="jd", scale="tdb")
-    # Horizons returns TDB; convert to UTC for output
-    return t.utc.isot + "Z"
-
-
-# -------------------------------------------------
-# Horizons queries
-# -------------------------------------------------
-
-def fetch_orbit_from_horizons(comet_id: str) -> OrbitInfo:
+def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
     """
-    Fetch osculating orbit elements from Horizons.
+    Get orbital elements for `label`:
+
+    1. Try JPL SBDB via sbdb_elements(label)
+    2. Fallback to Horizons elements(idspec)
+    3. Enrich with:
+        - a_au, Q_au
+        - period_days, period_years
+        - n_deg_per_day (mean motion)
     """
-    obj = Horizons(
-        id=comet_id,
-        id_type="designation",
-        location=OBSERVER_CODE,
-        epochs=None,
-    )
-    orb_table = obj.orbital_elements()
+    # 1) SBDB
+    base = sbdb_elements(label)
 
-    row = orb_table[0]
+    # 2) Fallback to Horizons elements if SBDB didn't work
+    if not base:
+        rec_id = resolve_ambiguous_to_record_id(label)
+        idspec = rec_id or label
+        base = horizons_elements(idspec)
 
-    q_au = float(row["q"])
-    e = float(row["e"])
-    i_deg = float(row["incl"])
-    Omega_deg = float(row["Omega"])
-    omega_deg = float(row["w"])
-    Tp_jd_tdb = float(row["Tp"])
-    epoch_jd_tdb = float(row["epoch"])
+    if not base:
+        return None
 
-    # Compute derived quantities only for bound (elliptic) orbits (e < 1)
-    a_au: Optional[float] = None
-    Q_au: Optional[float] = None
-    period_years: Optional[float] = None
-    period_days: Optional[float] = None
-    n_deg_per_day: Optional[float] = None
+    out = dict(base)  # shallow copy we can mutate
 
-    if e < 1.0:
-        a_au = q_au / (1.0 - e)
-        Q_au = a_au * (1.0 + e)
-        # Kepler's 3rd law in years if a_au in AU
-        period_years = a_au ** 1.5
-        period_days = period_years * 365.25
-        if period_days > 0:
-            n_deg_per_day = 360.0 / period_days
+    # Normalize basic orbital quantities
+    e = _fnum(out.get("e"))
+    q = _fnum(out.get("q_au") or out.get("q"))
+    a = _fnum(out.get("a_au") or out.get("a"))
 
-    orbit = OrbitInfo(
-        epoch_jd_tdb=epoch_jd_tdb,
-        frame="ecliptic J2000",
-        type="comet",
-        q_au=q_au,
-        e=e,
-        i_deg=i_deg,
-        Omega_deg=Omega_deg,
-        omega_deg=omega_deg,
-        Tp_jd_tdb=Tp_jd_tdb,
-        solution="osculating",
-        reference="JPL SBDB (via Horizons)",
-        a_au=a_au,
-        Q_au=Q_au,
-        period_years=period_years,
-        period_days=period_days,
-        n_deg_per_day=n_deg_per_day,
-    )
+    # Only derive extras for bound (elliptic) orbits
+    if (e is not None) and (e < 1.0):
+        # Derive a from q and e if needed
+        if (a is None) and (q is not None):
+            try:
+                a = q / (1.0 - e)
+                out["a_au"] = a
+            except ZeroDivisionError:
+                pass
 
-    return orbit
+        # Derive q from a and e if needed
+        if (q is None) and (a is not None):
+            q = a * (1.0 - e)
+            out["q_au"] = q
 
+        # Aphelion distance
+        if a is not None:
+            Q = a * (1.0 + e)
+            out["Q_au"] = Q
 
-def build_ephemeris_for_comet(
-    comet_id: str,
-    M1: Optional[float],
-    K1: Optional[float],
-    days: int = EPHEM_DAYS,
-) -> List[EphemerisPoint]:
-    """
-    Build a list of EphemerisPoint objects for the next `days` days.
+            # Kepler's third law: P(yrs)^2 = a^3, with a in AU
+            try:
+                period_years = math.sqrt(a ** 3)
+                period_days = period_years * 365.25
+                out["period_years"] = period_years
+                out["period_days"] = period_days
+                out["n_deg_per_day"] = 360.0 / period_days
+            except Exception:
+                pass
 
-    *** FIXED ***
-    - r_au taken from Horizons column 'r'
-    - phase_deg taken from Horizons column 'alpha'
-    - vmag computed when r_au and delta_au are present
-    """
-
-    start = today_utc()
-    epochs = [
-        Time(start + timedelta(days=i), scale="utc").jd
-        for i in range(days)
-    ]
-
-    obj = Horizons(
-        id=comet_id,
-        id_type="designation",
-        location=OBSERVER_CODE,
-        epochs=epochs,
-    )
-
-    # quantities='1' is enough to get r, delta, RA, DEC, alpha, etc.
-    eph = obj.ephemerides(quantities="1")
-
-    ephem_points: List[EphemerisPoint] = []
-
-    for row in eph:
-        # Raw values from Horizons
-        r_val = float(row["r"])
-        delta_val = float(row["delta"])
-        alpha_val = float(row["alpha"])
-        ra_val = float(row["RA"])     # degrees J2000
-        dec_val = float(row["DEC"])   # degrees J2000
-
-        # Convert NaNs to None just in case
-        def clean(x: float) -> Optional[float]:
-            return None if (x is None or math.isnan(x)) else float(x)
-
-        r_au = clean(r_val)
-        delta_au = clean(delta_val)
-        phase_deg = clean(alpha_val)
-
-        # --- FIXED: actually compute vmag when we have r_au and delta_au ---
-        vmag: Optional[float] = None
-        if (
-            r_au is not None
-            and delta_au is not None
-            and M1 is not None
-            and K1 is not None
-        ):
-            # Standard comet total magnitude law
-            vmag = M1 + 5.0 * math.log10(delta_au) + K1 * math.log10(r_au)
-
-        phot = PhotometryModel(M1=M1, K1=K1)
-
-        point = EphemerisPoint(
-            epoch_utc=jd_to_utc_iso(float(row["datetime_jd"])),
-            r_au=r_au,
-            delta_au=delta_au,
-            phase_deg=phase_deg,
-            ra_deg=ra_val,
-            dec_deg=dec_val,
-            vmag=vmag,
-            # If you ever want true JNOW, you’d precess here.
-            ra_jnow_deg=ra_val,
-            dec_jnow_deg=dec_val,
-            photometry=asdict(phot),
-        )
-
-        ephem_points.append(point)
-
-    return ephem_points
-
-
-# -------------------------------------------------
-# Top-level builder
-# -------------------------------------------------
-
-def build_comets_orbit_ephem(
-    comets: List[Dict[str, Any]],
-    days: int = EPHEM_DAYS,
-    observer_code: str = OBSERVER_CODE,
-) -> Dict[str, Any]:
-    """
-    comets: list of dicts with at least:
-        {
-          "id": "C/2025 K1",
-          "name_full": "C/2025 K1 (ATLAS)",
-          "display_name": "C/2025 K1 (ATLAS)",
-          "M1": 14.1,
-          "K1": 4.5,
-          "cobs_mag": 9.9
-        }
-    """
-
-    now = today_utc()
-
-    items: List[Dict[str, Any]] = []
-    for c in comets:
-        comet_id = c["id"]
-        name_full = c.get("name_full", comet_id)
-        display_name = c.get("display_name", name_full)
-        M1 = c.get("M1")
-        K1 = c.get("K1")
-        cobs_mag = c.get("cobs_mag")
-
-        orbit = fetch_orbit_from_horizons(comet_id)
-        ephem_points = build_ephemeris_for_comet(
-            comet_id=comet_id,
-            M1=M1,
-            K1=K1,
-            days=days,
-        )
-
-        comet_output = CometOutput(
-            id=comet_id,
-            epoch_utc=utc_iso(now),
-            orbit=asdict(orbit),
-            ephemeris_15d=[asdict(p) for p in ephem_points],
-            cobs_mag=cobs_mag,
-            name_full=name_full,
-            display_name=display_name,
-        )
-
-        items.append(asdict(comet_output))
-
-    out: Dict[str, Any] = {
-        "generated_utc": utc_iso(now),
-        "observer": observer_code,
-        "days": days,
-        "items": items,
-    }
+    # Default labels for clarity in UI/tooltips
+    out.setdefault("solution", "osculating")
+    out.setdefault("reference", "JPL SBDB (via Horizons)")
 
     return out
 
 
-# -------------------------------------------------
-# Script entry point
-# -------------------------------------------------
+# ---------- ephemeris helpers ----------
+
+def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
+    """
+    Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
+
+    We query Horizons at 1-day spacing starting at *now*.
+    """
+    jd0 = Time.now().jd
+    epochs = [jd0 + float(i) for i in range(days)]
+
+    # Use the same ambiguity-resolution logic as horizons_pull.py
+    rec_id = resolve_ambiguous_to_record_id(designation)
+    if rec_id:
+        id_value = rec_id
+        id_type = "smallbody"
+    else:
+        id_value = designation
+        id_type = "designation"
+
+    obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
+    eph = obj.ephemerides(quantities=QUANTITIES)
+
+    out: List[Dict[str, Any]] = []
+    for row in eph:
+        # r_au from Horizons ephemerides (*** FIXED: keep this value! ***)
+        try:
+            r_au = float(row["r"])
+        except Exception:
+            r_au = None  # <- now correctly indented under except
+
+        core = _row_to_payload_with_photometry(row, r_au=r_au, delta_vec_au=None)
+
+        # datetime_jd is TDB in Horizons output; convert to UTC safely
+        jd = float(row["datetime_jd"])
+        t_tdb = Time(jd, format="jd", scale="tdb")
+        t_utc = t_tdb.utc
+        dt = t_utc.to_datetime(timezone=timezone.utc)
+        epoch_iso = dt.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+        entry: Dict[str, Any] = {"epoch_utc": epoch_iso}
+        entry.update(core)
+        out.append(entry)
+
+    return out
+
+
+def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
+    """
+    For a comet designation:
+      - fetch extended orbit from SBDB/Horizons
+      - build 15-day Horizons ephemeris
+      - derive v_pred_now from the first ephemeris row (if available)
+    """
+    orbit = sbdb_orbit_extended(comet_id)
+    ephem: List[Dict[str, Any]] = []
+    error: Optional[str] = None
+
+    try:
+        ephem = build_ephemeris_span(comet_id, observer, days=DAYS)
+    except Exception as e:
+        error = str(e)
+
+    item: Dict[str, Any] = {
+        "id": comet_id,
+        "epoch_utc": now_iso(),
+    }
+
+    if orbit:
+        item["orbit"] = orbit
+    if ephem:
+        item["ephemeris_15d"] = ephem
+    if error and not ephem:
+        item["error"] = error
+
+    # v_pred_now from the first ephemeris row if available
+    if ephem:
+        first = ephem[0]
+        vpred = first.get("v_pred") or first.get("vmag")
+        if vpred is not None:
+            try:
+                item["v_pred_now"] = float(vpred)
+            except Exception:
+                pass
+
+    return item
+
+
+# ---------- main ----------
 
 def main() -> None:
-    # TODO: replace this with however you currently gather your comets
-    # (e.g. your COBS-based JSON/logic). This is only an example list
-    # using values visible in your current output file.
-    comets_config: List[Dict[str, Any]] = [
-        {
-            "id": "C/2025 K1",
-            "name_full": "C/2025 K1 (ATLAS)",
-            "display_name": "C/2025 K1 (ATLAS)",
-            "M1": 14.1,
-            "K1": 4.5,
-            "cobs_mag": 9.9,
-        },
-        {
-            "id": "3I",
-            "name_full": "3I/ATLAS",
-            "display_name": "3I/ATLAS",
-            "M1": 12.1,
-            "K1": 4.75,
-            "cobs_mag": 10.1,
-        },
-        {
-            "id": "C/2025 T1",
-            "name_full": "C/2025 T1 (ATLAS)",
-            "display_name": "C/2025 T1 (ATLAS)",
-            "M1": 11.3,
-            "K1": 35.75,
-            "cobs_mag": 10.1,
-        },
-        # Add C/2025 R2 and others here, with their M1 / K1 / cobs_mag
-    ]
+    # Load the same COBS designations list used by horizons_pull.py
+    cobs_map = load_cobs_designations(Path("data/cobs_list.json"))
+    debug_first_names = cobs_map.pop("_debug_first_names", [])
+    debug_counts = cobs_map.pop("_debug_counts", {})
+    fullname_map = cobs_map.pop("_fullname_map", {})
 
-    result = build_comets_orbit_ephem(comets_config, days=EPHEM_DAYS)
+    comet_ids: List[str] = sorted(cobs_map.keys())
+    print(f"[orbit_ephem] Loaded {len(comet_ids)} COBS designations; sample: {comet_ids[:10]}")
 
-    with open("comets_orbit_ephem.json", "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2)
+    results: List[Dict[str, Any]] = []
+    for cid in comet_ids:
+        print(f"[orbit_ephem] Fetching {cid} ...")
+        item = fetch_orbit_and_ephem(cid, OBSERVER)
+
+        # Attach observed magnitude from COBS
+        if cid in cobs_map:
+            item["cobs_mag"] = cobs_map[cid]
+
+        # Attach pretty full name if present
+        if cid in fullname_map:
+            item["name_full"] = fullname_map[cid]
+
+        # display_name fallback
+        item["display_name"] = item.get("name_full") or item["id"]
+
+        results.append(item)
+        time.sleep(PAUSE_S)
+
+    # ---- brightness filter: COBS OR predicted-now ----
+    limit = try_float_env(BRIGHT_LIMIT_ENV)
+    if limit is None:
+        limit = BRIGHT_LIMIT_DEFAULT
+
+    before = len(results)
+    filtered: List[Dict[str, Any]] = []
+
+    for it in results:
+        obs = it.get("cobs_mag")
+        pred = it.get("v_pred_now")
+
+        def _ok(v: Any) -> bool:
+            try:
+                return (v is not None) and (float(v) <= limit)
+            except Exception:
+                return False
+
+        if _ok(obs) or _ok(pred):
+            filtered.append(it)
+
+    results = filtered
+    print(f"[orbit_ephem] Brightness filter (<= {limit}) kept {len(results)}/{before}")
+
+    # Sort by same key as main script
+    results.sort(key=_sort_key)
+
+    # Truncate to 15 brightest
+    if len(results) > 15:
+        results = results[:15]
+        print(f"[orbit_ephem] Truncated to top 15 brightest")
+
+    payload: Dict[str, Any] = {
+        "generated_utc": now_iso(),
+        "observer": OBSERVER,
+        "days": DAYS,
+        "items": results,
+        "script": "horizons_orbit_ephem.py",
+        "filter": {
+            "mode": "cobs_or_pred_now",
+            "bright_limit": limit,
+            "max_items": 15,
+        },
+        "_debug_first_names": debug_first_names,
+        "_debug_counts": debug_counts,
+        "units": {
+            "angles": "deg",
+            "dist": "au",
+            "epoch_time_scale": "TDB",
+            "frame": "ecliptic J2000",
+            "period_days": "days",
+            "period_years": "Julian years",
+            "n_deg_per_day": "deg/day",
+        },
+    }
+
+    OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
+    print(f"[orbit_ephem] Wrote {OUT_JSON_PATH} with {len(results)} items")
 
 
 if __name__ == "__main__":
