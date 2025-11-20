@@ -35,7 +35,6 @@ from horizons_pull import (
     resolve_ambiguous_to_record_id,
     sbdb_elements,
     horizons_elements,
-    QUANTITIES,  # still imported, but not used here on purpose
 )
 
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
@@ -45,7 +44,9 @@ PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 
 # ---------- orbit helpers ----------
 
-...
+def _safe_float(x: Any) -> Optional[float]:
+    """Convert to float or return None if missing/NaN."""
+    try:
         if x is None:
             return None
         v = float(x)
@@ -70,7 +71,7 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
           - period_yr: orbital period [years], if computable
           - n_deg_per_day: mean motion [deg/day], if computable
     """
-    base = None
+    base: Optional[Dict[str, Any]] = None
 
     try:
         base = sbdb_elements(label)
