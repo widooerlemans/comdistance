@@ -5,12 +5,9 @@ Generate data/comets_orbit_ephem.json for the brightest comets.
 - Uses the same COBS-driven list and brightness filter as horizons_pull.py
 - For each comet:
     * Fetches osculating elements from JPL SBDB via sbdb_elements()
-      (fallback: Horizons elements()) and augments them with:
-          - a_au, Q_au
-          - period_days, period_years
-          - n_deg_per_day
+      and augments them with a, Q, orbital period, mean motion.
     * Builds a 15-day daily ephemeris via JPL Horizons with RA/DEC,
-      r, delta, phase, and predicted magnitude (v_pred).
+      r, delta, phase, and (predicted) magnitude.
 
 This script is intentionally separate from horizons_pull.py so the
 existing pipeline remains unchanged.
@@ -38,7 +35,7 @@ from horizons_pull import (
     resolve_ambiguous_to_record_id,
     sbdb_elements,
     horizons_elements,
-    QUANTITIES,
+    QUANTITIES,  # still imported, but not used here on purpose
 )
 
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
@@ -148,16 +145,18 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         id_value = designation
         id_type = "designation"
 
+    # IMPORTANT: let Horizons return the full default ephemeris
+    # so that r, alpha (phase angle), V, m1, k1 are all available.
     obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
-    eph = obj.ephemerides(quantities=QUANTITIES)
+    eph = obj.ephemerides()  # <- no quantities=QUANTITIES here on purpose
 
     out: List[Dict[str, Any]] = []
     for row in eph:
-        # r_au from Horizons ephemerides (*** FIXED: keep this value! ***)
+        # Try to read r_au directly from the Horizons ephemeris
         try:
             r_au = float(row["r"])
         except Exception:
-            r_au = None  # <- now correctly indented under except
+            r_au = None
 
         core = _row_to_payload_with_photometry(row, r_au=r_au, delta_vec_au=None)
 
