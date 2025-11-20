@@ -142,7 +142,7 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
 
     # Request apparent-of-date RA/Dec (equator-of-date) with extra precision.
     # RA/DEC here are apparent-of-date because of aberrations="apparent".
-    eph = obj.ephemerides(aberrations="apparent", extra_precision=True)
+    eph = obj.ephemerides(extra_precision=True)
 
     out: List[Dict[str, Any]] = []
     for row in eph:
