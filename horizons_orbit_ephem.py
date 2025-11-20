@@ -130,8 +130,16 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
 def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
     """
     Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
+def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
+    """
+    Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
 
     We query Horizons at 1-day spacing starting at *now*.
+
+    IMPORTANT:
+    - We request *apparent* RA/Dec from Horizons (aberrations='apparent'),
+      so RA/Dec are equator-of-date (JNow), not J2000.
+    - We then store those explicitly as ra_jnow_deg / dec_jnow_deg in the JSON.
     """
     jd0 = Time.now().jd
     epochs = [jd0 + float(i) for i in range(days)]
@@ -145,10 +153,15 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         id_value = designation
         id_type = "designation"
 
-    # IMPORTANT: let Horizons return the full default ephemeris
-    # so that r, alpha (phase angle), V, m1, k1 are all available.
-    obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
-    eph = obj.ephemerides()  # <- no quantities=QUANTITIES here on purpose
+    # Request *apparent* RA/Dec, with extra precision
+    obj = Horizons(
+        id=id_value,
+        id_type=id_type,
+        location=observer,
+        epochs=epochs,
+    )
+    # apparent-of-date RA/Dec via aberrations='apparent'
+    eph = obj.ephemerides(aberrations="apparent", extra_precision=True)
 
     out: List[Dict[str, Any]] = []
     for row in eph:
@@ -159,6 +172,18 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
             r_au = None
 
         core = _row_to_payload_with_photometry(row, r_au=r_au, delta_vec_au=None)
+
+        # --- NEW: force ra_jnow_deg / dec_jnow_deg from apparent RA/DEC ---
+        # (RA/DEC here are apparent-of-date because of aberrations='apparent')
+        try:
+            ra_app = float(row["RA"])
+            dec_app = float(row["DEC"])
+            core["ra_jnow_deg"] = ra_app
+            core["dec_jnow_deg"] = dec_app
+        except Exception:
+            # If anything goes wrong, just leave whatever _row_to_payload put in
+            pass
+        # -------------------------------------------------------------------
 
         # datetime_jd is TDB in Horizons output; convert to UTC safely
         jd = float(row["datetime_jd"])
