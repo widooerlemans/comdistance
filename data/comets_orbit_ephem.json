@@ -1,0 +1,129 @@
+{
+  "generated_utc": "2025-11-20T08:05:52Z",
+  "observer": "500",
+  "days": 15,
+  "items": [
+    {
+      "id": "C/2025 K1",
+      "epoch_utc": "2025-11-20T08:05:39Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 9.9,
+      "name_full": "C/2025 K1 (ATLAS)",
+      "display_name": "C/2025 K1 (ATLAS)"
+    },
+    {
+      "id": "3I",
+      "epoch_utc": "2025-11-20T08:04:47Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 10.1,
+      "name_full": "3I/ATLAS",
+      "display_name": "3I/ATLAS"
+    },
+    {
+      "id": "C/2025 T1",
+      "epoch_utc": "2025-11-20T08:05:45Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 10.1,
+      "name_full": "C/2025 T1 (ATLAS)",
+      "display_name": "C/2025 T1 (ATLAS)"
+    },
+    {
+      "id": "C/2025 R2",
+      "epoch_utc": "2025-11-20T08:05:43Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 10.9,
+      "name_full": "C/2025 R2 (SWAN)",
+      "display_name": "C/2025 R2 (SWAN)"
+    },
+    {
+      "id": "C/2024 E1",
+      "epoch_utc": "2025-11-20T08:05:27Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 11.2,
+      "name_full": "C/2024 E1 (Wierzchos)",
+      "display_name": "C/2024 E1 (Wierzchos)"
+    },
+    {
+      "id": "240P",
+      "epoch_utc": "2025-11-20T08:04:30Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 12.6,
+      "name_full": "240P/NEAT",
+      "display_name": "240P/NEAT"
+    },
+    {
+      "id": "29P",
+      "epoch_utc": "2025-11-20T08:04:39Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 12.6,
+      "name_full": "29P/Schwassmann-Wachmann",
+      "display_name": "29P/Schwassmann-Wachmann"
+    },
+    {
+      "id": "C/2025 V1",
+      "epoch_utc": "2025-11-20T08:05:46Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 12.7,
+      "name_full": "C/2025 V1 (Borisov)",
+      "display_name": "C/2025 V1 (Borisov)"
+    },
+    {
+      "id": "24P",
+      "epoch_utc": "2025-11-20T08:04:35Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 13.3,
+      "name_full": "24P/Schaumasse",
+      "display_name": "24P/Schaumasse"
+    },
+    {
+      "id": "C/2022 N2",
+      "epoch_utc": "2025-11-20T08:05:16Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 13.8,
+      "name_full": "C/2022 N2 (PANSTARRS)",
+      "display_name": "C/2022 N2 (PANSTARRS)"
+    },
+    {
+      "id": "C/2021 G2",
+      "epoch_utc": "2025-11-20T08:05:12Z",
+      "error": "scale is tdb, must be 'utc' when timezone is supplied.",
+      "cobs_mag": 15.0,
+      "name_full": "C/2021 G2 (Atlas)",
+      "display_name": "C/2021 G2 (Atlas)"
+    }
+  ],
+  "script": "horizons_orbit_ephem.py",
+  "filter": {
+    "mode": "cobs_or_pred",
+    "bright_limit": 15.0,
+    "max_items": 15
+  },
+  "_debug_first_names": [
+    "CK24G060",
+    "CK23H050",
+    "CK21G020",
+    "CK25V010",
+    "CK24E010",
+    "141P-B",
+    "CK24G040",
+    "CK25T010",
+    "CK23A030",
+    "CK25R010",
+    "CK24J030",
+    "CK23R010"
+  ],
+  "_debug_counts": {
+    "packed_unpacked": 36,
+    "fragments": 0,
+    "plain": 54
+  },
+  "units": {
+    "angles": "deg",
+    "dist": "au",
+    "epoch_time_scale": "TDB",
+    "frame": "ecliptic J2000",
+    "period_days": "days",
+    "period_years": "Julian years",
+    "n_deg_per_day": "deg/day"
+  }
+}
