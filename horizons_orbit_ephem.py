@@ -45,9 +45,7 @@ PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 
 # ---------- orbit helpers ----------
 
-def _fnum(x) -> Optional[float]:
-    """Parse a float, returning None on error/NaN."""
-    try:
+...
         if x is None:
             return None
         v = float(x)
@@ -63,73 +61,53 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
     Get orbital elements for `label`:
 
     1. Try JPL SBDB via sbdb_elements(label)
-    2. Fallback to Horizons elements(idspec)
-    3. Enrich with:
-        - a_au, Q_au
-        - period_days, period_years
-        - n_deg_per_day (mean motion)
-    """
-    # 1) SBDB
-    base = sbdb_elements(label)
+    2. Fallback to Horizons' own osculating elements via horizons_elements(label)
 
-    # 2) Fallback to Horizons elements if SBDB didn't work
+    Returns:
+        A dict of orbital elements extended with:
+          - a_au: semi-major axis [au]
+          - Q_au: apoapsis distance [au]
+          - period_yr: orbital period [years], if computable
+          - n_deg_per_day: mean motion [deg/day], if computable
+    """
+    base = None
+
+    try:
+        base = sbdb_elements(label)
+    except Exception as e:
+        print(f"[orbit] SBDB elements failed for {label}: {e!r}")
+
     if not base:
-        rec_id = resolve_ambiguous_to_record_id(label)
-        idspec = rec_id or label
-        base = horizons_elements(idspec)
+        try:
+            base = horizons_elements(label)
+        except Exception as e:
+            print(f"[orbit] Horizons elements failed for {label}: {e!r}")
 
     if not base:
         return None
 
-    out = dict(base)  # shallow copy we can mutate
+    # Extend with a, Q, period, mean motion if we have enough to do so
+    try:
+        q = _safe_float(base.get("q_au"))
+        e = _safe_float(base.get("e"))
+        if q is not None and e is not None and e != 1.0:
+            a = q / (1.0 - e)
+            base["a_au"] = a
+            base["Q_au"] = a * (1.0 + e)
+            # Kepler's third law (a^3 ~ P^2), period in years
+            if a > 0:
+                period_yr = math.sqrt(a * a * a)
+                base["period_yr"] = period_yr
+                # mean motion in deg/day: 360 degrees per period
+                base["n_deg_per_day"] = 360.0 / (period_yr * 365.25)
+    except Exception as e:
+        print(f"[orbit] Could not extend elements for {label}: {e!r}")
 
-    # Normalize basic orbital quantities
-    e = _fnum(out.get("e"))
-    q = _fnum(out.get("q_au") or out.get("q"))
-    a = _fnum(out.get("a_au") or out.get("a"))
-
-    # Only derive extras for bound (elliptic) orbits
-    if (e is not None) and (e < 1.0):
-        # Derive a from q and e if needed
-        if (a is None) and (q is not None):
-            try:
-                a = q / (1.0 - e)
-                out["a_au"] = a
-            except ZeroDivisionError:
-                pass
-
-        # Derive q from a and e if needed
-        if (q is None) and (a is not None):
-            q = a * (1.0 - e)
-            out["q_au"] = q
-
-        # Aphelion distance
-        if a is not None:
-            Q = a * (1.0 + e)
-            out["Q_au"] = Q
-
-            # Kepler's third law: P(yrs)^2 = a^3, with a in AU
-            try:
-                period_years = math.sqrt(a ** 3)
-                period_days = period_years * 365.25
-                out["period_years"] = period_years
-                out["period_days"] = period_days
-                out["n_deg_per_day"] = 360.0 / period_days
-            except Exception:
-                pass
-
-    # Default labels for clarity in UI/tooltips
-    out.setdefault("solution", "osculating")
-    out.setdefault("reference", "JPL SBDB (via Horizons)")
-
-    return out
+    return base
 
 
 # ---------- ephemeris helpers ----------
 
-def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
-    """
-    Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
 def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
     """
     Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
@@ -153,19 +131,21 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         id_value = designation
         id_type = "designation"
 
-    # Request *apparent* RA/Dec, with extra precision
+    # Create Horizons object for this target and epoch set.
     obj = Horizons(
         id=id_value,
         id_type=id_type,
         location=observer,
         epochs=epochs,
     )
-    # apparent-of-date RA/Dec via aberrations='apparent'
+
+    # Request apparent-of-date RA/Dec (equator-of-date) with extra precision.
+    # RA/DEC here are apparent-of-date because of aberrations="apparent".
     eph = obj.ephemerides(aberrations="apparent", extra_precision=True)
 
     out: List[Dict[str, Any]] = []
     for row in eph:
-        # Try to read r_au directly from the Horizons ephemeris
+        # Try to read r_au (heliocentric distance) directly from the Horizons ephemeris.
         try:
             r_au = float(row["r"])
         except Exception:
@@ -173,19 +153,17 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
 
         core = _row_to_payload_with_photometry(row, r_au=r_au, delta_vec_au=None)
 
-        # --- NEW: force ra_jnow_deg / dec_jnow_deg from apparent RA/DEC ---
-        # (RA/DEC here are apparent-of-date because of aberrations='apparent')
+        # Force ra_jnow_deg / dec_jnow_deg from apparent RA/DEC.
         try:
             ra_app = float(row["RA"])
             dec_app = float(row["DEC"])
             core["ra_jnow_deg"] = ra_app
             core["dec_jnow_deg"] = dec_app
         except Exception:
-            # If anything goes wrong, just leave whatever _row_to_payload put in
+            # If anything goes wrong, leave whatever _row_to_payload_with_photometry set.
             pass
-        # -------------------------------------------------------------------
 
-        # datetime_jd is TDB in Horizons output; convert to UTC safely
+        # datetime_jd is TDB in Horizons output; convert to UTC safely.
         jd = float(row["datetime_jd"])
         t_tdb = Time(jd, format="jd", scale="tdb")
         t_utc = t_tdb.utc
@@ -206,22 +184,19 @@ def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
       - build 15-day Horizons ephemeris
       - derive v_pred_now from the first ephemeris row (if available)
     """
+    item: Dict[str, Any] = {"id": comet_id}
     orbit = sbdb_orbit_extended(comet_id)
-    ephem: List[Dict[str, Any]] = []
-    error: Optional[str] = None
+    if orbit:
+        item["orbit"] = orbit
 
+    error = None
+    ephem: List[Dict[str, Any]] = []
     try:
         ephem = build_ephemeris_span(comet_id, observer, days=DAYS)
     except Exception as e:
-        error = str(e)
+        error = f"Horizons ephemeris failed: {e!r}"
+        print(f"[orbit_ephem] {error}")
 
-    item: Dict[str, Any] = {
-        "id": comet_id,
-        "epoch_utc": now_iso(),
-    }
-
-    if orbit:
-        item["orbit"] = orbit
     if ephem:
         item["ephemeris_15d"] = ephem
     if error and not ephem:
@@ -263,73 +238,26 @@ def main() -> None:
 
         # Attach pretty full name if present
         if cid in fullname_map:
-            item["name_full"] = fullname_map[cid]
-
-        # display_name fallback
-        item["display_name"] = item.get("name_full") or item["id"]
+            item["display_name"] = fullname_map[cid]
 
         results.append(item)
         time.sleep(PAUSE_S)
 
-    # ---- brightness filter: COBS OR predicted-now ----
-    limit = try_float_env(BRIGHT_LIMIT_ENV)
-    if limit is None:
-        limit = BRIGHT_LIMIT_DEFAULT
-
-    before = len(results)
-    filtered: List[Dict[str, Any]] = []
-
-    for it in results:
-        obs = it.get("cobs_mag")
-        pred = it.get("v_pred_now")
-
-        def _ok(v: Any) -> bool:
-            try:
-                return (v is not None) and (float(v) <= limit)
-            except Exception:
-                return False
-
-        if _ok(obs) or _ok(pred):
-            filtered.append(it)
-
-    results = filtered
-    print(f"[orbit_ephem] Brightness filter (<= {limit}) kept {len(results)}/{before}")
-
-    # Sort by same key as main script
+    # Sort for stable output (by brightness, then name)
     results.sort(key=_sort_key)
-
-    # Truncate to 15 brightest
-    if len(results) > 15:
-        results = results[:15]
-        print(f"[orbit_ephem] Truncated to top 15 brightest")
 
     payload: Dict[str, Any] = {
         "generated_utc": now_iso(),
         "observer": OBSERVER,
-        "days": DAYS,
+        "bright_limit_used": try_float_env(BRIGHT_LIMIT_ENV, BRIGHT_LIMIT_DEFAULT),
         "items": results,
-        "script": "horizons_orbit_ephem.py",
-        "filter": {
-            "mode": "cobs_or_pred_now",
-            "bright_limit": limit,
-            "max_items": 15,
-        },
-        "_debug_first_names": debug_first_names,
-        "_debug_counts": debug_counts,
-        "units": {
-            "angles": "deg",
-            "dist": "au",
-            "epoch_time_scale": "TDB",
-            "frame": "ecliptic J2000",
-            "period_days": "days",
-            "period_years": "Julian years",
-            "n_deg_per_day": "deg/day",
-        },
+        "debug_first_names": debug_first_names,
+        "debug_counts": debug_counts,
     }
 
     OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON_PATH.write_text(json.dumps(payload, indent=2))
-    print(f"[orbit_ephem] Wrote {OUT_JSON_PATH} with {len(results)} items")
+    print(f"[orbit_ephem] Wrote {OUT_JSON_PATH}")
 
 
 if __name__ == "__main__":
