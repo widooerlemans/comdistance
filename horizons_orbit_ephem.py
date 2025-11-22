@@ -2,15 +2,23 @@
 """
 Generate data/comets_orbit_ephem.json for the brightest comets.
 
-- Uses the same COBS-driven list and brightness filter as horizons_pull.py
-- For each comet:
+This version:
+
+- Uses its *own* load_cobs_designations() that calls the global COBS
+  Comet List API (no location / observer filter) and applies the
+  BRIGHT_LIMIT magnitude cut there.
+- Does NOT use the old location-based cobs_list.json produced by
+  horizons_pull.py. The cobs_list_path argument is only used as a
+  debug snapshot output.
+- For each comet that passes the COBS brightness cut:
     * Fetches osculating elements from JPL SBDB via sbdb_elements()
       and augments them with a, Q, orbital period, mean motion.
     * Builds a 15-day daily ephemeris via JPL Horizons with RA/DEC,
       r, delta, phase, and (predicted) magnitude.
-
-This script is intentionally separate from horizons_pull.py so the
-existing pipeline remains unchanged.
+    * Computes JNow (equinox-of-date) RA/Dec from the Horizons J2000 values.
+- After building all items, applies the same brightness filter
+  (COBS mag OR v_pred_now <= BRIGHT_LIMIT), sorts by brightness,
+  and truncates to the 15 brightest.
 """
 
 import json
@@ -21,13 +29,13 @@ from datetime import timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import requests
 from astropy.time import Time
 from astropy.coordinates import SkyCoord, FK5
 import astropy.units as u
 from astroquery.jplhorizons import Horizons
 
 from horizons_pull import (
-    load_cobs_designations,
     now_iso,
     OBSERVER,
     BRIGHT_LIMIT_ENV,
@@ -38,7 +46,7 @@ from horizons_pull import (
     resolve_ambiguous_to_record_id,
     sbdb_elements,
     horizons_elements,
-    QUANTITIES,  # still imported, but not used here on purpose
+    QUANTITIES,  # intentionally not used here in ephemeris
 )
 
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
@@ -46,59 +54,162 @@ DAYS = 15
 PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 
 
+# ---------- COBS global list loader ----------
+
+def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
+    """
+    Fetch a *global* comet list from the COBS Comet List API (no location filter).
+
+    - Uses BRIGHT_LIMIT (e.g. 15.0) as a maximum allowed current magnitude.
+    - Returns a dict with:
+        - keys = MPC designations (e.g. "CK25A060" or "3I")
+        - values = current magnitude (float)
+        - plus:
+            "_debug_first_names": sample of full names
+            "_debug_counts": basic stats
+            "_fullname_map": mapping MPC -> full name
+
+    NOTE: The cobs_list_path argument is used only to write a debug
+    snapshot of the raw API response, so you can inspect what COBS
+    returned. It is NOT read as an input list and has nothing to do
+    with the old, location-based cobs_list.json.
+    """
+    limit_mag = try_float_env(BRIGHT_LIMIT_ENV)
+    if limit_mag is None:
+        limit_mag = BRIGHT_LIMIT_DEFAULT
+    print(f"[orbit_ephem] COBS global list: using BRIGHT_LIMIT={limit_mag}")
+
+    base_url = "https://cobs.si/api/comet_list.api"
+
+    # Use the BRIGHT_LIMIT as the current-magnitude cutoff for the API.
+    # COBS expects an integer here; we round up a little for safety.
+    api_mag_limit = int(math.ceil(limit_mag))
+    params_base = {
+        "format": "json",
+        "cur-mag": str(api_mag_limit),
+    }
+
+    cobs_map: Dict[str, float] = {}
+    fullname_map: Dict[str, str] = {}
+    debug_counts: Dict[str, int] = {
+        "total_objects": 0,
+        "with_mpc_name": 0,
+        "within_mag_limit": 0,
+        "pages_fetched": 0,
+    }
+
+    all_objects: List[Dict[str, Any]] = []  # for optional snapshot
+    last_info: Dict[str, Any] = {}
+
+    page = 1
+    while True:
+        params = dict(params_base)
+        params["page"] = str(page)
+        print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} ...")
+
+        resp = requests.get(base_url, params=params, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        info = data.get("info", {})
+        objects = data.get("objects", [])
+        last_info = info
+        debug_counts["pages_fetched"] += 1
+        debug_counts["total_objects"] += len(objects)
+        all_objects.extend(objects)
+
+        for obj in objects:
+            # MPC designation field name per COBS docs
+            mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
+            if not mpc_name:
+                continue
+
+            debug_counts["with_mpc_name"] += 1
+
+            # Use current magnitude if available, fallback to cur_mag
+            cur_mag = obj.get("current_mag", obj.get("cur_mag"))
+            try:
+                mag_val = float(cur_mag)
+            except (TypeError, ValueError):
+                continue
+
+            # Apply the *same* BRIGHT_LIMIT cut here
+            if mag_val > limit_mag:
+                continue
+
+            debug_counts["within_mag_limit"] += 1
+
+            # Keep the "best" (brightest) value if duplicated
+            if (mpc_name not in cobs_map) or (mag_val < cobs_map[mpc_name]):
+                cobs_map[mpc_name] = mag_val
+                fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
+
+        total_pages = int(info.get("pages", 1) or 1)
+        if page >= total_pages:
+            break
+        page += 1
+
+    # Build debug helper fields expected by main()
+    comet_ids = sorted(cobs_map.keys())
+    debug_first_names = [fullname_map[cid] for cid in comet_ids[:10]]
+
+    result: Dict[str, Any] = dict(cobs_map)
+    result["_debug_first_names"] = debug_first_names
+    result["_debug_counts"] = debug_counts
+    result["_fullname_map"] = fullname_map
+
+    print(
+        f"[orbit_ephem] COBS global list: "
+        f"{debug_counts['total_objects']} objects across "
+        f"{debug_counts['pages_fetched']} pages; "
+        f"{len(comet_ids)} unique MPC IDs within cur-mag <= {api_mag_limit}"
+    )
+
+    # Optional: write a snapshot of what we fetched so you can inspect it
+    try:
+        cobs_list_path.parent.mkdir(parents=True, exist_ok=True)
+        snapshot = {
+            "info": last_info,
+            "objects": all_objects,
+            "signature": {
+                "source": "COBS Comet List API (global)",
+                "bright_limit": limit_mag,
+                "api_cur_mag_limit": api_mag_limit,
+                "fetched_utc": now_iso(),
+            },
+        }
+        cobs_list_path.write_text(json.dumps(snapshot, indent=2))
+        print(f"[orbit_ephem] Wrote COBS snapshot to {cobs_list_path}")
+    except Exception as e:
+        print(f"[orbit_ephem] Warning: could not write COBS snapshot: {e}")
+
+    return result
+
+
 # ---------- COBS ↔ Horizons ID mapping helpers ----------
-
-# Hard-coded overrides for known weird cases.
-# For now we keep this empty so Horizons sees the original IDs
-# exactly as load_cobs_designations() returns them.
-SPECIAL_ID_ALIASES: Dict[str, str] = {
-    # Example placeholder for future use:
-    # "SOME_WEIRD_ID": "Some Horizons-friendly designation",
-}
-
-
-def _strip_leading_zeros_in_interstellar(code: str) -> str:
-    """
-    Normalize interstellar-style IDs like '0003I' / '003I' / '3I' → '3I'.
-
-    Only touches patterns ending in 'I' with digits in front.
-    Other comet designations remain unchanged.
-    """
-    if not code:
-        return code
-    code = code.strip().upper()
-    m = re.fullmatch(r"0*(\d+I)", code)
-    if m:
-        return m.group(1)  # e.g. '0003I' → '3I'
-    return code
-
-
-def normalize_cobs_code(raw_code: Optional[str]) -> str:
-    """
-    Produce a key we can reliably look up in SPECIAL_ID_ALIASES.
-
-    - Trim whitespace
-    - Uppercase
-    - Apply the interstellar zero-stripping helper
-    """
-    if not raw_code:
-        return ""
-    code = raw_code.strip().upper()
-    code = _strip_leading_zeros_in_interstellar(code)
-    return code
-
 
 def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     """
     Map a COBS MPC/name-style ID to the Horizons target string.
 
-    With SPECIAL_ID_ALIASES empty, this just returns the original ID.
-    The mapping hook is kept so we can safely add overrides later.
+    We keep this extremely conservative on purpose:
+
+    - For *almost all* objects this is just an identity mapping.
+    - For 3I/ATLAS, if COBS ever gives a zero-padded code like "0003I"
+      or "003I", we map that to plain "3I" and let the Horizons /
+      SBDB logic resolve it. We do NOT try to guess "3I/ATLAS" or
+      "C/2025 N1 (ATLAS)" here.
     """
-    key = normalize_cobs_code(raw_id)
-    if key in SPECIAL_ID_ALIASES:
-        return SPECIAL_ID_ALIASES[key]
-    return raw_id
+    if not raw_id:
+        return raw_id
+
+    rid = raw_id.strip()
+
+    # Minimal special case: zero-padded 3I → "3I"
+    if rid in ("0003I", "003I"):
+        return "3I"
+
+    return rid
 
 
 # ---------- orbit helpers ----------
@@ -183,53 +294,6 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
     return out
 
 
-# ---------- Horizons ephemeris helper with fallback ----------
-
-def _get_horizons_ephemerides(
-    designation: str,
-    observer: str,
-    epochs: List[float],
-):
-    """
-    Call astroquery.Horizons.ephemerides() with a small set of fallback
-    id/id_type combinations.
-
-    This keeps the old behaviour as the *first* attempt, and only tries
-    alternatives if that fails (e.g. different id_type).
-    """
-    errors: List[Exception] = []
-
-    # Use the same ambiguity-resolution logic as horizons_pull.py
-    rec_id = resolve_ambiguous_to_record_id(designation)
-    candidates: List[tuple[str, str]] = []
-
-    if rec_id:
-        # Old behaviour first: rec_id with smallbody
-        candidates.append((rec_id, "smallbody"))
-        # Fallbacks: rec_id with other id_types
-        candidates.append((rec_id, "id"))
-        candidates.append((rec_id, "designation"))
-    else:
-        # Old behaviour first: designation with id_type="designation"
-        candidates.append((designation, "designation"))
-        # Fallbacks:
-        candidates.append((designation, "smallbody"))
-        candidates.append((designation, "id"))
-
-    last_error: Optional[Exception] = None
-    for obj_id, id_type in candidates:
-        try:
-            obj = Horizons(id=obj_id, id_type=id_type, location=observer, epochs=epochs)
-            return obj.ephemerides()
-        except Exception as e:
-            last_error = e
-            errors.append(e)
-
-    if last_error is not None:
-        raise last_error
-    raise RuntimeError(f"Horizons ephemerides failed for {designation!r} with no detail")
-
-
 # ---------- ephemeris helpers ----------
 
 def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
@@ -241,7 +305,19 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
     jd0 = Time.now().jd
     epochs = [jd0 + float(i) for i in range(days)]
 
-    eph = _get_horizons_ephemerides(designation, observer, epochs)
+    # Use the same ambiguity-resolution logic as horizons_pull.py
+    rec_id = resolve_ambiguous_to_record_id(designation)
+    if rec_id:
+        id_value = rec_id
+        id_type = "smallbody"
+    else:
+        id_value = designation
+        id_type = "designation"
+
+    # Let Horizons return the full default ephemeris so that r, alpha
+    # (phase angle), V, m1, k1 are all available.
+    obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
+    eph = obj.ephemerides()
 
     out: List[Dict[str, Any]] = []
     for row in eph:
@@ -342,8 +418,8 @@ def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
 # ---------- main ----------
 
 def main() -> None:
-    # Load the same COBS designations list used by horizons_pull.py
-    cobs_map = load_cobs_designations(Path("data/cobs_list.json"))
+    # COBS global designations (no location dependence)
+    cobs_map = load_cobs_designations(Path("data/cobs_list_global_snapshot.json"))
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
     fullname_map = cobs_map.pop("_fullname_map", {})
