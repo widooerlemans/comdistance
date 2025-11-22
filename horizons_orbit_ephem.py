@@ -25,10 +25,9 @@ from astropy.time import Time
 from astropy.coordinates import SkyCoord, FK5
 import astropy.units as u
 from astroquery.jplhorizons import Horizons
-import requests  # <-- NEW
 
 from horizons_pull import (
-    # load_cobs_designations,  # <-- REMOVE this import, we'll define our own below
+    load_cobs_designations,
     now_iso,
     OBSERVER,
     BRIGHT_LIMIT_ENV,
@@ -50,21 +49,18 @@ PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 # ---------- COBS ↔ Horizons ID mapping helpers ----------
 
 # Hard-coded overrides for known weird cases.
-# NOTE: normalize_cobs_code("0003I") and normalize_cobs_code("003I")
-# both become "3I", so only the "3I" key is actually necessary.
+# NOTE: we'll normalize COBS IDs before looking them up here.
 SPECIAL_ID_ALIASES: Dict[str, str] = {
     # Interstellar object 3I/ATLAS:
-    # Use its MPC-style designation that SBDB/Horizons both understand.
+    # If COBS ever gives you a zero-padded code like 0003I/003I, we can
+    # map that to the proper Horizons/SBDB designation. In your *current*
+    # working environment this may not be needed for 3I, but we leave it
+    # here as a safety net.
     "3I": "C/2025 N1 (ATLAS)",
-
-    # You *can* keep these redundant keys for clarity, but they are not needed
-    # because of the normalization step:
     "0003I": "C/2025 N1 (ATLAS)",
     "003I": "C/2025 N1 (ATLAS)",
 
-    # Optional but handy:
-    # If Horizons ever complains about "210P" being ambiguous, this
-    # forces the full comet name Horizons likes.
+    # Example for a periodic comet; only used if the raw ID matches:
     "210P": "210P/Christensen",
 }
 
@@ -105,139 +101,12 @@ def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     Map a COBS MPC/name-style ID to the Horizons target string.
 
     For almost all objects this is just an identity mapping, but it
-    allows us to fix known mismatches like 0003I/003I → 3I/ATLAS.
+    allows us to fix known mismatches like 0003I → C/2025 N1 (ATLAS).
     """
     key = normalize_cobs_code(raw_id)
     if key in SPECIAL_ID_ALIASES:
         return SPECIAL_ID_ALIASES[key]
     return raw_id
-
-
-def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
-    """
-    Fetch a *global* comet list from the COBS Comet List API (no location filter).
-
-    - Uses BRIGHT_LIMIT (e.g. 15.0) as a maximum allowed current magnitude.
-    - Returns a dict with:
-        - keys = MPC designations (e.g. "CK25A060")
-        - values = current magnitude (float)
-        - plus:
-            "_debug_first_names": sample of full names
-            "_debug_counts": basic stats
-            "_fullname_map": mapping MPC -> full name
-
-    The cobs_list_path argument is kept only so main() can stay unchanged;
-    we use it as the place to write a snapshot JSON for debugging.
-    """
-    # Read brightness limit from env, same as elsewhere
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV)
-    print(f"[orbit_ephem] COBS global list: using BRIGHT_LIMIT={limit_mag}")
-
-    base_url = "https://cobs.si/api/comet_list.api"
-
-    # Base query params: no location; global list, limited by current magnitude
-    params_base = {
-        "format": "json",
-        # COBS expects integer here; we clamp/round sensibly
-        "cur-mag": str(int(round(limit_mag))),
-        # You *could* add extra flags like:
-        # "is-active": "1",
-        # "is-observed": "1",
-    }
-
-    cobs_map: Dict[str, float] = {}
-    fullname_map: Dict[str, str] = {}
-    debug_counts: Dict[str, int] = {
-        "total_objects": 0,
-        "with_mpc_name": 0,
-        "within_mag_limit": 0,
-        "pages_fetched": 0,
-    }
-
-    all_objects: List[Dict[str, Any]] = []  # for optional snapshot
-    last_info: Dict[str, Any] = {}
-
-    page = 1
-    while True:
-        params = dict(params_base)
-        params["page"] = str(page)
-        print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} ...")
-
-        resp = requests.get(base_url, params=params, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-
-        info = data.get("info", {})
-        objects = data.get("objects", [])
-        last_info = info
-        debug_counts["pages_fetched"] += 1
-        debug_counts["total_objects"] += len(objects)
-        all_objects.extend(objects)
-
-        for obj in objects:
-            # MPC designation field name per COBS docs
-            mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
-            if not mpc_name:
-                continue
-
-            debug_counts["with_mpc_name"] += 1
-
-            # Use current magnitude if available, fallback to cur_mag
-            cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-            try:
-                mag_val = float(cur_mag)
-            except (TypeError, ValueError):
-                continue
-
-            if mag_val > limit_mag:
-                continue
-
-            debug_counts["within_mag_limit"] += 1
-
-            # Keep the "best" (brightest) value if duplicated
-            if (mpc_name not in cobs_map) or (mag_val < cobs_map[mpc_name]):
-                cobs_map[mpc_name] = mag_val
-                fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
-
-        total_pages = int(info.get("pages", 1) or 1)
-        if page >= total_pages:
-            break
-        page += 1
-
-    # Build debug helper fields expected by main()
-    comet_ids = sorted(cobs_map.keys())
-    debug_first_names = [fullname_map[cid] for cid in comet_ids[:10]]
-
-    result: Dict[str, Any] = dict(cobs_map)
-    result["_debug_first_names"] = debug_first_names
-    result["_debug_counts"] = debug_counts
-    result["_fullname_map"] = fullname_map
-
-    print(
-        f"[orbit_ephem] COBS global list: "
-        f"{debug_counts['total_objects']} objects across "
-        f"{debug_counts['pages_fetched']} pages; "
-        f"{len(comet_ids)} unique MPC IDs within mag <= {limit_mag}"
-    )
-
-    # Optional: write a snapshot of what we fetched so you can inspect it
-    try:
-        cobs_list_path.parent.mkdir(parents=True, exist_ok=True)
-        snapshot = {
-            "info": last_info,
-            "objects": all_objects,
-            "signature": {
-                "source": "COBS Comet List API (global)",
-                "bright_limit": limit_mag,
-                "fetched_utc": now_iso(),
-            },
-        }
-        cobs_list_path.write_text(json.dumps(snapshot, indent=2))
-        print(f"[orbit_ephem] Wrote COBS snapshot to {cobs_list_path}")
-    except Exception as e:
-        print(f"[orbit_ephem] Warning: could not write COBS snapshot: {e}")
-
-    return result
 
 
 # ---------- orbit helpers ----------
@@ -395,7 +264,7 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
 
 def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
     """
-    For a *COBS* comet ID (mpc_name key from COBS):
+    For a comet designation from COBS:
 
       - Map it (if needed) to the Horizons/SBDB target string via
         map_cobs_id_to_horizons_target().
@@ -537,4 +406,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
