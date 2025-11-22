@@ -193,6 +193,15 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
 # ---------- COBS ↔ Horizons ID normalization ----------
 
+# Specific Horizons alias for periodic comets where COBS uses the
+# provisional / packed designation but Horizons only knows the
+# numbered periodic one.
+SPECIAL_HORIZONS_ALIASES: Dict[str, str] = {
+    # P/2010 B2 (WISE) – COBS uses packed code K10B020,
+    # Horizons knows it as numbered 412P/WISE.
+    "K10B020": "412P/WISE",
+}
+
 def _strip_leading_zeros_in_interstellar(code: str) -> str:
     """
     Normalize interstellar-style IDs like '0003I' / '003I' / '3I' → '3I'.
@@ -213,17 +222,24 @@ def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     """
     Map a COBS MPC/name-style ID to the Horizons target string.
 
-    No per-object manual mapping:
-
     - Trim + uppercase
     - Strip leading zeros for generic interstellar patterns (NNNI)
-    - Otherwise return unchanged
+    - If we have a known Horizons alias (e.g. K10B020 → 412P/WISE),
+      use that.
+    - Otherwise return the normalized ID unchanged.
     """
     if not raw_id:
         return raw_id
+
     rid = raw_id.strip().upper()
     rid = _strip_leading_zeros_in_interstellar(rid)
+
+    # Check for special Horizons aliases (like K10B020 → 412P/WISE)
+    if rid in SPECIAL_HORIZONS_ALIASES:
+        return SPECIAL_HORIZONS_ALIASES[rid]
+
     return rid
+
 
 
 # ---------- orbit helpers ----------
@@ -606,3 +622,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
