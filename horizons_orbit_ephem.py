@@ -50,18 +50,22 @@ PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 # ---------- COBS ↔ Horizons ID mapping helpers ----------
 
 # Hard-coded overrides for known weird cases.
-# Keys are normalized COBS IDs (after stripping, uppercasing, and the
-# interstellar zero-stripping helper below).
-# Values are the Horizons target strings that are known to work.
+# NOTE: normalize_cobs_code("0003I") and normalize_cobs_code("003I")
+# both become "3I", so only the "3I" key is actually necessary.
 SPECIAL_ID_ALIASES: Dict[str, str] = {
-    # Interstellar object 3I/ATLAS
-    # COBS may use zero-padded codes like "0003I" or "003I";
-    # Horizons expects "3I/ATLAS".
-    "3I": "3I/ATLAS",
-    "0003I": "3I/ATLAS",
-    "003I": "3I/ATLAS",
-    # Add more oddballs here as you encounter them, e.g.:
-    # "00XYZ": "C/20XX A1 (FOO)",
+    # Interstellar object 3I/ATLAS:
+    # Use its MPC-style designation that SBDB/Horizons both understand.
+    "3I": "C/2025 N1 (ATLAS)",
+
+    # You *can* keep these redundant keys for clarity, but they are not needed
+    # because of the normalization step:
+    "0003I": "C/2025 N1 (ATLAS)",
+    "003I": "C/2025 N1 (ATLAS)",
+
+    # Optional but handy:
+    # If Horizons ever complains about "210P" being ambiguous, this
+    # forces the full comet name Horizons likes.
+    "210P": "210P/Christensen",
 }
 
 
@@ -533,3 +537,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
