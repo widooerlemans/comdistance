@@ -1,24 +1,33 @@
 #!/usr/bin/env python3
 """
-Generate data/comets_orbit_ephem.json for the brightest comets.
+Standalone generator for data/comets_orbit_ephem.json for the brightest comets.
 
-This version:
+Key points:
 
 - Uses its *own* load_cobs_designations() that calls the global COBS
   Comet List API (no location / observer filter) and applies the
   BRIGHT_LIMIT magnitude cut there.
-- Does NOT use the old location-based cobs_list.json produced by
+- Does NOT depend on the old, location-based cobs_list.json from
   horizons_pull.py. The cobs_list_path argument is only used as a
-  debug snapshot output.
+  debug snapshot output (fresh each run).
 - For each comet that passes the COBS brightness cut:
     * Fetches osculating elements from JPL SBDB via sbdb_elements()
       and augments them with a, Q, orbital period, mean motion.
     * Builds a 15-day daily ephemeris via JPL Horizons with RA/DEC,
       r, delta, phase, and (predicted) magnitude.
     * Computes JNow (equinox-of-date) RA/Dec from the Horizons J2000 values.
-- After building all items, applies the same brightness filter
+- After building all items, applies a brightness filter
   (COBS mag OR v_pred_now <= BRIGHT_LIMIT), sorts by brightness,
   and truncates to the 15 brightest.
+
+No per-comet manual mapping is used. The only normalization is:
+
+- Strip leading zeros from interstellar-style IDs like "0003I" → "3I"
+  (applied generically to any NNNI pattern).
+- For packed MPC codes like "K10B020" where Horizons doesn't recognise
+  the short code, we automatically fall back to using the full COBS
+  name "P/2010 B2 (WISE)" when querying Horizons, without hard-coding
+  that name in the script.
 """
 
 import json
@@ -27,7 +36,7 @@ import time
 import re
 from datetime import timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from astropy.time import Time
@@ -52,6 +61,7 @@ from horizons_pull import (
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
 DAYS = 15
 PAUSE_S = 0.25  # small courtesy delay between Horizons calls
+COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
 
 # ---------- COBS global list loader ----------
@@ -68,11 +78,6 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
             "_debug_first_names": sample of full names
             "_debug_counts": basic stats
             "_fullname_map": mapping MPC -> full name
-
-    NOTE: The cobs_list_path argument is used only to write a debug
-    snapshot of the raw API response, so you can inspect what COBS
-    returned. It is NOT read as an input list and has nothing to do
-    with the old, location-based cobs_list.json.
     """
     limit_mag = try_float_env(BRIGHT_LIMIT_ENV)
     if limit_mag is None:
@@ -133,7 +138,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
             except (TypeError, ValueError):
                 continue
 
-            # Apply the *same* BRIGHT_LIMIT cut here
+            # Apply the BRIGHT_LIMIT cut here
             if mag_val > limit_mag:
                 continue
 
@@ -186,29 +191,38 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     return result
 
 
-# ---------- COBS ↔ Horizons ID mapping helpers ----------
+# ---------- COBS ↔ Horizons ID normalization ----------
+
+def _strip_leading_zeros_in_interstellar(code: str) -> str:
+    """
+    Normalize interstellar-style IDs like '0003I' / '003I' / '3I' → '3I'.
+
+    Only touches patterns ending in 'I' with digits in front.
+    Other comet designations remain unchanged.
+    """
+    if not code:
+        return code
+    code = code.strip().upper()
+    m = re.fullmatch(r"0*(\d+I)", code)
+    if m:
+        return m.group(1)  # e.g. '0003I' → '3I'
+    return code
+
 
 def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     """
     Map a COBS MPC/name-style ID to the Horizons target string.
 
-    We keep this extremely conservative on purpose:
+    No per-object manual mapping:
 
-    - For *almost all* objects this is just an identity mapping.
-    - For 3I/ATLAS, if COBS ever gives a zero-padded code like "0003I"
-      or "003I", we map that to plain "3I" and let the Horizons /
-      SBDB logic resolve it. We do NOT try to guess "3I/ATLAS" or
-      "C/2025 N1 (ATLAS)" here.
+    - Trim + uppercase
+    - Strip leading zeros for generic interstellar patterns (NNNI)
+    - Otherwise return unchanged
     """
     if not raw_id:
         return raw_id
-
-    rid = raw_id.strip()
-
-    # Minimal special case: zero-padded 3I → "3I"
-    if rid in ("0003I", "003I"):
-        return "3I"
-
+    rid = raw_id.strip().upper()
+    rid = _strip_leading_zeros_in_interstellar(rid)
     return rid
 
 
@@ -294,30 +308,96 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
     return out
 
 
-# ---------- ephemeris helpers ----------
+# ---------- Horizons ephemeris helper with generic fallback ----------
 
-def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
+def _get_horizons_ephemerides_for_label(
+    label: str,
+    observer: str,
+    epochs: List[float],
+):
+    """
+    Core helper: given a *single* label string, try the standard
+    Horizons resolution path (rec_id + a couple of id_types).
+    """
+    errors: List[Exception] = []
+
+    # 1) Try with rec_id if available
+    rec_id = resolve_ambiguous_to_record_id(label)
+    candidates: List[Tuple[str, str]] = []
+    if rec_id:
+        candidates.append((rec_id, "smallbody"))
+        candidates.append((rec_id, "id"))
+        candidates.append((rec_id, "designation"))
+
+    # 2) Try the label itself under several id_types
+    candidates.append((label, "designation"))
+    candidates.append((label, "smallbody"))
+    candidates.append((label, "id"))
+
+    last_error: Optional[Exception] = None
+    for obj_id, id_type in candidates:
+        try:
+            obj = Horizons(id=obj_id, id_type=id_type, location=observer, epochs=epochs)
+            return obj.ephemerides(), obj_id, id_type
+        except Exception as e:
+            last_error = e
+            errors.append(e)
+
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"Horizons ephemerides failed for {label!r} with no detail")
+
+
+def build_ephemeris_span(
+    primary_label: str,
+    observer: str,
+    days: int = DAYS,
+    alt_label: Optional[str] = None,
+) -> Tuple[List[Dict[str, Any]], str]:
     """
     Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
 
     We query Horizons at 1-day spacing starting at *now*.
+
+    - primary_label: main ID from COBS (after normalization)
+    - alt_label: optional full name from COBS, e.g. "P/2010 B2 (WISE)"
+
+    This will try the primary label first; if that fails, it will try
+    the alt_label (if provided). The first one that works wins, and the
+    function returns (ephemeris_list, label_used_for_horizons).
     """
     jd0 = Time.now().jd
     epochs = [jd0 + float(i) for i in range(days)]
 
-    # Use the same ambiguity-resolution logic as horizons_pull.py
-    rec_id = resolve_ambiguous_to_record_id(designation)
-    if rec_id:
-        id_value = rec_id
-        id_type = "smallbody"
-    else:
-        id_value = designation
-        id_type = "designation"
+    errors: List[str] = []
+    eph = None
+    label_used = primary_label
 
-    # Let Horizons return the full default ephemeris so that r, alpha
-    # (phase angle), V, m1, k1 are all available.
-    obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
-    eph = obj.ephemerides()
+    # Try primary label
+    try:
+        eph_primary, used_id, used_type = _get_horizons_ephemerides_for_label(
+            primary_label, observer, epochs
+        )
+        eph = eph_primary
+        label_used = used_id  # what we actually passed to Horizons
+    except Exception as e:
+        errors.append(f"{primary_label}: {e}")
+
+    # If that failed and we have an alternate label, try that
+    if eph is None and alt_label:
+        try:
+            eph_alt, used_id, used_type = _get_horizons_ephemerides_for_label(
+                alt_label, observer, epochs
+            )
+            eph = eph_alt
+            label_used = used_id
+        except Exception as e:
+            errors.append(f"{alt_label}: {e}")
+
+    if eph is None:
+        raise RuntimeError(
+            "Horizons ephemerides resolution failed for labels: " + "; ".join(errors)
+        )
 
     out: List[Dict[str, Any]] = []
     for row in eph:
@@ -362,36 +442,52 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         entry.update(core)
         out.append(entry)
 
-    return out
+    return out, label_used
 
 
-def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
+# ---------- per-comet wrapper ----------
+
+def fetch_orbit_and_ephem(
+    comet_id: str,
+    observer: str,
+    full_name: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     For a comet designation from COBS:
 
-      - Map it (if needed) to the Horizons/SBDB target string via
-        map_cobs_id_to_horizons_target().
-      - Fetch extended orbit from SBDB/Horizons using that target.
-      - Build 15-day Horizons ephemeris using that target.
+      - Normalize the COBS ID via map_cobs_id_to_horizons_target().
+      - Fetch extended orbit from SBDB/Horizons using that primary label,
+        with fallback to the full name if needed.
+      - Build 15-day Horizons ephemeris using the same labels, with a
+        generic fallback from primary_label -> full_name.
       - Derive v_pred_now from the first ephemeris row (if available).
 
     We keep the original COBS ID in the 'id' field, and store the
-    Horizons label in 'horizons_target' for transparency.
+    actual Horizons label we ended up using in 'horizons_target' for
+    transparency. No manual per-comet name mapping is used.
     """
-    horizons_target = map_cobs_id_to_horizons_target(comet_id)
+    primary_label = map_cobs_id_to_horizons_target(comet_id)
 
-    orbit = sbdb_orbit_extended(horizons_target)
+    # --- orbit ---
+    orbit = sbdb_orbit_extended(primary_label)
+    if not orbit and full_name and full_name != primary_label:
+        orbit = sbdb_orbit_extended(full_name)
+
+    # --- ephemeris ---
     ephem: List[Dict[str, Any]] = []
     error: Optional[str] = None
+    label_used_for_ephem: str = primary_label
 
     try:
-        ephem = build_ephemeris_span(horizons_target, observer, days=DAYS)
+        ephem, label_used_for_ephem = build_ephemeris_span(
+            primary_label, observer, days=DAYS, alt_label=full_name
+        )
     except Exception as e:
         error = str(e)
 
     item: Dict[str, Any] = {
-        "id": comet_id,  # original COBS ID
-        "horizons_target": horizons_target,  # what we actually fed to Horizons/SBDB
+        "id": comet_id,  # original COBS ID (e.g. "K10B020")
+        "horizons_target": label_used_for_ephem,  # what we actually fed to Horizons
         "epoch_utc": now_iso(),
     }
 
@@ -419,7 +515,7 @@ def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
 
 def main() -> None:
     # COBS global designations (no location dependence)
-    cobs_map = load_cobs_designations(Path("data/cobs_list_global_snapshot.json"))
+    cobs_map = load_cobs_designations(COBS_SNAPSHOT_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
     fullname_map = cobs_map.pop("_fullname_map", {})
@@ -430,15 +526,16 @@ def main() -> None:
     results: List[Dict[str, Any]] = []
     for cid in comet_ids:
         print(f"[orbit_ephem] Fetching {cid} ...")
-        item = fetch_orbit_and_ephem(cid, OBSERVER)
+        full_name = fullname_map.get(cid)
+        item = fetch_orbit_and_ephem(cid, OBSERVER, full_name=full_name)
 
         # Attach observed magnitude from COBS
         if cid in cobs_map:
             item["cobs_mag"] = cobs_map[cid]
 
         # Attach pretty full name if present
-        if cid in fullname_map:
-            item["name_full"] = fullname_map[cid]
+        if full_name:
+            item["name_full"] = full_name
 
         # display_name fallback
         item["display_name"] = item.get("name_full") or item["id"]
