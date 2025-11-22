@@ -1,1716 +1,1153 @@
 {
-  "generated_utc": "2025-11-22T16:46:45Z",
+  "generated_utc": "2025-11-22T16:56:19Z",
   "observer": "500",
   "days": 15,
   "items": [
     {
-      "id": "K25A060",
-      "horizons_target": "K25A060",
-      "epoch_utc": "2025-11-22T16:46:30Z",
+      "id": "C/2025 K1",
+      "horizons_target": "C/2025 K1",
+      "epoch_utc": "2025-11-22T16:55:48Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.198950818,
+        "epoch_jd_tdb": 2461002.205404038,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.5298948831580379,
-        "e": 0.9954735101336321,
-        "i_deg": 143.6637656980655,
-        "Omega_deg": 108.0980471811799,
-        "omega_deg": 132.9636001257268,
-        "Tp_jd_tdb": 2460988.03819118,
-        "a_au": 117.06529757090246,
-        "Q_au": 233.60070025864687,
-        "period_years": 1266.608097324072,
-        "period_days": 462628.60754761734,
-        "n_deg_per_day": 0.0007781619945821141,
+        "q_au": 0.334195020385595,
+        "e": 1.00023667934925,
+        "i_deg": 147.8644825353893,
+        "Omega_deg": 97.55746404792458,
+        "omega_deg": 271.0199170592932,
+        "Tp_jd_tdb": 2460956.940081354,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:20Z",
-          "r_au": 0.623582879977,
-          "delta_au": 1.47434432292253,
-          "phase_deg": 30.3444,
-          "ra_deg": 257.93096,
-          "dec_deg": -22.62902,
+          "epoch_utc": "2025-11-22T16:54:38Z",
+          "r_au": 1.155037707661,
+          "delta_au": 0.40637579368516,
+          "phase_deg": 56.0862,
+          "ra_deg": 153.12429,
+          "dec_deg": 56.09522,
           "vmag": null,
-          "ra_jnow_deg": 258.32155080386167,
-          "dec_jnow_deg": -22.65867585227371,
+          "ra_jnow_deg": 153.55203789546152,
+          "dec_jnow_deg": 55.96640540353452,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 8.984277718716777
+          "v_pred": 12.426321885063505
         },
         {
-          "epoch_utc": "2025-11-23T16:45:20Z",
-          "r_au": 0.635749931872,
-          "delta_au": 1.50125792711793,
-          "phase_deg": 28.1759,
-          "ra_deg": 257.99085,
-          "dec_deg": -23.27682,
+          "epoch_utc": "2025-11-23T16:54:38Z",
+          "r_au": 1.174078883975,
+          "delta_au": 0.4025728508141,
+          "phase_deg": 53.2628,
+          "ra_deg": 149.0272,
+          "dec_deg": 60.05824,
           "vmag": null,
-          "ra_jnow_deg": 258.3833769212584,
-          "dec_jnow_deg": -23.306329129328624,
+          "ra_jnow_deg": 149.48659764721756,
+          "dec_jnow_deg": 59.934342106532064,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.120069274690522
+          "v_pred": 12.437860163017577
         },
         {
-          "epoch_utc": "2025-11-24T16:45:20Z",
-          "r_au": 0.648402706387,
-          "delta_au": 1.52742212671258,
-          "phase_deg": 26.1162,
-          "ra_deg": 258.03885,
-          "dec_deg": -23.90116,
+          "epoch_utc": "2025-11-24T16:54:38Z",
+          "r_au": 1.193027347127,
+          "delta_au": 0.40127837511668,
+          "phase_deg": 50.4541,
+          "ra_deg": 143.72394,
+          "dec_deg": 63.90909,
           "vmag": null,
-          "ra_jnow_deg": 258.43326077974893,
-          "dec_jnow_deg": -23.93055169629083,
+          "ra_jnow_deg": 144.2284573849795,
+          "dec_jnow_deg": 63.79248756358776,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.256010805475185
+          "v_pred": 12.46215557619831
         },
         {
-          "epoch_utc": "2025-11-25T16:45:20Z",
-          "r_au": 0.661499621849,
-          "delta_au": 1.55283853064216,
-          "phase_deg": 24.1654,
-          "ra_deg": 258.07673,
-          "dec_deg": -24.50364,
+          "epoch_utc": "2025-11-25T16:54:38Z",
+          "r_au": 1.211884127406,
+          "delta_au": 0.40254325852554,
+          "phase_deg": 47.7224,
+          "ra_deg": 136.75209,
+          "dec_deg": 67.50515,
           "vmag": null,
-          "ra_jnow_deg": 258.4729760145161,
-          "dec_jnow_deg": -24.53293921248714,
+          "ra_jnow_deg": 137.3206229446856,
+          "dec_jnow_deg": 67.39963531904779,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.391721896342826
+          "v_pred": 12.499637727223002
         },
         {
-          "epoch_utc": "2025-11-26T16:45:20Z",
-          "r_au": 0.675001458163,
-          "delta_au": 1.57751145366531,
-          "phase_deg": 22.3238,
-          "ra_deg": 258.10608,
-          "dec_deg": -25.08576,
+          "epoch_utc": "2025-11-26T16:54:38Z",
+          "r_au": 1.230650293402,
+          "delta_au": 0.40636896912035,
+          "phase_deg": 45.1287,
+          "ra_deg": 127.53974,
+          "dec_deg": 70.65752,
           "vmag": null,
-          "ra_jnow_deg": 258.5041160936632,
-          "dec_jnow_deg": -25.114987773557065,
+          "ra_jnow_deg": 128.19512281321224,
+          "dec_jnow_deg": 70.56900231116917,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.526866782437033
+          "v_pred": 12.550208654247736
         },
         {
-          "epoch_utc": "2025-11-27T16:45:20Z",
-          "r_au": 0.688871433615,
-          "delta_au": 1.60144741424433,
-          "phase_deg": 20.5918,
-          "ra_deg": 258.12824,
-          "dec_deg": -25.64891,
+          "epoch_utc": "2025-11-27T16:54:38Z",
+          "r_au": 1.24932694401,
+          "delta_au": 0.41270821451202,
+          "phase_deg": 42.727,
+          "ra_deg": 115.60112,
+          "dec_deg": 73.12652,
           "vmag": null,
-          "ra_jnow_deg": 258.5280242561377,
-          "dec_jnow_deg": -25.678084086027233,
+          "ra_jnow_deg": 116.35960985110047,
+          "dec_jnow_deg": 73.0633420624853,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.661152432655612
+          "v_pred": 12.61325804455813
         },
         {
-          "epoch_utc": "2025-11-28T16:45:20Z",
-          "r_au": 0.703075221379,
-          "delta_au": 1.62465469818502,
-          "phase_deg": 18.9708,
-          "ra_deg": 258.14441,
-          "dec_deg": -26.19437,
+          "epoch_utc": "2025-11-28T16:54:38Z",
+          "r_au": 1.267915201042,
+          "delta_au": 0.42146997339265,
+          "phase_deg": 40.5599,
+          "ra_deg": 101.08533,
+          "dec_deg": 74.65518,
           "vmag": null,
-          "ra_jnow_deg": 258.5459035200637,
-          "dec_jnow_deg": -26.22350519775668,
+          "ra_jnow_deg": 101.93182144885343,
+          "dec_jnow_deg": 74.62640160641423,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.794325965125957
+          "v_pred": 12.687739137864652
         },
         {
-          "epoch_utc": "2025-11-29T16:45:20Z",
-          "r_au": 0.717580918787,
-          "delta_au": 1.64714298184919,
-          "phase_deg": 17.4628,
-          "ra_deg": 258.15562,
-          "dec_deg": -26.72335,
+          "epoch_utc": "2025-11-29T16:54:38Z",
+          "r_au": 1.286416202487,
+          "delta_au": 0.43252785194639,
+          "phase_deg": 38.6551,
+          "ra_deg": 85.39513,
+          "dec_deg": 75.0817,
           "vmag": null,
-          "ra_jnow_deg": 258.55878678272086,
-          "dec_jnow_deg": -26.75245857284345,
+          "ra_jnow_deg": 86.26731593954126,
+          "dec_jnow_deg": 75.09218426584579,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 9.926171642122691
+          "v_pred": 12.772287148349063
         },
         {
-          "epoch_utc": "2025-11-30T16:45:20Z",
-          "r_au": 0.732358980851,
-          "delta_au": 1.66892300672853,
-          "phase_deg": 16.0709,
-          "ra_deg": 258.16275,
-          "dec_deg": -27.23696,
+          "epoch_utc": "2025-11-30T16:54:38Z",
+          "r_au": 1.304831096434,
+          "delta_au": 0.44573021370872,
+          "phase_deg": 37.0247,
+          "ra_deg": 70.73036,
+          "dec_deg": 74.46976,
           "vmag": null,
-          "ra_jnow_deg": 258.56755672045836,
-          "dec_jnow_deg": -27.26605204329499,
+          "ra_jnow_deg": 71.55443231607786,
+          "dec_jnow_deg": 74.51638667883584,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.056507641946014
+          "v_pred": 12.865354709849651
         },
         {
-          "epoch_utc": "2025-12-01T16:45:20Z",
-          "r_au": 0.747382127891,
-          "delta_au": 1.69000629602709,
-          "phase_deg": 14.7993,
-          "ra_deg": 258.16658,
-          "dec_deg": -27.73624,
+          "epoch_utc": "2025-12-01T16:54:38Z",
+          "r_au": 1.323161035737,
+          "delta_au": 0.46091049727034,
+          "phase_deg": 35.6658,
+          "ra_deg": 58.59155,
+          "dec_deg": 73.08483,
           "vmag": null,
-          "ra_jnow_deg": 258.5729958806396,
-          "dec_jnow_deg": -27.76532368623368,
+          "ra_jnow_deg": 59.33106093283345,
+          "dec_jnow_deg": 73.15922069184793,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.185182759121815
+          "v_pred": 12.96534016171746
         },
         {
-          "epoch_utc": "2025-12-02T16:45:20Z",
-          "r_au": 0.762625235428,
-          "delta_au": 1.7104049045147,
-          "phase_deg": 13.6537,
-          "ra_deg": 258.16775,
-          "dec_deg": -28.22215,
+          "epoch_utc": "2025-12-02T16:54:38Z",
+          "r_au": 1.341407173435,
+          "delta_au": 0.47789647850961,
+          "phase_deg": 34.563,
+          "ra_deg": 49.20708,
+          "dec_deg": 71.23456,
           "vmag": null,
-          "ra_jnow_deg": 258.5757466288208,
-          "dec_jnow_deg": -28.25123192305731,
+          "ra_jnow_deg": 49.8631624175085,
+          "dec_jnow_deg": 71.32820218983193,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.31207314474805
+          "v_pred": 13.070691961849434
         },
         {
-          "epoch_utc": "2025-12-03T16:45:20Z",
-          "r_au": 0.778065212981,
-          "delta_au": 1.73013119625115,
-          "phase_deg": 12.6411,
-          "ra_deg": 258.16684,
-          "dec_deg": -28.69559,
+          "epoch_utc": "2025-12-03T16:54:38Z",
+          "r_au": 1.359570658924,
+          "delta_au": 0.4965177454783,
+          "phase_deg": 33.6918,
+          "ra_deg": 42.11543,
+          "dec_deg": 69.15827,
           "vmag": null,
-          "ra_jnow_deg": 258.5763912217621,
-          "dec_jnow_deg": -28.72467532237837,
+          "ra_jnow_deg": 42.7039336241811,
+          "dec_jnow_deg": 69.26481740334732,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.437079169016917
+          "v_pred": 13.179981899181673
         },
         {
-          "epoch_utc": "2025-12-04T16:45:20Z",
-          "r_au": 0.793680877011,
-          "delta_au": 1.74919765075804,
-          "phase_deg": 11.769,
-          "ra_deg": 258.16433,
-          "dec_deg": -29.15741,
+          "epoch_utc": "2025-12-04T16:54:38Z",
+          "r_au": 1.37765263483,
+          "delta_au": 0.51661114100348,
+          "phase_deg": 33.0225,
+          "ra_deg": 36.74091,
+          "dec_deg": 67.0106,
           "vmag": null,
-          "ra_jnow_deg": 258.5754118204103,
-          "dec_jnow_deg": -29.18650269890386,
+          "ra_jnow_deg": 37.278427454505284,
+          "dec_jnow_deg": 67.12584587048373,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.560122466943463
+          "v_pred": 13.291947610886693
         },
         {
-          "epoch_utc": "2025-12-05T16:45:20Z",
-          "r_au": 0.809452822066,
-          "delta_au": 1.76761670429223,
-          "phase_deg": 11.0452,
-          "ra_deg": 258.16062,
-          "dec_deg": -29.60838,
+          "epoch_utc": "2025-12-05T16:54:38Z",
+          "r_au": 1.395654234497,
+          "delta_au": 0.53802428199871,
+          "phase_deg": 32.5234,
+          "ra_deg": 32.61107,
+          "dec_deg": 64.883,
           "vmag": null,
-          "ra_jnow_deg": 258.5732103896249,
-          "dec_jnow_deg": -29.637483064421165,
+          "ra_jnow_deg": 33.11080105261585,
+          "dec_jnow_deg": 65.00424178393641,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.681143212856272
+          "v_pred": 13.405509652146135
         },
         {
-          "epoch_utc": "2025-12-06T16:45:20Z",
-          "r_au": 0.82536329316,
-          "delta_au": 1.78540063454887,
-          "phase_deg": 10.4763,
-          "ra_deg": 258.15606,
-          "dec_deg": -30.04925,
+          "epoch_utc": "2025-12-06T16:54:38Z",
+          "r_au": 1.413576579994,
+          "delta_au": 0.56061746447475,
+          "phase_deg": 32.1637,
+          "ra_deg": 29.38322,
+          "dec_deg": 62.82664,
           "vmag": null,
-          "ra_jnow_deg": 258.57013889259724,
-          "dec_jnow_deg": -30.07836555367794,
+          "ra_jnow_deg": 29.854817086793833,
+          "dec_jnow_deg": 62.9521300968347,
           "photometry": {
-            "M1": 10.5,
-            "K1": 11.5,
+            "M1": 14.1,
+            "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 10.80009765299133
+          "v_pred": 13.519770149780198
         }
       ],
-      "v_pred_now": 8.984277718716777,
-      "cobs_mag": 5.9,
-      "name_full": "C/2025 A6 (Lemmon)",
-      "display_name": "C/2025 A6 (Lemmon)"
-    },
-    {
-      "id": "K25K010",
-      "horizons_target": "K25K010",
-      "epoch_utc": "2025-11-22T16:46:33Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461002.19897887,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 0.3341950218541702,
-        "e": 1.000236677828662,
-        "i_deg": 147.8644824284629,
-        "Omega_deg": 97.55746395019982,
-        "omega_deg": 271.0199170689328,
-        "Tp_jd_tdb": 2460956.940081268,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2025-11-22T16:45:23Z",
-          "r_au": 1.154915077683,
-          "delta_au": 0.40640814856746,
-          "phase_deg": 56.1043,
-          "ra_deg": 153.14749,
-          "dec_deg": 56.06964,
-          "vmag": null,
-          "ra_jnow_deg": 153.57506805899058,
-          "dec_jnow_deg": 55.94079940860876,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.426287265678814
-        },
-        {
-          "epoch_utc": "2025-11-23T16:45:23Z",
-          "r_au": 1.17395685275,
-          "delta_au": 0.40258935675869,
-          "phase_deg": 53.281,
-          "ra_deg": 149.05695,
-          "dec_deg": 60.03301,
-          "vmag": null,
-          "ra_jnow_deg": 149.51610670751052,
-          "dec_jnow_deg": 59.90907410050674,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.437746055133273
-        },
-        {
-          "epoch_utc": "2025-11-24T16:45:23Z",
-          "r_au": 1.192905908287,
-          "delta_au": 0.40127855146481,
-          "phase_deg": 50.4719,
-          "ra_deg": 143.76277,
-          "dec_deg": 63.88499,
-          "vmag": null,
-          "ra_jnow_deg": 144.26694324948824,
-          "dec_jnow_deg": 63.768330462504586,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.461957588641237
-        },
-        {
-          "epoch_utc": "2025-11-25T16:45:23Z",
-          "r_au": 1.211763274199,
-          "delta_au": 0.40252693426936,
-          "phase_deg": 47.7396,
-          "ra_deg": 136.80339,
-          "dec_deg": 67.48323,
-          "vmag": null,
-          "ra_jnow_deg": 137.37144027962015,
-          "dec_jnow_deg": 67.37762786430913,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.499354764480424
-        },
-        {
-          "epoch_utc": "2025-11-26T16:45:23Z",
-          "r_au": 1.23053001886,
-          "delta_au": 0.40633629363288,
-          "phase_deg": 45.1448,
-          "ra_deg": 127.60729,
-          "dec_deg": 70.63917,
-          "vmag": null,
-          "ra_jnow_deg": 128.26204548296593,
-          "dec_jnow_deg": 70.55051884723572,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.549843032120085
-        },
-        {
-          "epoch_utc": "2025-11-27T16:45:23Z",
-          "r_au": 1.249207240991,
-          "delta_au": 0.41265963864309,
-          "phase_deg": 42.7417,
-          "ra_deg": 115.68679,
-          "dec_deg": 73.1134,
-          "vmag": null,
-          "ra_jnow_deg": 116.44461610565138,
-          "dec_jnow_deg": 73.05002908342905,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.612815185929355
-        },
-        {
-          "epoch_utc": "2025-11-28T16:45:23Z",
-          "r_au": 1.267796062281,
-          "delta_au": 0.42140620504425,
-          "phase_deg": 40.573,
-          "ra_deg": 101.18455,
-          "dec_deg": 74.6488,
-          "vmag": null,
-          "ra_jnow_deg": 102.03063060698476,
-          "dec_jnow_deg": 74.61977742811565,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.687226924114574
-        },
-        {
-          "epoch_utc": "2025-11-29T16:45:23Z",
-          "r_au": 1.286297620634,
-          "delta_au": 0.43244979494908,
-          "phase_deg": 38.6664,
-          "ra_deg": 85.49495,
-          "dec_deg": 75.08248,
-          "vmag": null,
-          "ra_jnow_deg": 86.36722796445653,
-          "dec_jnow_deg": 75.09271348445684,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.771715075896758
-        },
-        {
-          "epoch_utc": "2025-11-30T16:45:23Z",
-          "r_au": 1.304713064094,
-          "delta_au": 0.44563890056838,
-          "phase_deg": 37.0343,
-          "ra_deg": 70.81738,
-          "dec_deg": 74.4765,
-          "vmag": null,
-          "ra_jnow_deg": 71.64192853606022,
-          "dec_jnow_deg": 74.52291868132178,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.864733020068554
-        },
-        {
-          "epoch_utc": "2025-12-01T16:45:23Z",
-          "r_au": 1.323043545498,
-          "delta_au": 0.4608070251809,
-          "phase_deg": 35.6737,
-          "ra_deg": 58.66045,
-          "dec_deg": 73.09552,
-          "vmag": null,
-          "ra_jnow_deg": 59.40052826708477,
-          "dec_jnow_deg": 73.16976131805275,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 12.964679080114346
-        },
-        {
-          "epoch_utc": "2025-12-02T16:45:23Z",
-          "r_au": 1.341290217897,
-          "delta_au": 0.47778195505081,
-          "phase_deg": 34.5693,
-          "ra_deg": 49.25942,
-          "dec_deg": 71.24738,
-          "vmag": null,
-          "ra_jnow_deg": 49.91599338086378,
-          "dec_jnow_deg": 71.34092133320885,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.070001123779154
-        },
-        {
-          "epoch_utc": "2025-12-03T16:45:23Z",
-          "r_au": 1.359454230722,
-          "delta_au": 0.49639324704085,
-          "phase_deg": 33.6967,
-          "ra_deg": 42.15493,
-          "dec_deg": 69.17196,
-          "vmag": null,
-          "ra_jnow_deg": 42.7438119872595,
-          "dec_jnow_deg": 69.2784398875246,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.17926998124513
-        },
-        {
-          "epoch_utc": "2025-12-04T16:45:23Z",
-          "r_au": 1.37753672665,
-          "delta_au": 0.51647768421639,
-          "phase_deg": 33.0262,
-          "ra_deg": 36.77103,
-          "dec_deg": 67.02441,
-          "vmag": null,
-          "ra_jnow_deg": 37.30882880607666,
-          "dec_jnow_deg": 67.13960989295936,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.29122214611801
-        },
-        {
-          "epoch_utc": "2025-12-05T16:45:23Z",
-          "r_au": 1.395538839092,
-          "delta_au": 0.53788280666532,
-          "phase_deg": 32.5262,
-          "ra_deg": 32.63442,
-          "dec_deg": 64.89648,
-          "vmag": null,
-          "ra_jnow_deg": 33.13435958786762,
-          "dec_jnow_deg": 65.01768963136307,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.404776986845544
-        },
-        {
-          "epoch_utc": "2025-12-06T16:45:23Z",
-          "r_au": 1.413461690196,
-          "delta_au": 0.56046882568034,
-          "phase_deg": 32.1656,
-          "ra_deg": 29.40163,
-          "dec_deg": 62.83955,
-          "vmag": null,
-          "ra_jnow_deg": 29.87338327153687,
-          "dec_jnow_deg": 62.965016983793426,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.519035495993442
-        }
-      ],
-      "v_pred_now": 12.426287265678814,
+      "v_pred_now": 12.426321885063505,
       "cobs_mag": 9.9,
       "name_full": "C/2025 K1 (ATLAS)",
       "display_name": "C/2025 K1 (ATLAS)"
     },
     {
-      "id": "K25T010",
-      "horizons_target": "K25T010",
-      "epoch_utc": "2025-11-22T16:46:43Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461002.199093048,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 1.108827323181359,
-        "e": 0.9998748680451182,
-        "i_deg": 123.4324689499207,
-        "Omega_deg": 140.4943854513715,
-        "omega_deg": 114.1396578013412,
-        "Tp_jd_tdb": 2461011.874299139,
-        "a_au": 8861.264288793369,
-        "Q_au": 17721.419750263558,
-        "period_years": 834148.8098546205,
-        "period_days": 304672852.79940015,
-        "n_deg_per_day": 1.1815952642063184e-06,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2025-11-22T16:45:32Z",
-          "r_au": 1.120027722605,
-          "delta_au": 1.06793542055977,
-          "phase_deg": 53.6073,
-          "ra_deg": 275.45728,
-          "dec_deg": 35.37339,
-          "vmag": null,
-          "ra_jnow_deg": 275.68715108968746,
-          "dec_jnow_deg": 35.38738786793153,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.064189532099945
-        },
-        {
-          "epoch_utc": "2025-11-23T16:45:32Z",
-          "r_au": 1.117845166423,
-          "delta_au": 1.07867174416647,
-          "phase_deg": 53.3986,
-          "ra_deg": 277.21319,
-          "dec_deg": 33.95708,
-          "vmag": null,
-          "ra_jnow_deg": 277.4486565098425,
-          "dec_jnow_deg": 33.975476028869046,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.054567683247846
-        },
-        {
-          "epoch_utc": "2025-11-24T16:45:32Z",
-          "r_au": 1.115895534064,
-          "delta_au": 1.09045626479394,
-          "phase_deg": 53.1517,
-          "ra_deg": 278.88005,
-          "dec_deg": 32.55016,
-          "vmag": null,
-          "ra_jnow_deg": 279.1209377292173,
-          "dec_jnow_deg": 32.57271628417232,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.050112220700946
-        },
-        {
-          "epoch_utc": "2025-11-25T16:45:32Z",
-          "r_au": 1.114180458611,
-          "delta_au": 1.10324193010645,
-          "phase_deg": 52.8673,
-          "ra_deg": 280.46297,
-          "dec_deg": 31.15734,
-          "vmag": null,
-          "ra_jnow_deg": 280.70908710623934,
-          "dec_jnow_deg": 31.183830415467618,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.050708672842514
-        },
-        {
-          "epoch_utc": "2025-11-26T16:45:32Z",
-          "r_au": 1.112701387015,
-          "delta_au": 1.11698000827,
-          "phase_deg": 52.5462,
-          "ra_deg": 281.96698,
-          "dec_deg": 29.78272,
-          "vmag": null,
-          "ra_jnow_deg": 282.21812351071935,
-          "dec_jnow_deg": 29.812930677983832,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.056236289020013
-        },
-        {
-          "epoch_utc": "2025-11-27T16:45:32Z",
-          "r_au": 1.111459574852,
-          "delta_au": 1.13162062988453,
-          "phase_deg": 52.1894,
-          "ra_deg": 283.39692,
-          "dec_deg": 28.42977,
-          "vmag": null,
-          "ra_jnow_deg": 283.6528811293251,
-          "dec_jnow_deg": 28.46349934436683,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.066570126545718
-        },
-        {
-          "epoch_utc": "2025-11-28T16:45:32Z",
-          "r_au": 1.110456081716,
-          "delta_au": 1.14711329025423,
-          "phase_deg": 51.7979,
-          "ra_deg": 284.75741,
-          "dec_deg": 27.10138,
-          "vmag": null,
-          "ra_jnow_deg": 285.0179782653013,
-          "dec_jnow_deg": 27.138438486117916,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.08158287539873
-        },
-        {
-          "epoch_utc": "2025-11-29T16:45:32Z",
-          "r_au": 1.109691767287,
-          "delta_au": 1.16340730524047,
-          "phase_deg": 51.3729,
-          "ra_deg": 286.0529,
-          "dec_deg": 25.79992,
-          "vmag": null,
-          "ra_jnow_deg": 286.31786634860663,
-          "dec_jnow_deg": 25.840129981086896,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.101146402321902
-        },
-        {
-          "epoch_utc": "2025-11-30T16:45:32Z",
-          "r_au": 1.109167288121,
-          "delta_au": 1.1804522158042,
-          "phase_deg": 50.9156,
-          "ra_deg": 287.28755,
-          "dec_deg": 24.52728,
-          "vmag": null,
-          "ra_jnow_deg": 287.5567091358446,
-          "dec_jnow_deg": 24.5704751331917,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.125133010618038
-        },
-        {
-          "epoch_utc": "2025-12-01T16:45:32Z",
-          "r_au": 1.108883095168,
-          "delta_au": 1.19819813735525,
-          "phase_deg": 50.4276,
-          "ra_deg": 288.4653,
-          "dec_deg": 23.28486,
-          "vmag": null,
-          "ra_jnow_deg": 288.7384522603987,
-          "dec_jnow_deg": 23.33088477782674,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.153416422054798
-        },
-        {
-          "epoch_utc": "2025-12-02T16:45:32Z",
-          "r_au": 1.108839432072,
-          "delta_au": 1.21659605059946,
-          "phase_deg": 49.9101,
-          "ra_deg": 289.58987,
-          "dec_deg": 22.07372,
-          "vmag": null,
-          "ra_jnow_deg": 289.8668224205537,
-          "dec_jnow_deg": 22.12242923151807,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.18587249570201
-        },
-        {
-          "epoch_utc": "2025-12-03T16:45:32Z",
-          "r_au": 1.109036334229,
-          "delta_au": 1.23559803174785,
-          "phase_deg": 49.3647,
-          "ra_deg": 290.66471,
-          "dec_deg": 20.89455,
-          "vmag": null,
-          "ra_jnow_deg": 290.94527718091024,
-          "dec_jnow_deg": 20.945808138424407,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.222379704119067
-        },
-        {
-          "epoch_utc": "2025-12-04T16:45:32Z",
-          "r_au": 1.109473628648,
-          "delta_au": 1.25515742310127,
-          "phase_deg": 48.7928,
-          "ra_deg": 291.69308,
-          "dec_deg": 19.74773,
-          "vmag": null,
-          "ra_jnow_deg": 291.97708463185603,
-          "dec_jnow_deg": 19.80141063669423,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.262819396423145
-        },
-        {
-          "epoch_utc": "2025-12-05T16:45:32Z",
-          "r_au": 1.110150934593,
-          "delta_au": 1.27522895054418,
-          "phase_deg": 48.196,
-          "ra_deg": 292.678,
-          "dec_deg": 18.63341,
-          "vmag": null,
-          "ra_jnow_deg": 292.96527302418383,
-          "dec_jnow_deg": 18.68939522416592,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.307075886684974
-        },
-        {
-          "epoch_utc": "2025-12-06T16:45:32Z",
-          "r_au": 1.11106766501,
-          "delta_au": 1.29576880034272,
-          "phase_deg": 47.5757,
-          "ra_deg": 293.6223,
-          "dec_deg": 17.55149,
-          "vmag": null,
-          "ra_jnow_deg": 293.9126807532776,
-          "dec_jnow_deg": 17.609669867059107,
-          "photometry": {
-            "M1": 11.1,
-            "K1": 37.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 13.355036414410112
-        }
-      ],
-      "v_pred_now": 13.064189532099945,
-      "cobs_mag": 10.0,
-      "name_full": "C/2025 T1 (ATLAS)",
-      "display_name": "C/2025 T1 (ATLAS)"
-    },
-    {
-      "id": "0003I",
+      "id": "3I",
       "horizons_target": "C/2025 N1 (ATLAS)",
-      "epoch_utc": "2025-11-22T16:46:07Z",
+      "epoch_utc": "2025-11-22T16:53:45Z",
       "error": "Unknown target (C/2025 N1 (ATLAS)). Maybe try different id_type?",
-      "cobs_mag": 10.1,
+      "cobs_mag": 10.0,
       "name_full": "3I/ATLAS",
       "display_name": "3I/ATLAS"
     },
     {
+      "id": "C/2025 T1",
+      "horizons_target": "C/2025 T1",
+      "epoch_utc": "2025-11-22T16:56:02Z",
+      "orbit": {
+        "epoch_jd_tdb": 2461002.205564666,
+        "frame": "ecliptic J2000",
+        "type": "comet",
+        "q_au": 1.108827323000807,
+        "e": 0.999874868900571,
+        "i_deg": 123.432468947483,
+        "Omega_deg": 140.4943854643641,
+        "omega_deg": 114.1396578989505,
+        "Tp_jd_tdb": 2461011.874299212,
+        "a_au": 8861.32486696302,
+        "Q_au": 17721.540906603037,
+        "period_years": 834157.3635935958,
+        "period_days": 304675977.05256087,
+        "n_deg_per_day": 1.1815831477185842e-06,
+        "solution": "osculating",
+        "reference": "JPL SBDB (via Horizons)"
+      },
+      "ephemeris_15d": [
+        {
+          "epoch_utc": "2025-11-22T16:54:52Z",
+          "r_au": 1.120012850629,
+          "delta_au": 1.06800144508633,
+          "phase_deg": 53.6061,
+          "ra_deg": 275.46894,
+          "dec_deg": 35.36421,
+          "vmag": null,
+          "ra_jnow_deg": 275.6988477924108,
+          "dec_jnow_deg": 35.3782371178233,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.064110410278879
+        },
+        {
+          "epoch_utc": "2025-11-23T16:54:52Z",
+          "r_au": 1.117831796433,
+          "delta_au": 1.07874470004721,
+          "phase_deg": 53.3971,
+          "ra_deg": 277.22426,
+          "dec_deg": 33.94794,
+          "vmag": null,
+          "ra_jnow_deg": 277.45976217501294,
+          "dec_jnow_deg": 33.966363709866435,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.054522352431924
+        },
+        {
+          "epoch_utc": "2025-11-24T16:54:52Z",
+          "r_au": 1.115883677214,
+          "delta_au": 1.09053585409155,
+          "phase_deg": 53.15,
+          "ra_deg": 278.89056,
+          "dec_deg": 32.54109,
+          "vmag": null,
+          "ra_jnow_deg": 279.1314822255385,
+          "dec_jnow_deg": 32.5636724622212,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.050099964956534
+        },
+        {
+          "epoch_utc": "2025-11-25T16:54:52Z",
+          "r_au": 1.114170124872,
+          "delta_au": 1.1033278421961,
+          "phase_deg": 52.8654,
+          "ra_deg": 280.47296,
+          "dec_deg": 31.14838,
+          "vmag": null,
+          "ra_jnow_deg": 280.71911030362924,
+          "dec_jnow_deg": 31.174895186323806,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.05072872841947
+        },
+        {
+          "epoch_utc": "2025-11-26T16:54:52Z",
+          "r_au": 1.112692585134,
+          "delta_au": 1.11707192345965,
+          "phase_deg": 52.544,
+          "ra_deg": 281.97647,
+          "dec_deg": 29.77389,
+          "vmag": null,
+          "ra_jnow_deg": 282.22764536816777,
+          "dec_jnow_deg": 29.804124091667607,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.056287858570306
+        },
+        {
+          "epoch_utc": "2025-11-27T16:54:52Z",
+          "r_au": 1.111452312323,
+          "delta_au": 1.13171822280209,
+          "phase_deg": 52.187,
+          "ra_deg": 283.40594,
+          "dec_deg": 28.42109,
+          "vmag": null,
+          "ra_jnow_deg": 283.6619316250544,
+          "dec_jnow_deg": 28.454841478440724,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.066652391848178
+        },
+        {
+          "epoch_utc": "2025-11-28T16:54:52Z",
+          "r_au": 1.110450364749,
+          "delta_au": 1.1472162329534,
+          "phase_deg": 51.7952,
+          "ra_deg": 284.766,
+          "dec_deg": 27.09287,
+          "vmag": null,
+          "ra_jnow_deg": 285.0265973933991,
+          "dec_jnow_deg": 27.129949444265076,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.081695008218386
+        },
+        {
+          "epoch_utc": "2025-11-29T16:54:52Z",
+          "r_au": 1.109687600789,
+          "delta_au": 1.16351526998884,
+          "phase_deg": 51.37,
+          "ra_deg": 286.06108,
+          "dec_deg": 25.79159,
+          "vmag": null,
+          "ra_jnow_deg": 286.326074135725,
+          "dec_jnow_deg": 25.831819819268425,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.10128757353589
+        },
+        {
+          "epoch_utc": "2025-11-30T16:54:52Z",
+          "r_au": 1.109164675672,
+          "delta_au": 1.18056487752566,
+          "phase_deg": 50.9126,
+          "ra_deg": 287.29535,
+          "dec_deg": 24.51914,
+          "vmag": null,
+          "ra_jnow_deg": 287.5645356158264,
+          "dec_jnow_deg": 24.56235393231348,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.12530239737192
+        },
+        {
+          "epoch_utc": "2025-12-01T16:54:52Z",
+          "r_au": 1.108882039015,
+          "delta_au": 1.19831517570393,
+          "phase_deg": 50.4243,
+          "ra_deg": 288.47275,
+          "dec_deg": 23.27692,
+          "vmag": null,
+          "ra_jnow_deg": 288.7459274692774,
+          "dec_jnow_deg": 23.322962618794598,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.153613213351477
+        },
+        {
+          "epoch_utc": "2025-12-02T16:54:52Z",
+          "r_au": 1.108839933113,
+          "delta_au": 1.21671715164588,
+          "phase_deg": 49.9067,
+          "ra_deg": 289.59698,
+          "dec_deg": 22.06599,
+          "vmag": null,
+          "ra_jnow_deg": 289.87395638832345,
+          "dec_jnow_deg": 22.114716147450483,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.186095896129613
+        },
+        {
+          "epoch_utc": "2025-12-03T16:54:52Z",
+          "r_au": 1.109038392015,
+          "delta_au": 1.2357228892711,
+          "phase_deg": 49.3611,
+          "ra_deg": 290.67151,
+          "dec_deg": 20.88702,
+          "vmag": null,
+          "ra_jnow_deg": 290.95209999819815,
+          "dec_jnow_deg": 20.938294209913064,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.222628936282039
+        },
+        {
+          "epoch_utc": "2025-12-04T16:54:52Z",
+          "r_au": 1.109477241382,
+          "delta_au": 1.2552857395097,
+          "phase_deg": 48.789,
+          "ra_deg": 291.69959,
+          "dec_deg": 19.74042,
+          "vmag": null,
+          "ra_jnow_deg": 291.9836163022485,
+          "dec_jnow_deg": 19.794115919975592,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.263093701990565
+        },
+        {
+          "epoch_utc": "2025-12-05T16:54:52Z",
+          "r_au": 1.110156099136,
+          "delta_au": 1.27536043748742,
+          "phase_deg": 48.1921,
+          "ra_deg": 292.68424,
+          "dec_deg": 18.6263,
+          "vmag": null,
+          "ra_jnow_deg": 292.9715336551922,
+          "dec_jnow_deg": 18.682299775046427,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.307374526482931
+        },
+        {
+          "epoch_utc": "2025-12-06T16:54:52Z",
+          "r_au": 1.111074376894,
+          "delta_au": 1.29590317910917,
+          "phase_deg": 47.5716,
+          "ra_deg": 293.62829,
+          "dec_deg": 17.5446,
+          "vmag": null,
+          "ra_jnow_deg": 293.9186903447651,
+          "dec_jnow_deg": 17.602793740539564,
+          "photometry": {
+            "M1": 11.1,
+            "K1": 37.0,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.355358667872341
+        }
+      ],
+      "v_pred_now": 13.064110410278879,
+      "cobs_mag": 10.1,
+      "name_full": "C/2025 T1 (ATLAS)",
+      "display_name": "C/2025 T1 (ATLAS)"
+    },
+    {
       "id": "210P",
       "horizons_target": "210P/Christensen",
-      "epoch_utc": "2025-11-22T16:46:11Z",
+      "epoch_utc": "2025-11-22T16:52:52Z",
       "error": "Unknown target (210P/Christensen). Maybe try different id_type?",
-      "cobs_mag": 10.7,
+      "cobs_mag": 10.8,
       "name_full": "210P/Christensen",
       "display_name": "210P/Christensen"
     },
     {
-      "id": "K25K01c",
-      "horizons_target": "K25K01c",
-      "epoch_utc": "2025-11-22T16:46:38Z",
+      "id": "C/2025 R2",
+      "horizons_target": "C/2025 R2",
+      "epoch_utc": "2025-11-22T16:55:56Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.199036169,
+        "epoch_jd_tdb": 2461002.205497982,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.3369152730833286,
-        "e": 1.003146452131864,
-        "i_deg": 147.9507292267038,
-        "Omega_deg": 97.6975920952319,
-        "omega_deg": 271.5406141583787,
-        "Tp_jd_tdb": 2460956.958954032,
+        "q_au": 0.5040933689564314,
+        "e": 0.9940451059593203,
+        "i_deg": 4.472836289311402,
+        "Omega_deg": 335.3310268090832,
+        "omega_deg": 308.3520064770881,
+        "Tp_jd_tdb": 2460931.342584166,
+        "a_au": 84.65194603175362,
+        "Q_au": 168.79979869455082,
+        "period_years": 778.8528610549521,
+        "period_days": 284476.00750032126,
+        "n_deg_per_day": 0.0012654845769360479,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:28Z",
-          "r_au": 1.155357433377,
-          "delta_au": 0.40717277508537,
-          "phase_deg": 56.0707,
-          "ra_deg": 153.14268,
-          "dec_deg": 56.06981,
+          "epoch_utc": "2025-11-22T16:54:46Z",
+          "r_au": 1.531628638651,
+          "delta_au": 0.7865875346591,
+          "phase_deg": 34.3516,
+          "ra_deg": 356.55793,
+          "dec_deg": 6.63007,
           "vmag": null,
-          "ra_jnow_deg": 153.57027469561183,
-          "dec_jnow_deg": 55.940974824205234,
+          "ra_jnow_deg": 356.8887103586823,
+          "dec_jnow_deg": 6.773974519517702,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.204951819989475
+          "v_pred": 15.985730515943288
         },
         {
-          "epoch_utc": "2025-11-23T16:45:28Z",
-          "r_au": 1.174427249258,
-          "delta_au": 0.403349020046,
-          "phase_deg": 53.249,
-          "ra_deg": 149.05119,
-          "dec_deg": 60.03285,
+          "epoch_utc": "2025-11-23T16:54:46Z",
+          "r_au": 1.547608402432,
+          "delta_au": 0.80879750190395,
+          "phase_deg": 34.0454,
+          "ra_deg": 357.25389,
+          "dec_deg": 6.82612,
           "vmag": null,
-          "ra_jnow_deg": 149.51036742390167,
-          "dec_jnow_deg": 59.90892148863391,
+          "ra_jnow_deg": 357.5848883367884,
+          "dec_jnow_deg": 6.9701291899158075,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.383536370059012
+          "v_pred": 16.104793032621544
         },
         {
-          "epoch_utc": "2025-11-24T16:45:28Z",
-          "r_au": 1.193405534944,
-          "delta_au": 0.40203799362801,
-          "phase_deg": 50.4415,
-          "ra_deg": 143.75597,
-          "dec_deg": 63.88439,
+          "epoch_utc": "2025-11-24T16:54:46Z",
+          "r_au": 1.563544857018,
+          "delta_au": 0.83117313500163,
+          "phase_deg": 33.7559,
+          "ra_deg": 357.92604,
+          "dec_deg": 7.01533,
           "vmag": null,
-          "ra_jnow_deg": 144.26016685123636,
-          "dec_jnow_deg": 63.76774049866779,
+          "ra_jnow_deg": 358.2572617344827,
+          "dec_jnow_deg": 7.159420641146648,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.571400821719859
+          "v_pred": 16.221891977766866
         },
         {
-          "epoch_utc": "2025-11-25T16:45:28Z",
-          "r_au": 1.212293268171,
-          "delta_au": 0.4032909398671,
-          "phase_deg": 47.7105,
-          "ra_deg": 136.79566,
-          "dec_deg": 67.48207,
+          "epoch_utc": "2025-11-25T16:54:46Z",
+          "r_au": 1.579438079814,
+          "delta_au": 0.85370948169418,
+          "phase_deg": 33.4816,
+          "ra_deg": 358.57615,
+          "dec_deg": 7.19825,
           "vmag": null,
-          "ra_jnow_deg": 137.36373109558065,
-          "dec_jnow_deg": 67.37648109155799,
+          "ra_jnow_deg": 358.9075998570384,
+          "dec_jnow_deg": 7.342401061625834,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.769107746616301
+          "v_pred": 16.337084383419775
         },
         {
-          "epoch_utc": "2025-11-26T16:45:28Z",
-          "r_au": 1.231091468759,
-          "delta_au": 0.4071095975684,
-          "phase_deg": 45.1169,
-          "ra_deg": 127.5991,
-          "dec_deg": 70.63731,
+          "epoch_utc": "2025-11-26T16:54:46Z",
+          "r_au": 1.595288169461,
+          "delta_au": 0.87640192039336,
+          "phase_deg": 33.221,
+          "ra_deg": 359.20585,
+          "dec_deg": 7.37539,
           "vmag": null,
-          "ra_jnow_deg": 128.25385815025098,
-          "dec_jnow_deg": 70.54867510213288,
+          "ra_jnow_deg": 359.53753212552704,
+          "dec_jnow_deg": 7.519582371326385,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.976685713422501
+          "v_pred": 16.450425481272994
         },
         {
-          "epoch_utc": "2025-11-27T16:45:28Z",
-          "r_au": 1.249801190185,
-          "delta_au": 0.41344684016155,
-          "phase_deg": 42.7148,
-          "ra_deg": 115.67937,
-          "dec_deg": 73.11081,
+          "epoch_utc": "2025-11-27T16:54:46Z",
+          "r_au": 1.611095243898,
+          "delta_au": 0.89924612436678,
+          "phase_deg": 32.9727,
+          "ra_deg": 359.8166,
+          "dec_deg": 7.54723,
           "vmag": null,
-          "ra_jnow_deg": 116.4371542425889,
-          "dec_jnow_deg": 73.04745590792383,
+          "ra_jnow_deg": 0.14851804628747628,
+          "dec_jnow_deg": 7.691446255800023,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.193644535020827
+          "v_pred": 16.561968676191253
         },
         {
-          "epoch_utc": "2025-11-28T16:45:28Z",
-          "r_au": 1.268423511915,
-          "delta_au": 0.42221169496861,
-          "phase_deg": 40.5469,
-          "ra_deg": 101.17989,
-          "dec_deg": 74.64559,
+          "epoch_utc": "2025-11-28T16:54:46Z",
+          "r_au": 1.626859438582,
+          "delta_au": 0.92223803430067,
+          "phase_deg": 32.7356,
+          "ra_deg": 0.40977,
+          "dec_deg": 7.71418,
           "vmag": null,
-          "ra_jnow_deg": 102.0258667884862,
-          "dec_jnow_deg": 74.61657904701632,
+          "ra_jnow_deg": 0.7419272188608882,
+          "dec_jnow_deg": 7.858404199423163,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.419051236294695
+          "v_pred": 16.671765552663906
         },
         {
-          "epoch_utc": "2025-11-29T16:45:28Z",
-          "r_au": 1.286959532405,
-          "delta_au": 0.43327770070977,
-          "phase_deg": 38.641,
-          "ra_deg": 85.49472,
-          "dec_deg": 75.07899,
+          "epoch_utc": "2025-11-29T16:54:46Z",
+          "r_au": 1.642580904839,
+          "delta_au": 0.9453738396633,
+          "phase_deg": 32.5086,
+          "ra_deg": 0.98656,
+          "dec_deg": 7.87662,
           "vmag": null,
-          "ra_jnow_deg": 86.36686547379453,
-          "dec_jnow_deg": 75.0892242284134,
+          "ra_jnow_deg": 1.3189592905824281,
+          "dec_jnow_deg": 8.020837511837552,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.651648638368343
+          "v_pred": 16.77986590926377
         },
         {
-          "epoch_utc": "2025-11-30T16:45:28Z",
-          "r_au": 1.305410362796,
-          "delta_au": 0.44649305055503,
-          "phase_deg": 37.0094,
-          "ra_deg": 70.82148,
-          "dec_deg": 74.47314,
+          "epoch_utc": "2025-11-30T16:54:46Z",
+          "r_au": 1.658259808362,
+          "delta_au": 0.96864996893252,
+          "phase_deg": 32.2907,
+          "ra_deg": 1.54812,
+          "dec_deg": 8.0349,
           "vmag": null,
-          "ra_jnow_deg": 71.64592807328992,
-          "dec_jnow_deg": 74.5195490267903,
+          "ra_jnow_deg": 1.8807639839516852,
+          "dec_jnow_deg": 8.17909734951172,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.88999108515361
+          "v_pred": 16.886317816320656
         },
         {
-          "epoch_utc": "2025-12-01T16:45:28Z",
-          "r_au": 1.323777121364,
-          "delta_au": 0.46169093130082,
-          "phase_deg": 35.6491,
-          "ra_deg": 58.66743,
-          "dec_deg": 73.09257,
+          "epoch_utc": "2025-12-01T16:54:46Z",
+          "r_au": 1.673896327822,
+          "delta_au": 0.9920630873905,
+          "phase_deg": 32.0811,
+          "ra_deg": 2.09546,
+          "dec_deg": 8.18933,
           "vmag": null,
-          "ra_jnow_deg": 59.407462158803845,
-          "dec_jnow_deg": 73.16679629667237,
+          "ra_jnow_deg": 2.4283510523744902,
+          "dec_jnow_deg": 8.333494738599507,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.132573107561473
+          "v_pred": 16.991167689678267
         },
         {
-          "epoch_utc": "2025-12-02T16:45:28Z",
-          "r_au": 1.342060928744,
-          "delta_au": 0.47869881061343,
-          "phase_deg": 34.5448,
-          "ra_deg": 49.26778,
-          "dec_deg": 71.24496,
+          "epoch_utc": "2025-12-02T16:54:46Z",
+          "r_au": 1.689490653598,
+          "delta_au": 1.0156100985931,
+          "phase_deg": 31.8789,
+          "ra_deg": 2.62953,
+          "dec_deg": 8.3402,
           "vmag": null,
-          "ra_jnow_deg": 49.92434841345245,
-          "dec_jnow_deg": 71.33848530707807,
+          "ra_jnow_deg": 2.9626702986171383,
+          "dec_jnow_deg": 8.484320588620779,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.37793426567517
+          "v_pred": 17.094460369221927
         },
         {
-          "epoch_utc": "2025-12-03T16:45:28Z",
-          "r_au": 1.360262903933,
-          "delta_au": 0.49734593629425,
-          "phase_deg": 33.6721,
-          "ra_deg": 42.16373,
-          "dec_deg": 69.17008,
+          "epoch_utc": "2025-12-03T16:54:46Z",
+          "r_au": 1.705042986606,
+          "delta_au": 1.03928814243929,
+          "phase_deg": 31.6835,
+          "ra_deg": 3.15121,
+          "dec_deg": 8.48776,
           "vmag": null,
-          "ra_jnow_deg": 42.75262963452513,
-          "dec_jnow_deg": 69.27654491233348,
+          "ra_jnow_deg": 3.484601560147577,
+          "dec_jnow_deg": 8.631825706631242,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.624732793932445
+          "v_pred": 17.196239186152543
         },
         {
-          "epoch_utc": "2025-12-04T16:45:28Z",
-          "r_au": 1.378384161003,
-          "delta_au": 0.51746879985049,
-          "phase_deg": 33.0015,
-          "ra_deg": 36.77977,
-          "dec_deg": 67.02303,
+          "epoch_utc": "2025-12-04T16:54:46Z",
+          "r_au": 1.720553537228,
+          "delta_au": 1.06309458101738,
+          "phase_deg": 31.4941,
+          "ra_deg": 3.66129,
+          "dec_deg": 8.63227,
           "vmag": null,
-          "ra_jnow_deg": 37.317596560311216,
-          "dec_jnow_deg": 67.13821660970216,
+          "ra_jnow_deg": 3.994934700070784,
+          "dec_jnow_deg": 8.77627081357939,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.871788520190748
+          "v_pred": 17.29654600234387
         },
         {
-          "epoch_utc": "2025-12-05T16:45:28Z",
-          "r_au": 1.39642580644,
-          "delta_au": 0.53891467206958,
-          "phase_deg": 32.5012,
-          "ra_deg": 32.64286,
-          "dec_deg": 64.89556,
+          "epoch_utc": "2025-12-05T16:54:46Z",
+          "r_au": 1.736022524328,
+          "delta_au": 1.08702696577017,
+          "phase_deg": 31.3101,
+          "ra_deg": 4.16052,
+          "dec_deg": 8.77393,
           "vmag": null,
-          "ra_jnow_deg": 33.14283080642509,
-          "dec_jnow_deg": 65.01675806522115,
+          "ra_jnow_deg": 4.494419608749174,
+          "dec_jnow_deg": 8.917856549141948,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.118100289264966
+          "v_pred": 17.395421212788467
         },
         {
-          "epoch_utc": "2025-12-06T16:45:28Z",
-          "r_au": 1.414388937027,
-          "delta_au": 0.56154351942717,
-          "phase_deg": 32.1403,
-          "ra_deg": 29.40967,
-          "dec_deg": 62.83904,
+          "epoch_utc": "2025-12-06T16:54:46Z",
+          "r_au": 1.751450174348,
+          "delta_au": 1.11108298669386,
+          "phase_deg": 31.1311,
+          "ra_deg": 4.64959,
+          "dec_deg": 8.91297,
           "vmag": null,
-          "ra_jnow_deg": 29.88145465560992,
-          "dec_jnow_deg": 62.9644969466155,
+          "ra_jnow_deg": 4.9837462051414345,
+          "dec_jnow_deg": 9.056813484028257,
           "photometry": {
-            "M1": 14.4,
-            "K1": 28.0,
+            "M1": 14.1,
+            "K1": 13.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.362844918771497
+          "v_pred": 17.492903717830412
         }
       ],
-      "v_pred_now": 14.204951819989475,
-      "cobs_mag": 10.8,
-      "name_full": "C/2025 K1-C",
-      "display_name": "C/2025 K1-C"
-    },
-    {
-      "id": "K25R020",
-      "horizons_target": "K25R020",
-      "epoch_utc": "2025-11-22T16:46:40Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461002.199064655,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 0.5040933678288505,
-        "e": 0.9940451070379323,
-        "i_deg": 4.472836295025257,
-        "Omega_deg": 335.3310269290261,
-        "omega_deg": 308.3520063120507,
-        "Tp_jd_tdb": 2460931.342584246,
-        "a_au": 84.65196117543842,
-        "Q_au": 168.79982898304797,
-        "period_years": 778.8530700525589,
-        "period_days": 284476.08383669716,
-        "n_deg_per_day": 0.0012654842373556337,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2025-11-22T16:45:30Z",
-          "r_au": 1.531525687203,
-          "delta_au": 0.78644518716245,
-          "phase_deg": 34.3537,
-          "ra_deg": 356.55338,
-          "dec_deg": 6.62878,
-          "vmag": null,
-          "ra_jnow_deg": 356.88415897888956,
-          "dec_jnow_deg": 6.772683766960673,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 15.984958004201818
-        },
-        {
-          "epoch_utc": "2025-11-23T16:45:30Z",
-          "r_au": 1.547505729888,
-          "delta_au": 0.80865407180427,
-          "phase_deg": 34.0473,
-          "ra_deg": 357.24949,
-          "dec_deg": 6.82489,
-          "vmag": null,
-          "ra_jnow_deg": 357.5804869150782,
-          "dec_jnow_deg": 6.968898593156425,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.10403334305384
-        },
-        {
-          "epoch_utc": "2025-11-24T16:45:30Z",
-          "r_au": 1.563442462893,
-          "delta_au": 0.83102865524142,
-          "phase_deg": 33.7577,
-          "ra_deg": 357.92179,
-          "dec_deg": 7.01413,
-          "vmag": null,
-          "ra_jnow_deg": 358.2530102823811,
-          "dec_jnow_deg": 7.158220186704994,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.221144737283453
-        },
-        {
-          "epoch_utc": "2025-11-25T16:45:30Z",
-          "r_au": 1.579335963543,
-          "delta_au": 0.85356398303571,
-          "phase_deg": 33.4833,
-          "ra_deg": 358.57204,
-          "dec_deg": 7.19709,
-          "vmag": null,
-          "ra_jnow_deg": 358.9034883774976,
-          "dec_jnow_deg": 7.341240736220237,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.336349230803684
-        },
-        {
-          "epoch_utc": "2025-11-26T16:45:30Z",
-          "r_au": 1.595186330343,
-          "delta_au": 0.87625543159471,
-          "phase_deg": 33.2226,
-          "ra_deg": 359.20186,
-          "dec_deg": 7.37427,
-          "vmag": null,
-          "ra_jnow_deg": 359.5335406187071,
-          "dec_jnow_deg": 7.518462162916988,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.449702066992735
-        },
-        {
-          "epoch_utc": "2025-11-27T16:45:30Z",
-          "r_au": 1.610993681118,
-          "delta_au": 0.89909867238583,
-          "phase_deg": 32.9742,
-          "ra_deg": 359.81273,
-          "dec_deg": 7.54614,
-          "vmag": null,
-          "ra_jnow_deg": 0.14464651825779998,
-          "dec_jnow_deg": 7.690356154574987,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.561256662495992
-        },
-        {
-          "epoch_utc": "2025-11-28T16:45:30Z",
-          "r_au": 1.626758151215,
-          "delta_au": 0.92208964444407,
-          "phase_deg": 32.7371,
-          "ra_deg": 0.406,
-          "dec_deg": 7.71312,
-          "vmag": null,
-          "ra_jnow_deg": 0.7381556679472336,
-          "dec_jnow_deg": 7.857344196581849,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.67106461342297
-        },
-        {
-          "epoch_utc": "2025-11-29T16:45:30Z",
-          "r_au": 1.642479891864,
-          "delta_au": 0.94522453567746,
-          "phase_deg": 32.51,
-          "ra_deg": 0.9829,
-          "dec_deg": 7.87559,
-          "vmag": null,
-          "ra_jnow_deg": 1.315297724950044,
-          "dec_jnow_deg": 8.019807599040531,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.779175729678116
-        },
-        {
-          "epoch_utc": "2025-11-30T16:45:30Z",
-          "r_au": 1.65815906867,
-          "delta_au": 0.96849977303991,
-          "phase_deg": 32.2921,
-          "ra_deg": 1.54455,
-          "dec_deg": 8.03389,
-          "vmag": null,
-          "ra_jnow_deg": 1.8771924002184213,
-          "dec_jnow_deg": 8.178087520321021,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.885638092486666
-        },
-        {
-          "epoch_utc": "2025-12-01T16:45:30Z",
-          "r_au": 1.673795860226,
-          "delta_au": 0.99191202028612,
-          "phase_deg": 32.0824,
-          "ra_deg": 2.09198,
-          "dec_deg": 8.18835,
-          "vmag": null,
-          "ra_jnow_deg": 2.42486945512515,
-          "dec_jnow_deg": 8.332514986400447,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 16.990498128087772
-        },
-        {
-          "epoch_utc": "2025-12-02T16:45:30Z",
-          "r_au": 1.689390456837,
-          "delta_au": 1.01545817943683,
-          "phase_deg": 31.8802,
-          "ra_deg": 2.62614,
-          "dec_deg": 8.33924,
-          "vmag": null,
-          "ra_jnow_deg": 2.959278690475924,
-          "dec_jnow_deg": 8.483360907102526,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.093800686261154
-        },
-        {
-          "epoch_utc": "2025-12-03T16:45:30Z",
-          "r_au": 1.704943059356,
-          "delta_au": 1.039135388898,
-          "phase_deg": 31.6847,
-          "ra_deg": 3.14789,
-          "dec_deg": 8.48683,
-          "vmag": null,
-          "ra_jnow_deg": 3.4812799382692727,
-          "dec_jnow_deg": 8.630896092676652,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.19558910775535
-        },
-        {
-          "epoch_utc": "2025-12-04T16:45:30Z",
-          "r_au": 1.720453878108,
-          "delta_au": 1.06294100941174,
-          "phase_deg": 31.4953,
-          "ra_deg": 3.65804,
-          "dec_deg": 8.63135,
-          "vmag": null,
-          "ra_jnow_deg": 3.991683064309921,
-          "dec_jnow_deg": 8.775351262309265,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.295905263851957
-        },
-        {
-          "epoch_utc": "2025-12-05T16:45:30Z",
-          "r_au": 1.735923131904,
-          "delta_au": 1.08687259134911,
-          "phase_deg": 31.3113,
-          "ra_deg": 4.15734,
-          "dec_deg": 8.77303,
-          "vmag": null,
-          "ra_jnow_deg": 4.491237963307906,
-          "dec_jnow_deg": 8.916957055885725,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.394789559042398
-        },
-        {
-          "epoch_utc": "2025-12-06T16:45:30Z",
-          "r_au": 1.751351047142,
-          "delta_au": 1.11092782400277,
-          "phase_deg": 31.1322,
-          "ra_deg": 4.64648,
-          "dec_deg": 8.91208,
-          "vmag": null,
-          "ra_jnow_deg": 4.980634550445538,
-          "dec_jnow_deg": 9.055924044308068,
-          "photometry": {
-            "M1": 14.1,
-            "K1": 13.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.4922809034145
-        }
-      ],
-      "v_pred_now": 15.984958004201818,
-      "cobs_mag": 10.9,
+      "v_pred_now": 15.985730515943288,
+      "cobs_mag": 11.0,
       "name_full": "C/2025 R2 (SWAN)",
       "display_name": "C/2025 R2 (SWAN)"
     },
     {
-      "id": "K24E010",
-      "horizons_target": "K24E010",
-      "epoch_utc": "2025-11-22T16:46:28Z",
+      "id": "C/2024 E1",
+      "horizons_target": "C/2024 E1",
+      "epoch_utc": "2025-11-22T16:55:20Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.198922102,
+        "epoch_jd_tdb": 2461002.205075293,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.5662455478704423,
-        "e": 0.999942328225235,
-        "i_deg": 75.23991007335619,
-        "Omega_deg": 108.0793562097681,
-        "omega_deg": 243.6209381968133,
-        "Tp_jd_tdb": 2461061.27831038,
-        "a_au": 9818.417244443397,
-        "Q_au": 19636.268243338924,
-        "period_years": 972886.6095521706,
-        "period_days": 355346834.1389303,
-        "n_deg_per_day": 1.0130947159620688e-06,
+        "q_au": 0.566245579694086,
+        "e": 0.9999422996678842,
+        "i_deg": 75.2399100757766,
+        "Omega_deg": 108.0793562080167,
+        "omega_deg": 243.6209363786542,
+        "Tp_jd_tdb": 2461061.278311759,
+        "a_au": 9813.55841344889,
+        "Q_au": 19626.550581318086,
+        "period_years": 972164.5216702047,
+        "period_days": 355083091.5400423,
+        "n_deg_per_day": 1.0138472052798472e-06,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:18Z",
-          "r_au": 1.331825094097,
-          "delta_au": 2.11704427539035,
-          "phase_deg": 20.5572,
-          "ra_deg": 260.85858,
-          "dec_deg": -2.71321,
+          "epoch_utc": "2025-11-22T16:54:09Z",
+          "r_au": 1.331726740799,
+          "delta_au": 2.11699451935048,
+          "phase_deg": 20.5559,
+          "ra_deg": 260.86148,
+          "dec_deg": -2.71642,
           "vmag": null,
-          "ra_jnow_deg": 261.19710323713446,
-          "dec_jnow_deg": -2.735687475423309,
+          "ra_jnow_deg": 261.200011497482,
+          "dec_jnow_deg": -2.7388902734218616,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.481997470454681
+          "v_pred": 13.481778050394281
         },
         {
-          "epoch_utc": "2025-11-23T16:45:18Z",
-          "r_au": 1.315830384517,
-          "delta_au": 2.1089053967478,
-          "phase_deg": 20.3471,
-          "ra_deg": 261.33156,
-          "dec_deg": -3.23616,
+          "epoch_utc": "2025-11-23T16:54:09Z",
+          "r_au": 1.315731881753,
+          "delta_au": 2.10885497667338,
+          "phase_deg": 20.3457,
+          "ra_deg": 261.33449,
+          "dec_deg": -3.23939,
           "vmag": null,
-          "ra_jnow_deg": 261.6714310185966,
-          "dec_jnow_deg": -3.257461970731667,
+          "ra_jnow_deg": 261.67436935589103,
+          "dec_jnow_deg": -3.260684683282384,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.446085022086407
+          "v_pred": 13.445862415411009
         },
         {
-          "epoch_utc": "2025-11-24T16:45:18Z",
-          "r_au": 1.299811975289,
-          "delta_au": 2.10065762037602,
-          "phase_deg": 20.1282,
-          "ra_deg": 261.8104,
-          "dec_deg": -3.76153,
+          "epoch_utc": "2025-11-24T16:54:09Z",
+          "r_au": 1.299713330503,
+          "delta_au": 2.10060652402514,
+          "phase_deg": 20.1268,
+          "ra_deg": 261.81337,
+          "dec_deg": -3.76477,
           "vmag": null,
-          "ra_jnow_deg": 262.15162926663464,
-          "dec_jnow_deg": -3.781640147045209,
+          "ra_jnow_deg": 262.1546076563145,
+          "dec_jnow_deg": -3.784872749441679,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.409649172050235
+          "v_pred": 13.409423309694914
         },
         {
-          "epoch_utc": "2025-11-25T16:45:18Z",
-          "r_au": 1.283771138971,
-          "delta_au": 2.09229896671869,
-          "phase_deg": 19.9002,
-          "ra_deg": 262.29523,
-          "dec_deg": -4.2894,
+          "epoch_utc": "2025-11-25T16:54:09Z",
+          "r_au": 1.283672360358,
+          "delta_au": 2.09224718195092,
+          "phase_deg": 19.8988,
+          "ra_deg": 262.29823,
+          "dec_deg": -4.29266,
           "vmag": null,
-          "ra_jnow_deg": 262.6378282178368,
-          "dec_jnow_deg": -4.308301705086099,
+          "ra_jnow_deg": 262.64083668490775,
+          "dec_jnow_deg": -4.311554222391657,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.372678644314199
+          "v_pred": 13.372449456488575
         },
         {
-          "epoch_utc": "2025-11-26T16:45:18Z",
-          "r_au": 1.26770926908,
-          "delta_au": 2.08382746920319,
-          "phase_deg": 19.6629,
-          "ra_deg": 262.78615,
-          "dec_deg": -4.8199,
+          "epoch_utc": "2025-11-26T16:54:09Z",
+          "r_au": 1.267610365611,
+          "delta_au": 2.08377498395448,
+          "phase_deg": 19.6614,
+          "ra_deg": 262.78919,
+          "dec_deg": -4.82318,
           "vmag": null,
-          "ra_jnow_deg": 263.1301282282939,
-          "dec_jnow_deg": -4.837576424499269,
+          "ra_jnow_deg": 263.13317677317224,
+          "dec_jnow_deg": -4.8408488319774925,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.335162038450909
+          "v_pred": 13.33492945464454
         },
         {
-          "epoch_utc": "2025-11-27T16:45:18Z",
-          "r_au": 1.251627890169,
-          "delta_au": 2.0752411730429,
-          "phase_deg": 19.4158,
-          "ra_deg": 263.2833,
-          "dec_deg": -5.35314,
+          "epoch_utc": "2025-11-27T16:54:09Z",
+          "r_au": 1.251528871653,
+          "delta_au": 2.07518797531728,
+          "phase_deg": 19.4142,
+          "ra_deg": 263.28638,
+          "dec_deg": -5.35643,
           "vmag": null,
-          "ra_jnow_deg": 263.62866959979067,
-          "dec_jnow_deg": -5.369573989848848,
+          "ra_jnow_deg": 263.63175819741554,
+          "dec_jnow_deg": -5.372856287748841,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.297087844494717
+          "v_pred": 13.296851793572312
         },
         {
-          "epoch_utc": "2025-11-28T16:45:18Z",
-          "r_au": 1.235528668846,
-          "delta_au": 2.06653813343485,
-          "phase_deg": 19.1585,
-          "ra_deg": 263.78681,
-          "dec_deg": -5.88922,
+          "epoch_utc": "2025-11-28T16:54:09Z",
+          "r_au": 1.235429546003,
+          "delta_au": 2.0664842112892,
+          "phase_deg": 19.1569,
+          "ra_deg": 263.78993,
+          "dec_deg": -5.89253,
           "vmag": null,
-          "ra_jnow_deg": 264.13358260298287,
-          "dec_jnow_deg": -5.904394115588582,
+          "ra_jnow_deg": 264.13671127862295,
+          "dec_jnow_deg": -5.907696304135686,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.258444460485702
+          "v_pred": 13.258204870805704
         },
         {
-          "epoch_utc": "2025-11-29T16:45:18Z",
-          "r_au": 1.219413425768,
-          "delta_au": 2.05771641180806,
-          "phase_deg": 18.8908,
-          "ra_deg": 264.29684,
-          "dec_deg": -6.42827,
+          "epoch_utc": "2025-11-29T16:54:09Z",
+          "r_au": 1.219314210306,
+          "delta_au": 2.05766175331853,
+          "phase_deg": 18.8891,
+          "ra_deg": 264.3,
+          "dec_deg": -6.4316,
           "vmag": null,
-          "ra_jnow_deg": 264.6450275789735,
-          "dec_jnow_deg": -6.442166446278927,
+          "ra_jnow_deg": 264.648196332688,
+          "dec_jnow_deg": -6.445488525770673,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.219220211650887
+          "v_pred": 13.218977011184899
         },
         {
-          "epoch_utc": "2025-11-30T16:45:18Z",
-          "r_au": 1.203284148698,
-          "delta_au": 2.04877406774317,
-          "phase_deg": 18.6122,
-          "ra_deg": 264.81355,
-          "dec_deg": -6.97042,
+          "epoch_utc": "2025-11-30T16:54:09Z",
+          "r_au": 1.203184853395,
+          "delta_au": 2.04871866093566,
+          "phase_deg": 18.6104,
+          "ra_deg": 264.81675,
+          "dec_deg": -6.97377,
           "vmag": null,
-          "ra_jnow_deg": 265.16316486282795,
-          "dec_jnow_deg": -6.9830206320343375,
+          "ra_jnow_deg": 265.1663736946206,
+          "dec_jnow_deg": -6.986362602811225,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.179403369170556
+          "v_pred": 13.17915648560829
         },
         {
-          "epoch_utc": "2025-12-01T16:45:18Z",
-          "r_au": 1.187143006725,
-          "delta_au": 2.03970914330578,
-          "phase_deg": 18.3223,
-          "ra_deg": 265.33711,
-          "dec_deg": -7.51579,
+          "epoch_utc": "2025-12-01T16:54:09Z",
+          "r_au": 1.187043645523,
+          "delta_au": 2.0396529760289,
+          "phase_deg": 18.3205,
+          "ra_deg": 265.34035,
+          "dec_deg": -7.51916,
           "vmag": null,
-          "ra_jnow_deg": 265.68816475765703,
-          "dec_jnow_deg": -7.527076303985932,
+          "ra_jnow_deg": 265.69141366747294,
+          "dec_jnow_deg": -7.530438166433655,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.138982165526931
+          "v_pred": 13.138731526358383
         },
         {
-          "epoch_utc": "2025-12-02T16:45:18Z",
-          "r_au": 1.170992365752,
-          "delta_au": 2.03051963667513,
-          "phase_deg": 18.0207,
-          "ra_deg": 265.8677,
-          "dec_deg": -8.06451,
+          "epoch_utc": "2025-12-02T16:54:09Z",
+          "r_au": 1.170892953853,
+          "delta_au": 2.03046269640102,
+          "phase_deg": 18.0188,
+          "ra_deg": 265.87098,
+          "dec_deg": -8.0679,
           "vmag": null,
-          "ra_jnow_deg": 266.2202075847317,
-          "dec_jnow_deg": -8.074463074681265,
+          "ra_jnow_deg": 266.22349657245496,
+          "dec_jnow_deg": -8.077844829233003,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.09794480351766
+          "v_pred": 13.097690336059124
         },
         {
-          "epoch_utc": "2025-12-03T16:45:18Z",
-          "r_au": 1.154834805367,
-          "delta_au": 2.02120346418651,
-          "phase_deg": 17.7069,
-          "ra_deg": 266.40552,
-          "dec_deg": -8.61672,
+          "epoch_utc": "2025-12-03T16:54:09Z",
+          "r_au": 1.154735359343,
+          "delta_au": 2.0211457377463,
+          "phase_deg": 17.7049,
+          "ra_deg": 266.40886,
+          "dec_deg": -8.62013,
           "vmag": null,
-          "ra_jnow_deg": 266.7594936832772,
-          "dec_jnow_deg": -8.62532051346336,
+          "ra_jnow_deg": 266.7628427491181,
+          "dec_jnow_deg": -8.628722110318181,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.056279458365173
+          "v_pred": 13.056021089759982
         },
         {
-          "epoch_utc": "2025-12-04T16:45:18Z",
-          "r_au": 1.138673137224,
-          "delta_au": 2.011758414599,
-          "phase_deg": 17.3805,
-          "ra_deg": 266.95081,
-          "dec_deg": -9.17254,
+          "epoch_utc": "2025-12-04T16:54:09Z",
+          "r_au": 1.138573675137,
+          "delta_au": 2.0116998878941,
+          "phase_deg": 17.3784,
+          "ra_deg": 266.95419,
+          "dec_deg": -9.17597,
           "vmag": null,
-          "ra_jnow_deg": 267.3062633327864,
-          "dec_jnow_deg": -9.179768096757384,
+          "ra_jnow_deg": 267.3096524760571,
+          "dec_jnow_deg": -9.183189586703298,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.013974277453842
+          "v_pred": 13.013711934686533
         },
         {
-          "epoch_utc": "2025-12-05T16:45:18Z",
-          "r_au": 1.122510425074,
-          "delta_au": 2.00218210479691,
-          "phase_deg": 17.041,
-          "ra_deg": 267.50378,
-          "dec_deg": -9.73211,
+          "epoch_utc": "2025-12-05T16:54:09Z",
+          "r_au": 1.122410966602,
+          "delta_au": 2.00212276255529,
+          "phase_deg": 17.0389,
+          "ra_deg": 267.50721,
+          "dec_deg": -9.73557,
           "vmag": null,
-          "ra_jnow_deg": 267.8607268531742,
-          "dec_jnow_deg": -9.737945384609358,
+          "ra_jnow_deg": 267.8641660995976,
+          "dec_jnow_deg": -9.741396743037917,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 12.97101738831529
+          "v_pred": 12.97075099830957
         },
         {
-          "epoch_utc": "2025-12-06T16:45:18Z",
-          "r_au": 1.106350006585,
-          "delta_au": 1.99247194839014,
-          "phase_deg": 16.688,
-          "ra_deg": 268.0647,
-          "dec_deg": -10.29558,
+          "epoch_utc": "2025-12-06T16:54:09Z",
+          "r_au": 1.106250573165,
+          "delta_au": 1.99241177403258,
+          "phase_deg": 16.6858,
+          "ra_deg": 268.06818,
+          "dec_deg": -10.29906,
           "vmag": null,
-          "ra_jnow_deg": 268.4231545799832,
-          "dec_jnow_deg": -10.300001795114847,
+          "ra_jnow_deg": 268.4266439032695,
+          "dec_jnow_deg": -10.303473022690126,
           "photometry": {
             "M1": 11.2,
             "K1": 5.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 12.927396928402363
+          "v_pred": 12.927126418302036
         }
       ],
-      "v_pred_now": 13.481997470454681,
+      "v_pred_now": 13.481778050394281,
       "cobs_mag": 11.1,
       "name_full": "C/2024 E1 (Wierzchos)",
       "display_name": "C/2024 E1 (Wierzchos)"
@@ -1718,846 +1155,846 @@
     {
       "id": "240P",
       "horizons_target": "240P",
-      "epoch_utc": "2025-11-22T16:46:13Z",
+      "epoch_utc": "2025-11-22T16:53:06Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.198752167,
+        "epoch_jd_tdb": 2461002.203534042,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 2.121693040070079,
-        "e": 0.4504058278955266,
-        "i_deg": 23.53495629964476,
-        "Omega_deg": 74.9125756501442,
-        "omega_deg": 352.0587883560829,
-        "Tp_jd_tdb": 2461029.452293322,
-        "a_au": 3.860472231621048,
-        "Q_au": 5.599251423172016,
-        "period_years": 7.585088448347818,
-        "period_days": 2770.4535557590407,
-        "n_deg_per_day": 0.12994262230155607,
+        "q_au": 2.121693039916103,
+        "e": 0.450405834794696,
+        "i_deg": 23.53495626555789,
+        "Omega_deg": 74.91257567849499,
+        "omega_deg": 352.0587883484369,
+        "Tp_jd_tdb": 2461029.452293303,
+        "a_au": 3.8604722798021927,
+        "Q_au": 5.599251519688282,
+        "period_years": 7.585088590347899,
+        "period_days": 2770.4536076245704,
+        "n_deg_per_day": 0.12994261986890643,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:03Z",
-          "r_au": 2.132644130836,
-          "delta_au": 1.16096688564375,
-          "phase_deg": 6.4436,
-          "ra_deg": 56.7781,
-          "dec_deg": 6.23275,
+          "epoch_utc": "2025-11-22T16:51:56Z",
+          "r_au": 2.132640305256,
+          "delta_au": 1.16096520975374,
+          "phase_deg": 6.4439,
+          "ra_deg": 56.77681,
+          "dec_deg": 6.23379,
           "vmag": null,
-          "ra_jnow_deg": 57.123126956467274,
-          "dec_jnow_deg": 6.311356908738125,
+          "ra_jnow_deg": 57.121839159078455,
+          "dec_jnow_deg": 6.312399666366315,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.06273252544555
+          "v_pred": 17.062706798498926
         },
         {
-          "epoch_utc": "2025-11-23T16:45:03Z",
-          "r_au": 2.131858670986,
-          "delta_au": 1.16075243462015,
-          "phase_deg": 6.5186,
-          "ra_deg": 56.50897,
-          "dec_deg": 6.453,
+          "epoch_utc": "2025-11-23T16:51:56Z",
+          "r_au": 2.131854983378,
+          "delta_au": 1.16075206538442,
+          "phase_deg": 6.5191,
+          "ra_deg": 56.50768,
+          "dec_deg": 6.45406,
           "vmag": null,
-          "ra_jnow_deg": 56.85446221695098,
-          "dec_jnow_deg": 6.532181434379334,
+          "ra_jnow_deg": 56.853174449336464,
+          "dec_jnow_deg": 6.533244184220136,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.05769191428263
+          "v_pred": 17.057669437961636
         },
         {
-          "epoch_utc": "2025-11-24T16:45:03Z",
-          "r_au": 2.131102085459,
-          "delta_au": 1.16081119063749,
-          "phase_deg": 6.6401,
-          "ra_deg": 56.2402,
-          "dec_deg": 6.67642,
+          "epoch_utc": "2025-11-24T16:51:56Z",
+          "r_au": 2.131098536092,
+          "delta_au": 1.16081212809932,
+          "phase_deg": 6.6408,
+          "ra_deg": 56.23891,
+          "dec_deg": 6.6775,
           "vmag": null,
-          "ra_jnow_deg": 56.586161573315955,
-          "dec_jnow_deg": 6.756173576627478,
+          "ra_jnow_deg": 56.584873835143476,
+          "dec_jnow_deg": 6.757256318629988,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.053331299155488
+          "v_pred": 17.05331207649735
         },
         {
-          "epoch_utc": "2025-11-25T16:45:03Z",
-          "r_au": 2.130374428224,
-          "delta_au": 1.16114303146983,
-          "phase_deg": 6.8056,
-          "ra_deg": 55.97221,
-          "dec_deg": 6.90291,
+          "epoch_utc": "2025-11-25T16:51:56Z",
+          "r_au": 2.130371017351,
+          "delta_au": 1.16114527441582,
+          "phase_deg": 6.8065,
+          "ra_deg": 55.97093,
+          "dec_deg": 6.904,
           "vmag": null,
-          "ra_jnow_deg": 56.31864482902884,
-          "dec_jnow_deg": 6.9832324518278535,
+          "ra_jnow_deg": 56.31736710046078,
+          "dec_jnow_deg": 6.984325165076435,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.049650873507456
+          "v_pred": 17.049634903349826
         },
         {
-          "epoch_utc": "2025-11-26T16:45:03Z",
-          "r_au": 2.129675751284,
-          "delta_au": 1.16174757462092,
-          "phase_deg": 7.0116,
-          "ra_deg": 55.70542,
-          "dec_deg": 7.13235,
+          "epoch_utc": "2025-11-26T16:51:56Z",
+          "r_au": 2.129672479149,
+          "delta_au": 1.16175112060369,
+          "phase_deg": 7.0127,
+          "ra_deg": 55.70415,
+          "dec_deg": 7.13345,
           "vmag": null,
-          "ra_jnow_deg": 56.05233175936193,
-          "dec_jnow_deg": 7.213237187130061,
+          "ra_jnow_deg": 56.05106404033205,
+          "dec_jnow_deg": 7.214339871726722,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.046649966336172
+          "v_pred": 17.0466372434107
         },
         {
-          "epoch_utc": "2025-11-27T16:45:03Z",
-          "r_au": 2.129006104659,
-          "delta_au": 1.1626241826435,
-          "phase_deg": 7.2543,
-          "ra_deg": 55.44025,
-          "dec_deg": 7.3646,
+          "epoch_utc": "2025-11-27T16:51:56Z",
+          "r_au": 2.129002971496,
+          "delta_au": 1.16262902801315,
+          "phase_deg": 7.2556,
+          "ra_deg": 55.43899,
+          "dec_deg": 7.36572,
           "vmag": null,
-          "ra_jnow_deg": 55.787642112434185,
-          "dec_jnow_deg": 7.446046920578659,
+          "ra_jnow_deg": 55.786384424026245,
+          "dec_jnow_deg": 7.447169576617617,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.04432705534361
+          "v_pred": 17.04431757035067
         },
         {
-          "epoch_utc": "2025-11-28T16:45:03Z",
-          "r_au": 2.128365536376,
-          "delta_au": 1.16377197141277,
-          "phase_deg": 7.5297,
-          "ra_deg": 55.1771,
-          "dec_deg": 7.59955,
+          "epoch_utc": "2025-11-28T16:51:56Z",
+          "r_au": 2.128362542411,
+          "delta_au": 1.16377811136611,
+          "phase_deg": 7.5311,
+          "ra_deg": 55.17584,
+          "dec_deg": 7.60068,
           "vmag": null,
-          "ra_jnow_deg": 55.52497571182303,
-          "dec_jnow_deg": 7.681550842467136,
+          "ra_jnow_deg": 55.52371803095612,
+          "dec_jnow_deg": 7.682683490810539,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.04267978811521
+          "v_pred": 17.042673527861076
         },
         {
-          "epoch_utc": "2025-11-29T16:45:03Z",
-          "r_au": 2.127754092453,
-          "delta_au": 1.16518982313572,
-          "phase_deg": 7.8337,
-          "ra_deg": 54.91636,
-          "dec_deg": 7.83706,
+          "epoch_utc": "2025-11-29T16:51:56Z",
+          "r_au": 2.1277512379,
+          "delta_au": 1.16519725179359,
+          "phase_deg": 7.8352,
+          "ra_deg": 54.91512,
+          "dec_deg": 7.83821,
           "vmag": null,
-          "ra_jnow_deg": 55.264722331458316,
-          "dec_jnow_deg": 7.919608174182923,
+          "ra_jnow_deg": 55.26348468298362,
+          "dec_jnow_deg": 7.920760773530535,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.04170501443213
+          "v_pred": 17.041701961993784
         },
         {
-          "epoch_utc": "2025-11-30T16:45:03Z",
-          "r_au": 2.127171816886,
-          "delta_au": 1.16687640646975,
-          "phase_deg": 8.1624,
-          "ra_deg": 54.65842,
-          "dec_deg": 8.07701,
+          "epoch_utc": "2025-11-30T16:51:56Z",
+          "r_au": 2.127169101951,
+          "delta_au": 1.16688511699417,
+          "phase_deg": 8.164,
+          "ra_deg": 54.6572,
+          "dec_deg": 8.07816,
           "vmag": null,
-          "ra_jnow_deg": 55.00727180339673,
-          "dec_jnow_deg": 8.160098147142284,
+          "ra_jnow_deg": 55.00605414541501,
+          "dec_jnow_deg": 8.161250697818785,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.04139883396209
+          "v_pred": 17.04139896898288
         },
         {
-          "epoch_utc": "2025-12-01T16:45:03Z",
-          "r_au": 2.126618751636,
-          "delta_au": 1.16883020590653,
-          "phase_deg": 8.5123,
-          "ra_deg": 54.40366,
-          "dec_deg": 8.31925,
+          "epoch_utc": "2025-12-01T16:51:56Z",
+          "r_au": 2.126616176515,
+          "delta_au": 1.16884019066529,
+          "phase_deg": 8.514,
+          "ra_deg": 54.40245,
+          "dec_deg": 8.32041,
           "vmag": null,
-          "ra_jnow_deg": 54.75300391090062,
-          "dec_jnow_deg": 8.402870023318568,
+          "ra_jnow_deg": 54.75179626254906,
+          "dec_jnow_deg": 8.404032546117222,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.041756662970258
+          "v_pred": 17.0417599620158
         },
         {
-          "epoch_utc": "2025-12-02T16:45:03Z",
-          "r_au": 2.126094936619,
-          "delta_au": 1.17104956070566,
-          "phase_deg": 8.88,
-          "ra_deg": 54.15244,
-          "dec_deg": 8.56364,
+          "epoch_utc": "2025-12-02T16:51:56Z",
+          "r_au": 2.126092501498,
+          "delta_au": 1.17106081147753,
+          "phase_deg": 8.8818,
+          "ra_deg": 54.15125,
+          "dec_deg": 8.56481,
           "vmag": null,
-          "ra_jnow_deg": 54.50227847051394,
-          "dec_jnow_deg": 8.647783115153679,
+          "ra_jnow_deg": 54.501090834088565,
+          "dec_jnow_deg": 8.64895558979301,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.042773320104352
+          "v_pred": 17.04277975711064
         },
         {
-          "epoch_utc": "2025-12-03T16:45:03Z",
-          "r_au": 2.125600409691,
-          "delta_au": 1.17353270964874,
-          "phase_deg": 9.2625,
-          "ra_deg": 53.90511,
-          "dec_deg": 8.81005,
+          "epoch_utc": "2025-12-03T16:51:56Z",
+          "r_au": 2.125598114747,
+          "delta_au": 1.17354521783917,
+          "phase_deg": 9.2644,
+          "ra_deg": 53.90393,
+          "dec_deg": 8.81123,
           "vmag": null,
-          "ra_jnow_deg": 54.25544533368329,
-          "dec_jnow_deg": 8.894706764348761,
+          "ra_jnow_deg": 54.254267707183295,
+          "dec_jnow_deg": 8.895889211540611,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.044443123697015
+          "v_pred": 17.044452670446088
         },
         {
-          "epoch_utc": "2025-12-04T16:45:03Z",
-          "r_au": 2.125135206642,
-          "delta_au": 1.17627783273949,
-          "phase_deg": 9.6574,
-          "ra_deg": 53.66199,
-          "dec_deg": 9.05833,
+          "epoch_utc": "2025-12-04T16:51:56Z",
+          "r_au": 2.12513305204,
+          "delta_au": 1.17629158955362,
+          "phase_deg": 9.6593,
+          "ra_deg": 53.66084,
+          "dec_deg": 9.05953,
           "vmag": null,
-          "ra_jnow_deg": 54.01282431914045,
-          "dec_jnow_deg": 9.143490382070102,
+          "ra_jnow_deg": 54.011676728298184,
+          "dec_jnow_deg": 9.144692761315362,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.046759983686517
+          "v_pred": 17.046772610179517
         },
         {
-          "epoch_utc": "2025-12-05T16:45:03Z",
-          "r_au": 2.124699361181,
-          "delta_au": 1.17928307791274,
-          "phase_deg": 10.0621,
-          "ra_deg": 53.42343,
-          "dec_deg": 9.30836,
+          "epoch_utc": "2025-12-05T16:51:56Z",
+          "r_au": 2.124697347077,
+          "delta_au": 1.17929807442952,
+          "phase_deg": 10.0641,
+          "ra_deg": 53.4223,
+          "dec_deg": 9.30956,
           "vmag": null,
-          "ra_jnow_deg": 53.774765331011906,
-          "dec_jnow_deg": 9.394013326000065,
+          "ra_jnow_deg": 53.77363773216826,
+          "dec_jnow_deg": 9.395215658068881,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.049717465709037
+          "v_pred": 17.049733140391837
         },
         {
-          "epoch_utc": "2025-12-06T16:45:03Z",
-          "r_au": 2.124292904931,
-          "delta_au": 1.18254656354886,
-          "phase_deg": 10.4747,
-          "ra_deg": 53.18972,
-          "dec_deg": 9.55999,
+          "epoch_utc": "2025-12-06T16:51:56Z",
+          "r_au": 2.124291031473,
+          "delta_au": 1.18256279066997,
+          "phase_deg": 10.4767,
+          "ra_deg": 53.18862,
+          "dec_deg": 9.5612,
           "vmag": null,
-          "ra_jnow_deg": 53.54155821220436,
-          "dec_jnow_deg": 9.646125083041241,
+          "ra_jnow_deg": 53.54046062911652,
+          "dec_jnow_deg": 9.647337348026655,
           "photometry": {
             "M1": 7.2,
             "K1": 29.0,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.0533088106894
+          "v_pred": 17.05332750043705
         }
       ],
-      "v_pred_now": 17.06273252544555,
-      "cobs_mag": 12.4,
+      "v_pred_now": 17.062706798498926,
+      "cobs_mag": 12.6,
       "name_full": "240P/NEAT",
       "display_name": "240P/NEAT"
     },
     {
       "id": "29P",
       "horizons_target": "29P",
-      "epoch_utc": "2025-11-22T16:46:17Z",
+      "epoch_utc": "2025-11-22T16:53:26Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.198795225,
+        "epoch_jd_tdb": 2461002.203766506,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 5.796726025695954,
-        "e": 0.04306070599035128,
-        "i_deg": 9.355252781488575,
-        "Omega_deg": 312.4008857791528,
-        "omega_deg": 51.89609712575694,
-        "Tp_jd_tdb": 2458601.618494034,
-        "a_au": 6.057569233474811,
-        "Q_au": 6.318412441253667,
-        "period_years": 14.908967902298372,
-        "period_days": 5445.50052631448,
-        "n_deg_per_day": 0.06610962541649928,
+        "q_au": 5.79672608445539,
+        "e": 0.0430606996853752,
+        "i_deg": 9.355252773856822,
+        "Omega_deg": 312.4008857494716,
+        "omega_deg": 51.89608916493653,
+        "Tp_jd_tdb": 2458601.618346425,
+        "a_au": 6.0575692549668805,
+        "Q_au": 6.318412425478372,
+        "period_years": 14.908967981643212,
+        "period_days": 5445.500555295183,
+        "n_deg_per_day": 0.0661096250646669,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:06Z",
-          "r_au": 6.301985424302,
-          "delta_au": 6.61103253660989,
-          "phase_deg": 8.3343,
-          "ra_deg": 171.43582,
-          "dec_deg": -1.47237,
+          "epoch_utc": "2025-11-22T16:52:16Z",
+          "r_au": 6.301985926772,
+          "delta_au": 6.61095763715551,
+          "phase_deg": 8.3346,
+          "ra_deg": 171.43629,
+          "dec_deg": -1.47268,
           "vmag": null,
-          "ra_jnow_deg": 171.76700073250564,
-          "dec_jnow_deg": -1.6149644599930588,
+          "ra_jnow_deg": 171.7674708241608,
+          "dec_jnow_deg": -1.6152747076601037,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.798994747536668
+          "v_pred": 17.79897030160134
         },
         {
-          "epoch_utc": "2025-11-23T16:45:06Z",
-          "r_au": 6.302086315768,
-          "delta_au": 6.59592290585791,
-          "phase_deg": 8.3855,
-          "ra_deg": 171.5313,
-          "dec_deg": -1.53407,
+          "epoch_utc": "2025-11-23T16:52:16Z",
+          "r_au": 6.302086816679,
+          "delta_au": 6.59584753746501,
+          "phase_deg": 8.3858,
+          "ra_deg": 171.53177,
+          "dec_deg": -1.53438,
           "vmag": null,
-          "ra_jnow_deg": 171.86249971826658,
-          "dec_jnow_deg": -1.6767144264446243,
+          "ra_jnow_deg": 171.86296981245496,
+          "dec_jnow_deg": -1.6770246721985032,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.794057416647657
+          "v_pred": 17.79403275948646
         },
         {
-          "epoch_utc": "2025-11-24T16:45:06Z",
-          "r_au": 6.302186893857,
-          "delta_au": 6.58072081132252,
-          "phase_deg": 8.4348,
-          "ra_deg": 171.62493,
-          "dec_deg": -1.59515,
+          "epoch_utc": "2025-11-24T16:52:16Z",
+          "r_au": 6.302187393209,
+          "delta_au": 6.58064499257991,
+          "phase_deg": 8.435,
+          "ra_deg": 171.62539,
+          "dec_deg": -1.59546,
           "vmag": null,
-          "ra_jnow_deg": 171.95614930262832,
-          "dec_jnow_deg": -1.7378433395601494,
+          "ra_jnow_deg": 171.95660939859002,
+          "dec_jnow_deg": -1.7381535798447194,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.789078082630045
+          "v_pred": 17.789053219057557
         },
         {
-          "epoch_utc": "2025-11-25T16:45:06Z",
-          "r_au": 6.302287158425,
-          "delta_au": 6.56543004282558,
-          "phase_deg": 8.4821,
-          "ra_deg": 171.71669,
-          "dec_deg": -1.6556,
+          "epoch_utc": "2025-11-25T16:52:16Z",
+          "r_au": 6.302287656217,
+          "delta_au": 6.5653537926747,
+          "phase_deg": 8.4823,
+          "ra_deg": 171.71714,
+          "dec_deg": -1.6559,
           "vmag": null,
-          "ra_jnow_deg": 172.04792946560084,
-          "dec_jnow_deg": -1.7983412143887925,
+          "ra_jnow_deg": 172.04837956680248,
+          "dec_jnow_deg": -1.7986414493205052,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.784057734581875
+          "v_pred": 17.784032669568305
         },
         {
-          "epoch_utc": "2025-11-26T16:45:06Z",
-          "r_au": 6.302387109328,
-          "delta_au": 6.55005442524032,
-          "phase_deg": 8.5274,
-          "ra_deg": 171.80656,
-          "dec_deg": -1.71541,
+          "epoch_utc": "2025-11-26T16:52:16Z",
+          "r_au": 6.30238760556,
+          "delta_au": 6.54997776277059,
+          "phase_deg": 8.5276,
+          "ra_deg": 171.807,
+          "dec_deg": -1.71571,
           "vmag": null,
-          "ra_jnow_deg": 172.13782018710526,
-          "dec_jnow_deg": -1.85819806586429,
+          "ra_jnow_deg": 172.13826028986247,
+          "dec_jnow_deg": -1.8584982955563667,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.778997381367667
+          "v_pred": 17.77897211997408
         },
         {
-          "epoch_utc": "2025-11-27T16:45:06Z",
-          "r_au": 6.302486746428,
-          "delta_au": 6.53459780742115,
-          "phase_deg": 8.5707,
-          "ra_deg": 171.89451,
-          "dec_deg": -1.77457,
+          "epoch_utc": "2025-11-27T16:52:16Z",
+          "r_au": 6.3024872411,
+          "delta_au": 6.53452075181022,
+          "phase_deg": 8.5709,
+          "ra_deg": 171.89495,
+          "dec_deg": -1.77486,
           "vmag": null,
-          "ra_jnow_deg": 172.225791446185,
-          "dec_jnow_deg": -1.9174039053113743,
+          "ra_jnow_deg": 172.22623155469233,
+          "dec_jnow_deg": -1.9176941333529944,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.77389804832818
+          "v_pred": 17.773872595688136
         },
         {
-          "epoch_utc": "2025-11-28T16:45:06Z",
-          "r_au": 6.302586069592,
-          "delta_au": 6.51906404878351,
-          "phase_deg": 8.612,
-          "ra_deg": 171.98053,
-          "dec_deg": -1.83306,
+          "epoch_utc": "2025-11-28T16:52:16Z",
+          "r_au": 6.302586562702,
+          "delta_au": 6.51898661922261,
+          "phase_deg": 8.6122,
+          "ra_deg": 171.98095,
+          "dec_deg": -1.83335,
           "vmag": null,
-          "ra_jnow_deg": 172.3118332268209,
-          "dec_jnow_deg": -1.9759387509334627,
+          "ra_jnow_deg": 172.31225333586704,
+          "dec_jnow_deg": -1.9762289704808191,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.76876077315494
+          "v_pred": 17.768735134450576
         },
         {
-          "epoch_utc": "2025-11-29T16:45:06Z",
-          "r_au": 6.302685078692,
-          "delta_au": 6.50345700249652,
-          "phase_deg": 8.6513,
-          "ra_deg": 172.06459,
-          "dec_deg": -1.89088,
+          "epoch_utc": "2025-11-29T16:52:16Z",
+          "r_au": 6.30268557024,
+          "delta_au": 6.50337921809757,
+          "phase_deg": 8.6515,
+          "ra_deg": 172.06501,
+          "dec_deg": -1.89117,
           "vmag": null,
-          "ra_jnow_deg": 172.39591550438445,
-          "dec_jnow_deg": -2.0338026138092613,
+          "ra_jnow_deg": 172.39633561553953,
+          "dec_jnow_deg": -2.0340928318500318,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.763586600570434
+          "v_pred": 17.763560781003957
         },
         {
-          "epoch_utc": "2025-11-30T16:45:06Z",
-          "r_au": 6.302783773609,
-          "delta_au": 6.48778049510192,
-          "phase_deg": 8.6885,
-          "ra_deg": 172.14668,
-          "dec_deg": -1.94802,
+          "epoch_utc": "2025-11-30T16:52:16Z",
+          "r_au": 6.302784263595,
+          "delta_au": 6.48770237478896,
+          "phase_deg": 8.6886,
+          "ra_deg": 172.14709,
+          "dec_deg": -1.9483,
           "vmag": null,
-          "ra_jnow_deg": 172.4780282593921,
-          "dec_jnow_deg": -2.0909855117113616,
+          "ra_jnow_deg": 172.47843837511252,
+          "dec_jnow_deg": -2.0912657249131597,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.758376575731205
+          "v_pred": 17.758350580488784
         },
         {
-          "epoch_utc": "2025-12-01T16:45:06Z",
-          "r_au": 6.30288215423,
-          "delta_au": 6.47203830419398,
-          "phase_deg": 8.7235,
-          "ra_deg": 172.22677,
-          "dec_deg": -2.00446,
+          "epoch_utc": "2025-12-01T16:52:16Z",
+          "r_au": 6.302882642652,
+          "delta_au": 6.47195986659347,
+          "phase_deg": 8.7237,
+          "ra_deg": 172.22717,
+          "dec_deg": -2.00474,
           "vmag": null,
-          "ra_jnow_deg": 172.55814147397527,
-          "dec_jnow_deg": -2.1474674554007076,
+          "ra_jnow_deg": 172.55854159076793,
+          "dec_jnow_deg": -2.1477476638674844,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.75313173687569
+          "v_pred": 17.75310557109044
         },
         {
-          "epoch_utc": "2025-12-02T16:45:06Z",
-          "r_au": 6.302980220448,
-          "delta_au": 6.45623413865612,
-          "phase_deg": 8.7565,
-          "ra_deg": 172.30485,
-          "dec_deg": -2.0602,
+          "epoch_utc": "2025-12-02T16:52:16Z",
+          "r_au": 6.302980707306,
+          "delta_au": 6.45615540201652,
+          "phase_deg": 8.7567,
+          "ra_deg": 172.30523,
+          "dec_deg": -2.06047,
           "vmag": null,
-          "ra_jnow_deg": 172.63624512528122,
-          "dec_jnow_deg": -2.2032484621515116,
+          "ra_jnow_deg": 172.6366252454361,
+          "dec_jnow_deg": -2.2035186626863412,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.74785310871777
+          "v_pred": 17.747826777443862
         },
         {
-          "epoch_utc": "2025-12-03T16:45:06Z",
-          "r_au": 6.303077972162,
-          "delta_au": 6.44037162886586,
-          "phase_deg": 8.7874,
-          "ra_deg": 172.38089,
-          "dec_deg": -2.11522,
+          "epoch_utc": "2025-12-03T16:52:16Z",
+          "r_au": 6.303078457457,
+          "delta_au": 6.44029261104814,
+          "phase_deg": 8.7875,
+          "ra_deg": 172.38127,
+          "dec_deg": -2.11549,
           "vmag": null,
-          "ra_jnow_deg": 172.7123091953438,
-          "dec_jnow_deg": -2.2583085423307097,
+          "ra_jnow_deg": 172.7126893172969,
+          "dec_jnow_deg": -2.25857874163244,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.742541699095504
+          "v_pred": 17.742515207304237
         },
         {
-          "epoch_utc": "2025-12-04T16:45:06Z",
-          "r_au": 6.303175409281,
-          "delta_au": 6.4244543349664,
-          "phase_deg": 8.8161,
-          "ra_deg": 172.45488,
-          "dec_deg": -2.16952,
+          "epoch_utc": "2025-12-04T16:52:16Z",
+          "r_au": 6.303175893011,
+          "delta_au": 6.42437505354017,
+          "phase_deg": 8.8162,
+          "ra_deg": 172.45525,
+          "dec_deg": -2.16978,
           "vmag": null,
-          "ra_jnow_deg": 172.7863236614783,
-          "dec_jnow_deg": -2.3126477126457963,
+          "ra_jnow_deg": 172.78669378745712,
+          "dec_jnow_deg": -2.3129079075130035,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.73719850166904
+          "v_pred": 17.737171854279612
         },
         {
-          "epoch_utc": "2025-12-05T16:45:06Z",
-          "r_au": 6.303272531714,
-          "delta_au": 6.4084857773405,
-          "phase_deg": 8.8426,
-          "ra_deg": 172.5268,
-          "dec_deg": -2.22308,
+          "epoch_utc": "2025-12-05T16:52:16Z",
+          "r_au": 6.303273013879,
+          "delta_au": 6.40840624978797,
+          "phase_deg": 8.8427,
+          "ra_deg": 172.52715,
+          "dec_deg": -2.22334,
           "vmag": null,
-          "ra_jnow_deg": 172.85826850668892,
-          "dec_jnow_deg": -2.366245986197206,
+          "ra_jnow_deg": 172.85861863233862,
+          "dec_jnow_deg": -2.3665061735208344,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.731824506168717
+          "v_pred": 17.73179770811882
         },
         {
-          "epoch_utc": "2025-12-06T16:45:06Z",
-          "r_au": 6.303369339379,
-          "delta_au": 6.39246948507937,
-          "phase_deg": 8.8669,
-          "ra_deg": 172.59662,
-          "dec_deg": -2.2759,
+          "epoch_utc": "2025-12-06T16:52:16Z",
+          "r_au": 6.303369819978,
+          "delta_au": 6.39238972906295,
+          "phase_deg": 8.867,
+          "ra_deg": 172.59696,
+          "dec_deg": -2.27616,
           "vmag": null,
-          "ra_jnow_deg": 172.92811370653922,
-          "dec_jnow_deg": -2.4191033726171294,
+          "ra_jnow_deg": 172.92845383275562,
+          "dec_jnow_deg": -2.419363555724442,
           "photometry": {
             "M1": 10.1,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.726420714907736
+          "v_pred": 17.726393771244304
         }
       ],
-      "v_pred_now": 17.798994747536668,
+      "v_pred_now": 17.79897030160134,
       "cobs_mag": 12.6,
       "name_full": "29P/Schwassmann-Wachmann",
       "display_name": "29P/Schwassmann-Wachmann"
     },
     {
-      "id": "K25V010",
-      "horizons_target": "K25V010",
-      "epoch_utc": "2025-11-22T16:46:45Z",
+      "id": "C/2025 V1",
+      "horizons_target": "C/2025 V1",
+      "epoch_utc": "2025-11-22T16:56:05Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.199120846,
+        "epoch_jd_tdb": 2461002.20559858,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.4626512279238944,
-        "e": 1.008241715484116,
-        "i_deg": 112.7086703857941,
-        "Omega_deg": 91.88377474632647,
-        "omega_deg": 47.56674899925573,
-        "Tp_jd_tdb": 2460996.04028078,
+        "q_au": 0.4626512279764842,
+        "e": 1.008241714723062,
+        "i_deg": 112.7086703879911,
+        "Omega_deg": 91.88377475460204,
+        "omega_deg": 47.56674902507515,
+        "Tp_jd_tdb": 2460996.040280783,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:35Z",
-          "r_au": 0.48810893776,
-          "delta_au": 0.89378003279379,
-          "phase_deg": 85.9614,
-          "ra_deg": 249.32386,
-          "dec_deg": 7.19359,
+          "epoch_utc": "2025-11-22T16:54:55Z",
+          "r_au": 0.488160689003,
+          "delta_au": 0.89397848633754,
+          "phase_deg": 85.9359,
+          "ra_deg": 249.33896,
+          "dec_deg": 7.1916,
           "vmag": null,
-          "ra_jnow_deg": 249.63862987636122,
-          "dec_jnow_deg": 7.143068623225492,
+          "ra_jnow_deg": 249.65373313862614,
+          "dec_jnow_deg": 7.141114171736955,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.554478661499635
+          "v_pred": 13.555167952685382
         },
         {
-          "epoch_utc": "2025-11-23T16:45:35Z",
-          "r_au": 0.496641472994,
-          "delta_au": 0.92493198944167,
-          "phase_deg": 82.0614,
-          "ra_deg": 251.56292,
-          "dec_deg": 6.86074,
+          "epoch_utc": "2025-11-23T16:54:55Z",
+          "r_au": 0.496700240895,
+          "delta_au": 0.9251369579006,
+          "phase_deg": 82.0365,
+          "ra_deg": 251.57684,
+          "dec_deg": 6.85843,
           "vmag": null,
-          "ra_jnow_deg": 251.87828858232268,
-          "dec_jnow_deg": 6.815527294727262,
+          "ra_jnow_deg": 251.89221303958857,
+          "dec_jnow_deg": 6.813250525783393,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.662742425423925
+          "v_pred": 13.663454821544153
         },
         {
-          "epoch_utc": "2025-11-24T16:45:35Z",
-          "r_au": 0.5062180724,
-          "delta_au": 0.95697413983598,
-          "phase_deg": 78.2586,
-          "ra_deg": 253.6257,
-          "dec_deg": 6.48392,
+          "epoch_utc": "2025-11-24T16:54:55Z",
+          "r_au": 0.506283345684,
+          "delta_au": 0.9571841482858,
+          "phase_deg": 78.2343,
+          "ra_deg": 253.63852,
+          "dec_deg": 6.48136,
           "vmag": null,
-          "ra_jnow_deg": 253.94183412927947,
-          "dec_jnow_deg": 6.443660247440756,
+          "ra_jnow_deg": 253.95465955264714,
+          "dec_jnow_deg": 6.441131202478739,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.774020416269813
+          "v_pred": 13.774748875020109
         },
         {
-          "epoch_utc": "2025-11-25T16:45:35Z",
-          "r_au": 0.516758920473,
-          "delta_au": 0.98969261984579,
-          "phase_deg": 74.5782,
-          "ra_deg": 255.52582,
-          "dec_deg": 6.07334,
+          "epoch_utc": "2025-11-25T16:54:55Z",
+          "r_au": 0.516830178484,
+          "delta_au": 0.98990637273279,
+          "phase_deg": 74.5548,
+          "ra_deg": 255.53763,
+          "dec_deg": 6.07059,
           "vmag": null,
-          "ra_jnow_deg": 255.8428524046143,
-          "dec_jnow_deg": 6.03768984270164,
+          "ra_jnow_deg": 255.85466858816807,
+          "dec_jnow_deg": 6.03496862389099,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 13.887297579061688
+          "v_pred": 13.88803599235343
         },
         {
-          "epoch_utc": "2025-11-26T16:45:35Z",
-          "r_au": 0.528183756583,
-          "delta_au": 1.02290080477412,
-          "phase_deg": 71.0368,
-          "ra_deg": 257.27713,
-          "dec_deg": 5.63775,
+          "epoch_utc": "2025-11-26T16:54:55Z",
+          "r_au": 0.528260481954,
+          "delta_au": 1.02311717897305,
+          "phase_deg": 71.0144,
+          "ra_deg": 257.28802,
+          "dec_deg": 5.63486,
           "vmag": null,
-          "ra_jnow_deg": 257.59516313620577,
-          "dec_jnow_deg": 5.6063841062442945,
+          "ra_jnow_deg": 257.60605990246506,
+          "dec_jnow_deg": 5.603520845195323,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.001700286272222
+          "v_pred": 14.002443439070312
         },
         {
-          "epoch_utc": "2025-11-27T16:45:35Z",
-          "r_au": 0.540413639349,
-          "delta_au": 1.05643780448489,
-          "phase_deg": 67.6444,
-          "ra_deg": 258.89324,
-          "dec_deg": 5.18451,
+          "epoch_utc": "2025-11-27T16:54:55Z",
+          "r_au": 0.540495328163,
+          "delta_au": 1.05665583715735,
+          "phase_deg": 67.6229,
+          "ra_deg": 258.90329,
+          "dec_deg": 5.18153,
           "vmag": null,
-          "ra_jnow_deg": 259.21235025932015,
-          "dec_jnow_deg": 5.157124504043494,
+          "ra_jnow_deg": 259.2224074371039,
+          "dec_jnow_deg": 5.1541693306687675,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.116488026778077
+          "v_pred": 14.11723153243317
         },
         {
-          "epoch_utc": "2025-11-28T16:45:35Z",
-          "r_au": 0.553372322242,
-          "delta_au": 1.09016634310957,
-          "phase_deg": 64.4054,
-          "ra_deg": 260.38705,
-          "dec_deg": 4.71974,
+          "epoch_utc": "2025-11-28T16:54:55Z",
+          "r_au": 0.553458491692,
+          "delta_au": 1.09038521668747,
+          "phase_deg": 64.385,
+          "ra_deg": 260.39635,
+          "dec_deg": 4.71671,
           "vmag": null,
-          "ra_jnow_deg": 260.7072917960821,
-          "dec_jnow_deg": 4.6960538734269255,
+          "ra_jnow_deg": 260.716599245001,
+          "dec_jnow_deg": 4.6930469599642635,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.231042299779338
+          "v_pred": 14.231782522153408
         },
         {
-          "epoch_utc": "2025-11-29T16:45:35Z",
-          "r_au": 0.566987256966,
-          "delta_au": 1.12397033343639,
-          "phase_deg": 61.3207,
-          "ra_deg": 261.77062,
-          "dec_deg": 4.24846,
+          "epoch_utc": "2025-11-29T16:54:55Z",
+          "r_au": 0.567077450727,
+          "delta_au": 1.12418935943962,
+          "phase_deg": 61.3012,
+          "ra_deg": 261.77925,
+          "dec_deg": 4.24539,
           "vmag": null,
-          "ra_jnow_deg": 262.0920295571153,
-          "dec_jnow_deg": 4.22821535555296,
+          "ra_jnow_deg": 262.10066721887836,
+          "dec_jnow_deg": 4.225166863162173,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.344854084200293
+          "v_pred": 14.345588054214641
         },
         {
-          "epoch_utc": "2025-11-30T16:45:35Z",
-          "r_au": 0.581190264398,
-          "delta_au": 1.15775236775153,
-          "phase_deg": 58.3882,
-          "ra_deg": 263.05503,
-          "dec_deg": 3.77471,
+          "epoch_utc": "2025-11-30T16:54:55Z",
+          "r_au": 0.581284055996,
+          "delta_au": 1.15797097061604,
+          "phase_deg": 58.3697,
+          "ra_deg": 263.06305,
+          "dec_deg": 3.77164,
           "vmag": null,
-          "ra_jnow_deg": 263.37762879220855,
-          "dec_jnow_deg": 3.7576714604678148,
+          "ra_jnow_deg": 263.3856565399321,
+          "dec_jnow_deg": 3.754621510461491,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.457510877680903
+          "v_pred": 14.458236209580487
         },
         {
-          "epoch_utc": "2025-12-01T16:45:35Z",
-          "r_au": 0.595917924874,
-          "delta_au": 1.19143127256505,
-          "phase_deg": 55.6039,
-          "ra_deg": 264.25034,
-          "dec_deg": 3.30176,
+          "epoch_utc": "2025-12-01T16:54:55Z",
+          "r_au": 0.596014919421,
+          "delta_au": 1.19164897423055,
+          "phase_deg": 55.5863,
+          "ra_deg": 264.25782,
+          "dec_deg": 3.2987,
           "vmag": null,
-          "ra_jnow_deg": 264.57413755900427,
-          "dec_jnow_deg": 3.2877135112260167,
+          "ra_jnow_deg": 264.58162534582044,
+          "dec_jnow_deg": 3.2846722575038876,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.568683996436754
+          "v_pred": 14.569398807463058
         },
         {
-          "epoch_utc": "2025-12-02T16:45:35Z",
-          "r_au": 0.611111743026,
-          "delta_au": 1.22493981688411,
-          "phase_deg": 52.9624,
-          "ra_deg": 265.36565,
-          "dec_deg": 2.83216,
+          "epoch_utc": "2025-12-02T16:54:55Z",
+          "r_au": 0.611211577671,
+          "delta_au": 1.22515622257065,
+          "phase_deg": 52.9457,
+          "ra_deg": 265.37264,
+          "dec_deg": 2.82914,
           "vmag": null,
-          "ra_jnow_deg": 265.6906464721173,
-          "dec_jnow_deg": 2.8209114466169334,
+          "ra_jnow_deg": 265.69764420560773,
+          "dec_jnow_deg": 2.817908998615741,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.678116589554406
+          "v_pred": 14.678819425302047
         },
         {
-          "epoch_utc": "2025-12-03T16:45:35Z",
-          "r_au": 0.626718139868,
-          "delta_au": 1.25822262264747,
-          "phase_deg": 50.4576,
-          "ra_deg": 266.4091,
-          "dec_deg": 2.36794,
+          "epoch_utc": "2025-12-03T16:54:55Z",
+          "r_au": 0.626820483287,
+          "delta_au": 1.25843740803606,
+          "phase_deg": 50.4418,
+          "ra_deg": 266.41565,
+          "dec_deg": 2.36496,
           "vmag": null,
-          "ra_jnow_deg": 266.73528807749386,
-          "dec_jnow_deg": 2.3593135585301637,
+          "ra_jnow_deg": 266.74184574421605,
+          "dec_jnow_deg": 2.35635002995072,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.785612640719856
+          "v_pred": 14.786302407464175
         },
         {
-          "epoch_utc": "2025-12-04T16:45:35Z",
-          "r_au": 0.642688318926,
-          "delta_au": 1.29123429990028,
-          "phase_deg": 48.0827,
-          "ra_deg": 267.38797,
-          "dec_deg": 1.91065,
+          "epoch_utc": "2025-12-04T16:54:55Z",
+          "r_au": 0.642792870133,
+          "delta_au": 1.29144719980691,
+          "phase_deg": 48.0677,
+          "ra_deg": 267.39412,
+          "dec_deg": 1.90772,
           "vmag": null,
-          "ra_jnow_deg": 267.71533663728036,
-          "dec_jnow_deg": 1.9044865460051499,
+          "ra_jnow_deg": 267.72149420163015,
+          "dec_jnow_deg": 1.9015720285176567,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.891027099305873
+          "v_pred": 14.891703003894584
         },
         {
-          "epoch_utc": "2025-12-05T16:45:35Z",
-          "r_au": 0.65897804574,
-          "delta_au": 1.32393781433588,
-          "phase_deg": 45.831,
-          "ra_deg": 268.30873,
-          "dec_deg": 1.46147,
+          "epoch_utc": "2025-12-05T16:54:55Z",
+          "r_au": 0.659084532454,
+          "delta_au": 1.32414861289301,
+          "phase_deg": 45.8168,
+          "ra_deg": 268.31452,
+          "dec_deg": 1.45858,
           "vmag": null,
-          "ra_jnow_deg": 268.63725775428986,
-          "dec_jnow_deg": 1.4576254938517843,
+          "ra_jnow_deg": 268.6430552333641,
+          "dec_jnow_deg": 1.454750081524006,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.99425719056373
+          "v_pred": 14.994918687972737
         },
         {
-          "epoch_utc": "2025-12-06T16:45:35Z",
-          "r_au": 0.675547372398,
-          "delta_au": 1.35630308514588,
-          "phase_deg": 43.6955,
-          "ra_deg": 269.17716,
-          "dec_deg": 1.02125,
+          "epoch_utc": "2025-12-06T16:54:55Z",
+          "r_au": 0.675655549131,
+          "delta_au": 1.35651160745025,
+          "phase_deg": 43.6821,
+          "ra_deg": 269.18262,
+          "dec_deg": 1.01843,
           "vmag": null,
-          "ra_jnow_deg": 269.5068281876716,
-          "dec_jnow_deg": 1.0195940652795623,
+          "ra_jnow_deg": 269.5122954996689,
+          "dec_jnow_deg": 1.016787828623563,
           "photometry": {
             "M1": 15.2,
             "K1": 4.5,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.095234889088118
+          "v_pred": 15.095881637318177
         }
       ],
-      "v_pred_now": 13.554478661499635,
+      "v_pred_now": 13.555167952685382,
       "cobs_mag": 12.8,
       "name_full": "C/2025 V1 (Borisov)",
       "display_name": "C/2025 V1 (Borisov)"
@@ -2565,853 +2002,844 @@
     {
       "id": "24P",
       "horizons_target": "24P",
-      "epoch_utc": "2025-11-22T16:46:15Z",
+      "epoch_utc": "2025-11-22T16:53:18Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.198773831,
+        "epoch_jd_tdb": 2461002.203666154,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 1.183941341269916,
-        "e": 0.7082879105887582,
-        "i_deg": 11.50217793625479,
-        "Omega_deg": 78.2719769957336,
-        "omega_deg": 58.48283807686318,
-        "Tp_jd_tdb": 2461048.842468207,
-        "a_au": 4.058595389925207,
-        "Q_au": 6.933249438580498,
-        "period_years": 8.176428372805763,
-        "period_days": 2986.4404631673046,
-        "n_deg_per_day": 0.12054484408445154,
+        "q_au": 1.183941342610787,
+        "e": 0.7082879096189325,
+        "i_deg": 11.50217791995937,
+        "Omega_deg": 78.27197697311831,
+        "omega_deg": 58.48283791326942,
+        "Tp_jd_tdb": 2461048.842468061,
+        "a_au": 4.058595381028562,
+        "Q_au": 6.933249419446337,
+        "period_years": 8.17642834592105,
+        "period_days": 2986.440453347663,
+        "n_deg_per_day": 0.12054484448081208,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:05Z",
-          "r_au": 1.332483189455,
-          "delta_au": 0.74203507164812,
-          "phase_deg": 46.9281,
-          "ra_deg": 144.68551,
-          "dec_deg": 19.86731,
+          "epoch_utc": "2025-11-22T16:52:07Z",
+          "r_au": 1.332454586894,
+          "delta_au": 0.74199730332586,
+          "phase_deg": 46.9294,
+          "ra_deg": 144.69116,
+          "dec_deg": 19.86706,
           "vmag": null,
-          "ra_jnow_deg": 145.0471352235456,
-          "dec_jnow_deg": 19.749429590891996,
+          "ra_jnow_deg": 145.05278080966747,
+          "dec_jnow_deg": 19.74917135397279,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.803890199294585
+          "v_pred": 14.803656149174385
         },
         {
-          "epoch_utc": "2025-11-23T16:45:05Z",
-          "r_au": 1.326681464888,
-          "delta_au": 0.73441992810793,
-          "phase_deg": 47.1933,
-          "ra_deg": 145.84598,
-          "dec_deg": 19.81483,
+          "epoch_utc": "2025-11-23T16:52:07Z",
+          "r_au": 1.326653289394,
+          "delta_au": 0.73438317282252,
+          "phase_deg": 47.1946,
+          "ra_deg": 145.85169,
+          "dec_deg": 19.81456,
           "vmag": null,
-          "ra_jnow_deg": 146.20669302829054,
-          "dec_jnow_deg": 19.695281835475843,
+          "ra_jnow_deg": 146.2123985028247,
+          "dec_jnow_deg": 19.695003749518328,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.756380530258044
+          "v_pred": 14.756149641709301
         },
         {
-          "epoch_utc": "2025-11-24T16:45:05Z",
-          "r_au": 1.320967941249,
-          "delta_au": 0.72701244200614,
-          "phase_deg": 47.4598,
-          "ra_deg": 147.01557,
-          "dec_deg": 19.75801,
+          "epoch_utc": "2025-11-24T16:52:07Z",
+          "r_au": 1.320940201988,
+          "delta_au": 0.72697670597566,
+          "phase_deg": 47.4611,
+          "ra_deg": 147.02132,
+          "dec_deg": 19.75772,
           "vmag": null,
-          "ra_jnow_deg": 147.37535036898254,
-          "dec_jnow_deg": 19.636830316654024,
+          "ra_jnow_deg": 147.38109575101396,
+          "dec_jnow_deg": 19.63653241925033,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.709531897662233
+          "v_pred": 14.70930431804168
         },
         {
-          "epoch_utc": "2025-11-25T16:45:05Z",
-          "r_au": 1.315344500959,
-          "delta_au": 0.71981381644308,
-          "phase_deg": 47.7274,
-          "ra_deg": 148.19398,
-          "dec_deg": 19.69674,
+          "epoch_utc": "2025-11-25T16:52:07Z",
+          "r_au": 1.315317207166,
+          "delta_au": 0.71977910518132,
+          "phase_deg": 47.7287,
+          "ra_deg": 148.19977,
+          "dec_deg": 19.69643,
           "vmag": null,
-          "ra_jnow_deg": 148.55280820943747,
-          "dec_jnow_deg": 19.57396728697664,
+          "ra_jnow_deg": 148.55859350345625,
+          "dec_jnow_deg": 19.573649586802308,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.663374445959688
+          "v_pred": 14.66315032268158
         },
         {
-          "epoch_utc": "2025-11-26T16:45:05Z",
-          "r_au": 1.309813035069,
-          "delta_au": 0.71282509798975,
-          "phase_deg": 47.996,
-          "ra_deg": 149.38087,
-          "dec_deg": 19.63092,
+          "epoch_utc": "2025-11-26T16:52:07Z",
+          "r_au": 1.309786196015,
+          "delta_au": 0.71279141621009,
+          "phase_deg": 47.9973,
+          "ra_deg": 149.38669,
+          "dec_deg": 19.63059,
           "vmag": null,
-          "ra_jnow_deg": 149.73872763384915,
-          "dec_jnow_deg": 19.506595016455897,
+          "ra_jnow_deg": 149.7445428523068,
+          "dec_jnow_deg": 19.50625753493302,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.617938245246584
+          "v_pred": 14.617717725103276
         },
         {
-          "epoch_utc": "2025-11-27T16:45:05Z",
-          "r_au": 1.304375441638,
-          "delta_au": 0.70604716221459,
-          "phase_deg": 48.2653,
-          "ra_deg": 150.57589,
-          "dec_deg": 19.56044,
+          "epoch_utc": "2025-11-27T16:52:07Z",
+          "r_au": 1.304349066627,
+          "delta_au": 0.70601451375533,
+          "phase_deg": 48.2667,
+          "ra_deg": 150.58175,
+          "dec_deg": 19.56008,
           "vmag": null,
-          "ra_jnow_deg": 150.93275979361604,
-          "dec_jnow_deg": 19.43460574262314,
+          "ra_jnow_deg": 150.93861491999712,
+          "dec_jnow_deg": 19.43423847522974,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.573253187385285
+          "v_pred": 14.573036416037755
         },
         {
-          "epoch_utc": "2025-11-28T16:45:05Z",
-          "r_au": 1.299033624043,
-          "delta_au": 0.69948069743308,
-          "phase_deg": 48.5353,
-          "ra_deg": 151.77866,
-          "dec_deg": 19.4852,
+          "epoch_utc": "2025-11-28T16:52:07Z",
+          "r_au": 1.299007722399,
+          "delta_au": 0.69944908517283,
+          "phase_deg": 48.5366,
+          "ra_deg": 151.78456,
+          "dec_deg": 19.48482,
           "vmag": null,
-          "ra_jnow_deg": 152.13452595120103,
-          "dec_jnow_deg": 19.357901687509468,
+          "ra_jnow_deg": 152.14042100507024,
+          "dec_jnow_deg": 19.357514642863528,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.529348871901012
+          "v_pred": 14.529135993273057
         },
         {
-          "epoch_utc": "2025-11-29T16:45:05Z",
-          "r_au": 1.293789489197,
-          "delta_au": 0.6931261863967,
-          "phase_deg": 48.8055,
-          "ra_deg": 152.98877,
-          "dec_deg": 19.40511,
+          "epoch_utc": "2025-11-29T16:52:07Z",
+          "r_au": 1.293764070257,
+          "delta_au": 0.69309561216016,
+          "phase_deg": 48.8068,
+          "ra_deg": 152.99471,
+          "dec_deg": 19.40471,
           "vmag": null,
-          "ra_jnow_deg": 153.34361747658522,
-          "dec_jnow_deg": 19.27639504619488,
+          "ra_jnow_deg": 153.3495524633801,
+          "dec_jnow_deg": 19.275988232872123,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.4862544806267
+          "v_pred": 14.486045636273726
         },
         {
-          "epoch_utc": "2025-11-30T16:45:05Z",
-          "r_au": 1.288644945683,
-          "delta_au": 0.68698388661699,
-          "phase_deg": 49.0759,
-          "ra_deg": 154.2058,
-          "dec_deg": 19.32009,
+          "epoch_utc": "2025-11-30T16:52:07Z",
+          "r_au": 1.288620018788,
+          "delta_au": 0.68695435107848,
+          "phase_deg": 49.0772,
+          "ra_deg": 154.21177,
+          "dec_deg": 19.31966,
           "vmag": null,
-          "ra_jnow_deg": 154.55961582717802,
-          "dec_jnow_deg": 19.190007953289392,
+          "ra_jnow_deg": 154.56558074828072,
+          "dec_jnow_deg": 19.189571390683493,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.443998643318928
+          "v_pred": 14.443793971759934
         },
         {
-          "epoch_utc": "2025-12-01T16:45:05Z",
-          "r_au": 1.2836019018,
-          "delta_au": 0.68105381168283,
-          "phase_deg": 49.3462,
-          "ra_deg": 155.42927,
-          "dec_deg": 19.23007,
+          "epoch_utc": "2025-12-01T16:52:07Z",
+          "r_au": 1.283577476283,
+          "delta_au": 0.6810253142837,
+          "phase_deg": 49.3475,
+          "ra_deg": 155.43527,
+          "dec_deg": 19.22962,
           "vmag": null,
-          "ra_jnow_deg": 155.7820425823939,
-          "dec_jnow_deg": 19.098672527753894,
+          "ra_jnow_deg": 155.78803745650814,
+          "dec_jnow_deg": 19.098216223297513,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.402609301954715
+          "v_pred": 14.40240893801646
         },
         {
-          "epoch_utc": "2025-12-02T16:45:05Z",
-          "r_au": 1.278662263526,
-          "delta_au": 0.67533571799264,
-          "phase_deg": 49.616,
-          "ra_deg": 156.65869,
-          "dec_deg": 19.13498,
+          "epoch_utc": "2025-12-02T16:52:07Z",
+          "r_au": 1.278638348707,
+          "delta_au": 0.67530825689909,
+          "phase_deg": 49.6173,
+          "ra_deg": 156.66472,
+          "dec_deg": 19.13451,
           "vmag": null,
-          "ra_jnow_deg": 157.0104093875802,
-          "dec_jnow_deg": 19.00232080391688,
+          "ra_jnow_deg": 157.01643422083157,
+          "dec_jnow_deg": 19.00184476491411,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.362113588683044
+          "v_pred": 14.361917662992244
         },
         {
-          "epoch_utc": "2025-12-03T16:45:05Z",
-          "r_au": 1.273827932402,
-          "delta_au": 0.66982910268784,
-          "phase_deg": 49.8852,
-          "ra_deg": 157.89355,
-          "dec_deg": 19.03479,
+          "epoch_utc": "2025-12-03T16:52:07Z",
+          "r_au": 1.27380453757,
+          "delta_au": 0.6698026748173,
+          "phase_deg": 49.8865,
+          "ra_deg": 157.89961,
+          "dec_deg": 19.03429,
           "vmag": null,
-          "ra_jnow_deg": 158.24420800040704,
-          "dec_jnow_deg": 18.900924733397037,
+          "ra_jnow_deg": 158.25026278856646,
+          "dec_jnow_deg": 18.900418967002384,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.32253773780274
+          "v_pred": 14.322346376438698
         },
         {
-          "epoch_utc": "2025-12-04T16:45:05Z",
-          "r_au": 1.269100803327,
-          "delta_au": 0.66453321742905,
-          "phase_deg": 50.1534,
-          "ra_deg": 159.13329,
-          "dec_deg": 18.92947,
+          "epoch_utc": "2025-12-04T16:52:07Z",
+          "r_au": 1.269077937735,
+          "delta_au": 0.66450781855914,
+          "phase_deg": 50.1547,
+          "ra_deg": 159.13937,
+          "dec_deg": 18.92894,
           "vmag": null,
-          "ra_jnow_deg": 159.48288025975384,
-          "dec_jnow_deg": 18.794456201933308,
+          "ra_jnow_deg": 159.48895501845638,
+          "dec_jnow_deg": 18.79392072400829,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.283907049489974
+          "v_pred": 14.283720373975097
         },
         {
-          "epoch_utc": "2025-12-05T16:45:05Z",
-          "r_au": 1.264482762284,
-          "delta_au": 0.65944709784476,
-          "phase_deg": 50.4203,
-          "ra_deg": 160.37733,
-          "dec_deg": 18.819,
+          "epoch_utc": "2025-12-05T16:52:07Z",
+          "r_au": 1.264460435136,
+          "delta_au": 0.65942272278689,
+          "phase_deg": 50.4216,
+          "ra_deg": 160.38343,
+          "dec_deg": 18.81844,
           "vmag": null,
-          "ra_jnow_deg": 160.7258480664317,
-          "dec_jnow_deg": 18.682896986701373,
+          "ra_jnow_deg": 160.73194280343148,
+          "dec_jnow_deg": 18.68233180298839,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.246245908059445
+          "v_pred": 14.246064035550454
         },
         {
-          "epoch_utc": "2025-12-06T16:45:05Z",
-          "r_au": 1.259975683987,
-          "delta_au": 0.65456960158138,
-          "phase_deg": 50.6855,
-          "ra_deg": 161.62505,
-          "dec_deg": 18.7034,
+          "epoch_utc": "2025-12-06T16:52:07Z",
+          "r_au": 1.259953904425,
+          "delta_au": 0.65454624436954,
+          "phase_deg": 50.6868,
+          "ra_deg": 161.63116,
+          "dec_deg": 18.70282,
           "vmag": null,
-          "ra_jnow_deg": 161.9724934174429,
-          "dec_jnow_deg": 18.566268762124512,
+          "ra_jnow_deg": 161.97859815741901,
+          "dec_jnow_deg": 18.56568388598459,
           "photometry": {
             "M1": 13.8,
             "K1": 13.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.20957783419267
+          "v_pred": 14.209400877755124
         }
       ],
-      "v_pred_now": 14.803890199294585,
-      "cobs_mag": 13.1,
+      "v_pred_now": 14.803656149174385,
+      "cobs_mag": 13.2,
       "name_full": "24P/Schaumasse",
       "display_name": "24P/Schaumasse"
     },
     {
-      "id": "K10B020",
-      "horizons_target": "K10B020",
-      "epoch_utc": "2025-11-22T16:46:18Z",
-      "error": "Unknown target (K10B020). Maybe try different id_type?",
-      "cobs_mag": 13.3,
-      "name_full": "P/2010 B2 (WISE)",
-      "display_name": "P/2010 B2 (WISE)"
-    },
-    {
-      "id": "K25K01b",
-      "horizons_target": "K25K01b",
-      "epoch_utc": "2025-11-22T16:46:35Z",
+      "id": "C/2022 N2",
+      "horizons_target": "C/2022 N2",
+      "epoch_utc": "2025-11-22T16:54:54Z",
       "orbit": {
-        "epoch_jd_tdb": 2461002.199007218,
+        "epoch_jd_tdb": 2461002.204775376,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.3356936683816336,
-        "e": 1.00194829747029,
-        "i_deg": 147.9112300992684,
-        "Omega_deg": 97.63491649089511,
-        "omega_deg": 271.3099442996498,
-        "Tp_jd_tdb": 2460956.952224028,
+        "q_au": 3.825560585896115,
+        "e": 1.003415835540434,
+        "i_deg": 5.502985066985832,
+        "Omega_deg": 319.7372282109086,
+        "omega_deg": 75.40589905599448,
+        "Tp_jd_tdb": 2460888.34044466,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2025-11-22T16:45:25Z",
-          "r_au": 1.155199798154,
-          "delta_au": 0.40686560140395,
-          "phase_deg": 56.0814,
-          "ra_deg": 153.1377,
-          "dec_deg": 56.06863,
+          "epoch_utc": "2025-11-22T16:53:43Z",
+          "r_au": 3.954149890602,
+          "delta_au": 2.97625881958449,
+          "phase_deg": 2.3091,
+          "ra_deg": 50.13988,
+          "dec_deg": 25.93572,
           "vmag": null,
-          "ra_jnow_deg": 153.56530702974024,
-          "dec_jnow_deg": 55.93980043612818,
+          "ra_jnow_deg": 50.5257009000148,
+          "dec_jnow_deg": 26.027727167548342,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.629346753761796
+          "v_pred": 14.799935527832332
         },
         {
-          "epoch_utc": "2025-11-23T16:45:25Z",
-          "r_au": 1.174259260993,
-          "delta_au": 0.40304622135048,
-          "phase_deg": 53.259,
-          "ra_deg": 149.04579,
-          "dec_deg": 60.03121,
+          "epoch_utc": "2025-11-23T16:53:43Z",
+          "r_au": 3.956368739254,
+          "delta_au": 2.98025001724404,
+          "phase_deg": 2.4845,
+          "ra_deg": 50.0348,
+          "dec_deg": 25.90215,
           "vmag": null,
-          "ra_jnow_deg": 149.504979207169,
-          "dec_jnow_deg": 59.9072884221412,
+          "ra_jnow_deg": 50.42049926096021,
+          "dec_jnow_deg": 25.994370370810948,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.788315118126047
+          "v_pred": 14.80436825631851
         },
         {
-          "epoch_utc": "2025-11-24T16:45:25Z",
-          "r_au": 1.193226664648,
-          "delta_au": 0.40173735421077,
-          "phase_deg": 50.4508,
-          "ra_deg": 143.75032,
-          "dec_deg": 63.88223,
+          "epoch_utc": "2025-11-24T16:53:43Z",
+          "r_au": 3.958605293275,
+          "delta_au": 2.98453127318114,
+          "phase_deg": 2.6753,
+          "ra_deg": 49.93104,
+          "dec_deg": 25.86808,
           "vmag": null,
-          "ra_jnow_deg": 144.2545238531092,
-          "dec_jnow_deg": 63.76558884907357,
+          "ra_jnow_deg": 50.31661753380784,
+          "dec_jnow_deg": 25.960510757614475,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 14.956965558537705
+          "v_pred": 14.809019426397743
         },
         {
-          "epoch_utc": "2025-11-25T16:45:25Z",
-          "r_au": 1.21210301039,
-          "delta_au": 0.40299018509145,
-          "phase_deg": 47.7192,
-          "ra_deg": 136.79016,
-          "dec_deg": 67.47934,
+          "epoch_utc": "2025-11-25T16:53:43Z",
+          "r_au": 3.960859511971,
+          "delta_au": 2.98910157542633,
+          "phase_deg": 2.878,
+          "ra_deg": 49.82874,
+          "dec_deg": 25.83356,
           "vmag": null,
-          "ra_jnow_deg": 137.35822379276132,
-          "dec_jnow_deg": 67.37376052386465,
+          "ra_jnow_deg": 50.214195957578596,
+          "dec_jnow_deg": 25.92619806775246,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.13584547338585
+          "v_pred": 14.81388735884628
         },
         {
-          "epoch_utc": "2025-11-26T16:45:25Z",
-          "r_au": 1.230889339924,
-          "delta_au": 0.40680644455556,
-          "phase_deg": 45.1251,
-          "ra_deg": 127.59461,
-          "dec_deg": 70.63403,
+          "epoch_utc": "2025-11-26T16:53:43Z",
+          "r_au": 3.963131354453,
+          "delta_au": 2.99395973175626,
+          "phase_deg": 3.0898,
+          "ra_deg": 49.72803,
+          "dec_deg": 25.79863,
           "vmag": null,
-          "ra_jnow_deg": 128.24932905849286,
-          "dec_jnow_deg": 70.5454040552288,
+          "ra_jnow_deg": 50.11336473879101,
+          "dec_jnow_deg": 25.891472061699787,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.324969136984704
+          "v_pred": 14.81897019227519
         },
         {
-          "epoch_utc": "2025-11-27T16:45:25Z",
-          "r_au": 1.249586727124,
-          "delta_au": 0.41313904854336,
-          "phase_deg": 42.7226,
-          "ra_deg": 115.67741,
-          "dec_deg": 73.10709,
+          "epoch_utc": "2025-11-27T16:53:43Z",
+          "r_au": 3.965420779623,
+          "delta_au": 2.99910437624668,
+          "phase_deg": 3.3084,
+          "ra_deg": 49.62904,
+          "dec_deg": 25.76334,
           "vmag": null,
-          "ra_jnow_deg": 116.43510231260963,
-          "dec_jnow_deg": 73.0437404442055,
+          "ra_jnow_deg": 50.01425410693255,
+          "dec_jnow_deg": 25.85638250114434,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.523832914978653
+          "v_pred": 14.8242658905504
         },
         {
-          "epoch_utc": "2025-11-28T16:45:25Z",
-          "r_au": 1.268196270495,
-          "delta_au": 0.4218971125215,
-          "phase_deg": 40.5543,
-          "ra_deg": 101.18224,
-          "dec_deg": 74.64172,
+          "epoch_utc": "2025-11-28T16:53:43Z",
+          "r_au": 3.967727746184,
+          "delta_au": 3.00453397816532,
+          "phase_deg": 3.5323,
+          "ra_deg": 49.5319,
+          "dec_deg": 25.72773,
           "vmag": null,
-          "ra_jnow_deg": 102.02807666344253,
-          "dec_jnow_deg": 74.61270342520925,
+          "ra_jnow_deg": 49.91699426679942,
+          "dec_jnow_deg": 25.82096914897795,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.73149117529474
+          "v_pred": 14.829772252072646
         },
         {
-          "epoch_utc": "2025-11-29T16:45:25Z",
-          "r_au": 1.286719086287,
-          "delta_au": 0.43295429986501,
-          "phase_deg": 38.6481,
-          "ra_deg": 85.50204,
-          "dec_deg": 75.07539,
+          "epoch_utc": "2025-11-29T16:53:43Z",
+          "r_au": 3.970052212633,
+          "delta_au": 3.01024685502309,
+          "phase_deg": 3.7599,
+          "ra_deg": 49.43674,
+          "dec_deg": 25.69184,
           "vmag": null,
-          "ra_jnow_deg": 86.3740535664897,
-          "dec_jnow_deg": 75.0856060114213,
+          "ra_jnow_deg": 49.821715422334016,
+          "dec_jnow_deg": 25.78527176921277,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 15.94667479727946
+          "v_pred": 14.835486922160348
         },
         {
-          "epoch_utc": "2025-11-30T16:45:25Z",
-          "r_au": 1.305156302287,
-          "delta_au": 0.44615895368206,
-          "phase_deg": 37.0162,
-          "ra_deg": 70.8325,
-          "dec_deg": 74.47016,
+          "epoch_utc": "2025-11-30T16:53:43Z",
+          "r_au": 3.97239413727,
+          "delta_au": 3.01624119221974,
+          "phase_deg": 3.9902,
+          "ra_deg": 49.34365,
+          "dec_deg": 25.65571,
           "vmag": null,
-          "ra_jnow_deg": 71.65688028368825,
-          "dec_jnow_deg": 74.51654283451565,
+          "ra_jnow_deg": 49.72850774520459,
+          "dec_jnow_deg": 25.749330203570747,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.16792681667537
+          "v_pred": 14.841407410248665
         },
         {
-          "epoch_utc": "2025-12-01T16:45:25Z",
-          "r_au": 1.323509052364,
-          "delta_au": 0.46134442462659,
-          "phase_deg": 35.6557,
-          "ra_deg": 58.68009,
-          "dec_deg": 73.09034,
+          "epoch_utc": "2025-12-01T16:53:43Z",
+          "r_au": 3.974753478192,
+          "delta_au": 3.02251507149084,
+          "phase_deg": 4.2222,
+          "ra_deg": 49.25277,
+          "dec_deg": 25.6194,
           "vmag": null,
-          "ra_jnow_deg": 59.420118695920124,
-          "dec_jnow_deg": 73.16453896137453,
+          "ra_jnow_deg": 49.63751149246425,
+          "dec_jnow_deg": 25.71320419862847,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.393731013499647
+          "v_pred": 14.847531113373442
         },
         {
-          "epoch_utc": "2025-12-02T16:45:25Z",
-          "r_au": 1.341778471779,
-          "delta_au": 0.47833834815173,
-          "phase_deg": 34.5513,
-          "ra_deg": 49.28062,
-          "dec_deg": 71.24343,
+          "epoch_utc": "2025-12-02T16:53:43Z",
+          "r_au": 3.977130193303,
+          "delta_au": 3.02906650844948,
+          "phase_deg": 4.4554,
+          "ra_deg": 49.16419,
+          "dec_deg": 25.58293,
           "vmag": null,
-          "ra_jnow_deg": 49.93722162149435,
-          "dec_jnow_deg": 71.33693064867688,
+          "ra_jnow_deg": 49.548816786560025,
+          "dec_jnow_deg": 25.676913597649055,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.622616690598463
+          "v_pred": 14.85385534604146
         },
         {
-          "epoch_utc": "2025-12-03T16:45:25Z",
-          "r_au": 1.359965693264,
-          "delta_au": 0.49697013598861,
-          "phase_deg": 33.6787,
-          "ra_deg": 42.17604,
-          "dec_deg": 69.16916,
+          "epoch_utc": "2025-12-03T16:53:43Z",
+          "r_au": 3.979524240305,
+          "delta_au": 3.03589349543515,
+          "phase_deg": 4.689,
+          "ra_deg": 49.07802,
+          "dec_deg": 25.54636,
           "vmag": null,
-          "ra_jnow_deg": 42.76498745871192,
-          "dec_jnow_deg": 69.27560393900441,
+          "ra_jnow_deg": 49.46253385887288,
+          "dec_jnow_deg": 25.640518206088966,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 16.853232270306176
+          "v_pred": 14.860377373607466
         },
         {
-          "epoch_utc": "2025-12-04T16:45:25Z",
-          "r_au": 1.378071843802,
-          "delta_au": 0.51707643433393,
-          "phase_deg": 33.008,
-          "ra_deg": 36.79132,
-          "dec_deg": 67.0226,
+          "epoch_utc": "2025-12-04T16:53:43Z",
+          "r_au": 3.98193557671,
+          "delta_au": 3.04299404067969,
+          "phase_deg": 4.9226,
+          "ra_deg": 48.99435,
+          "dec_deg": 25.50971,
           "vmag": null,
-          "ra_jnow_deg": 37.329197200382126,
-          "dec_jnow_deg": 67.13776903976716,
+          "ra_jnow_deg": 49.37875282999954,
+          "dec_jnow_deg": 25.60403786822532,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.084388178585723
+          "v_pred": 14.867094442655072
         },
         {
-          "epoch_utc": "2025-12-05T16:45:25Z",
-          "r_au": 1.396098042032,
-          "delta_au": 0.53850465621227,
-          "phase_deg": 32.5078,
-          "ra_deg": 32.65364,
-          "dec_deg": 64.89551,
+          "epoch_utc": "2025-12-05T16:53:43Z",
+          "r_au": 3.984364159835,
+          "delta_au": 3.05036619175203,
+          "phase_deg": 5.1558,
+          "ra_deg": 48.91329,
+          "dec_deg": 25.47304,
           "vmag": null,
-          "ra_jnow_deg": 33.15365927697641,
-          "dec_jnow_deg": 65.0166932813344,
+          "ra_jnow_deg": 49.29758392911332,
+          "dec_jnow_deg": 25.56753239048373,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.315074243863304
+          "v_pred": 14.874003799773924
         },
         {
-          "epoch_utc": "2025-12-06T16:45:25Z",
-          "r_au": 1.414045396189,
-          "delta_au": 0.56111489639742,
-          "phase_deg": 32.147,
-          "ra_deg": 29.41975,
-          "dec_deg": 62.83929,
+          "epoch_utc": "2025-12-06T16:53:43Z",
+          "r_au": 3.986809946807,
+          "delta_au": 3.05800803409523,
+          "phase_deg": 5.3881,
+          "ra_deg": 48.83491,
+          "dec_deg": 25.43639,
           "vmag": null,
-          "ra_jnow_deg": 29.891579346641475,
-          "dec_jnow_deg": 62.964734354524985,
+          "ra_jnow_deg": 49.21909730590926,
+          "dec_jnow_deg": 25.53104165589147,
           "photometry": {
-            "M1": 15.0,
-            "K1": 25.25,
+            "M1": 8.7,
+            "K1": 6.25,
             "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
           },
-          "v_pred": 17.544458634640517
+          "v_pred": 14.881102692375297
         }
       ],
-      "v_pred_now": 14.629346753761796,
-      "cobs_mag": 13.3,
-      "name_full": "C/2025 K1-B",
-      "display_name": "C/2025 K1-B"
-    },
-    {
-      "id": "K22N020",
-      "horizons_target": "K22N020",
-      "epoch_utc": "2025-11-22T16:46:26Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461002.198893845,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 3.825560579464701,
-        "e": 1.003415823755076,
-        "i_deg": 5.502985064672824,
-        "Omega_deg": 319.7372284340687,
-        "omega_deg": 75.40589824746183,
-        "Tp_jd_tdb": 2460888.340441267,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2025-11-22T16:45:15Z",
-          "r_au": 3.954136890994,
-          "delta_au": 2.97623620177785,
-          "phase_deg": 2.3081,
-          "ra_deg": 50.1405,
-          "dec_deg": 25.93592,
-          "vmag": null,
-          "ra_jnow_deg": 50.52632162328837,
-          "dec_jnow_deg": 26.027925908968655,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.799910102221038
-        },
-        {
-          "epoch_utc": "2025-11-23T16:45:15Z",
-          "r_au": 3.956355635374,
-          "delta_au": 2.98022569057564,
-          "phase_deg": 2.4834,
-          "ra_deg": 50.03542,
-          "dec_deg": 25.90235,
-          "vmag": null,
-          "ra_jnow_deg": 50.4211199837913,
-          "dec_jnow_deg": 25.994569113808396,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.80434154115148
-        },
-        {
-          "epoch_utc": "2025-11-24T16:45:15Z",
-          "r_au": 3.958592085364,
-          "delta_au": 2.98450524306426,
-          "phase_deg": 2.6742,
-          "ra_deg": 49.93165,
-          "dec_deg": 25.86828,
-          "vmag": null,
-          "ra_jnow_deg": 50.31722824835424,
-          "dec_jnow_deg": 25.96070952149065,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.80899143100584
-        },
-        {
-          "epoch_utc": "2025-11-25T16:45:15Z",
-          "r_au": 3.96084620027,
-          "delta_au": 2.9890738483464,
-          "phase_deg": 2.8768,
-          "ra_deg": 49.82934,
-          "dec_deg": 25.83377,
-          "vmag": null,
-          "ra_jnow_deg": 50.21479668763834,
-          "dec_jnow_deg": 25.92640685241147,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.81385809364727
-        },
-        {
-          "epoch_utc": "2025-11-26T16:45:15Z",
-          "r_au": 3.963117939202,
-          "delta_au": 2.99393031524155,
-          "phase_deg": 3.0885,
-          "ra_deg": 49.72862,
-          "dec_deg": 25.79884,
-          "vmag": null,
-          "ra_jnow_deg": 50.11395546045328,
-          "dec_jnow_deg": 25.891680867090592,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.818939668736595
-        },
-        {
-          "epoch_utc": "2025-11-27T16:45:15Z",
-          "r_au": 3.965407261065,
-          "delta_au": 2.99907327882423,
-          "phase_deg": 3.3071,
-          "ra_deg": 49.62962,
-          "dec_deg": 25.76355,
-          "vmag": null,
-          "ra_jnow_deg": 50.01483482016839,
-          "dec_jnow_deg": 25.856591327191826,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.82423412114405
-        },
-        {
-          "epoch_utc": "2025-11-28T16:45:15Z",
-          "r_au": 3.967714124562,
-          "delta_au": 3.0045012092987,
-          "phase_deg": 3.5309,
-          "ra_deg": 49.53247,
-          "dec_deg": 25.72794,
-          "vmag": null,
-          "ra_jnow_deg": 49.91756497158228,
-          "dec_jnow_deg": 25.82117799560612,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.829739250210533
-        },
-        {
-          "epoch_utc": "2025-11-29T16:45:15Z",
-          "r_au": 3.970038488192,
-          "delta_au": 3.01021242501881,
-          "phase_deg": 3.7585,
-          "ra_deg": 49.43729,
-          "dec_deg": 25.69205,
-          "vmag": null,
-          "ra_jnow_deg": 49.822266110797834,
-          "dec_jnow_deg": 25.785480655533433,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.83545270211078
-        },
-        {
-          "epoch_utc": "2025-11-30T16:45:15Z",
-          "r_au": 3.972380310256,
-          "delta_au": 3.01620511208762,
-          "phase_deg": 3.9888,
-          "ra_deg": 49.34419,
-          "dec_deg": 25.65593,
-          "vmag": null,
-          "ra_jnow_deg": 49.72904844877022,
-          "dec_jnow_deg": 25.749549110271513,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.841371987017117
-        },
-        {
-          "epoch_utc": "2025-12-01T16:45:15Z",
-          "r_au": 3.974739548853,
-          "delta_au": 3.02247735274879,
-          "phase_deg": 4.2209,
-          "ra_deg": 49.2533,
-          "dec_deg": 25.61961,
-          "vmag": null,
-          "ra_jnow_deg": 49.638042163905844,
-          "dec_jnow_deg": 25.713413125677782,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.847494502545363
-        },
-        {
-          "epoch_utc": "2025-12-02T16:45:15Z",
-          "r_au": 3.977116161885,
-          "delta_au": 3.02902716288089,
-          "phase_deg": 4.454,
-          "ra_deg": 49.16471,
-          "dec_deg": 25.58314,
-          "vmag": null,
-          "ra_jnow_deg": 49.549337449465305,
-          "dec_jnow_deg": 25.67712254494782,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.853817563588969
-        },
-        {
-          "epoch_utc": "2025-12-03T16:45:15Z",
-          "r_au": 3.979510107059,
-          "delta_au": 3.03585253483644,
-          "phase_deg": 4.6876,
-          "ra_deg": 49.07852,
-          "dec_deg": 25.54657,
-          "vmag": null,
-          "ra_jnow_deg": 49.46303450537666,
-          "dec_jnow_deg": 25.640727192654847,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.860338435698539
-        },
-        {
-          "epoch_utc": "2025-12-04T16:45:15Z",
-          "r_au": 3.981921341886,
-          "delta_au": 3.04295147666407,
-          "phase_deg": 4.9212,
-          "ra_deg": 48.99484,
-          "dec_deg": 25.50993,
-          "vmag": null,
-          "ra_jnow_deg": 49.37924349137482,
-          "dec_jnow_deg": 25.60425687484411,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.867054365496312
-        },
-        {
-          "epoch_utc": "2025-12-05T16:45:15Z",
-          "r_au": 3.984349823685,
-          "delta_au": 3.05032203567889,
-          "phase_deg": 5.1544,
-          "ra_deg": 48.91376,
-          "dec_deg": 25.47326,
-          "vmag": null,
-          "ra_jnow_deg": 49.29805457402451,
-          "dec_jnow_deg": 25.567751436153713,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.873962599550998
-        },
-        {
-          "epoch_utc": "2025-12-06T16:45:15Z",
-          "r_au": 3.986795509584,
-          "delta_au": 3.05796229715748,
-          "phase_deg": 5.3867,
-          "ra_deg": 48.83536,
-          "dec_deg": 25.4366,
-          "vmag": null,
-          "ra_jnow_deg": 49.219547910998294,
-          "dec_jnow_deg": 25.531250740519972,
-          "photometry": {
-            "M1": 8.7,
-            "K1": 6.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 14.881060385303673
-        }
-      ],
-      "v_pred_now": 14.799910102221038,
+      "v_pred_now": 14.799935527832332,
       "cobs_mag": 13.8,
       "name_full": "C/2022 N2 (PANSTARRS)",
       "display_name": "C/2022 N2 (PANSTARRS)"
+    },
+    {
+      "id": "C/2021 G2",
+      "horizons_target": "C/2021 G2",
+      "epoch_utc": "2025-11-22T16:54:45Z",
+      "orbit": {
+        "epoch_jd_tdb": 2461002.204677247,
+        "frame": "ecliptic J2000",
+        "type": "comet",
+        "q_au": 4.982104176601605,
+        "e": 1.000914085411837,
+        "i_deg": 48.46249263846335,
+        "Omega_deg": 221.0917945640436,
+        "omega_deg": 343.2651291035924,
+        "Tp_jd_tdb": 2460562.634946534,
+        "solution": "osculating",
+        "reference": "JPL SBDB (via Horizons)"
+      },
+      "ephemeris_15d": [
+        {
+          "epoch_utc": "2025-11-22T16:53:35Z",
+          "r_au": 5.993298131399,
+          "delta_au": 6.91089469010889,
+          "phase_deg": 3.2516,
+          "ra_deg": 244.67776,
+          "dec_deg": -1.1129,
+          "vmag": null,
+          "ra_jnow_deg": 245.01211257382934,
+          "dec_jnow_deg": -1.1741679066659305,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.280417255306006
+        },
+        {
+          "epoch_utc": "2025-11-23T16:53:35Z",
+          "r_au": 5.997384582699,
+          "delta_au": 6.91503605211838,
+          "phase_deg": 3.2435,
+          "ra_deg": 244.88262,
+          "dec_deg": -1.09703,
+          "vmag": null,
+          "ra_jnow_deg": 245.21697554523556,
+          "dec_jnow_deg": -1.1578374457058236,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.283272212603936
+        },
+        {
+          "epoch_utc": "2025-11-24T16:53:35Z",
+          "r_au": 6.0014764911,
+          "delta_au": 6.91897206807069,
+          "phase_deg": 3.2401,
+          "ra_deg": 245.08747,
+          "dec_deg": -1.08033,
+          "vmag": null,
+          "ra_jnow_deg": 245.4218264564239,
+          "dec_jnow_deg": -1.1406761337591773,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.286062960223834
+        },
+        {
+          "epoch_utc": "2025-11-25T16:53:35Z",
+          "r_au": 6.005573839828,
+          "delta_au": 6.92270289637131,
+          "phase_deg": 3.2416,
+          "ra_deg": 245.29228,
+          "dec_deg": -1.06279,
+          "vmag": null,
+          "ra_jnow_deg": 245.62663527541332,
+          "dec_jnow_deg": -1.1226740454050341,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.28878964954002
+        },
+        {
+          "epoch_utc": "2025-11-26T16:53:35Z",
+          "r_au": 6.009676612153,
+          "delta_au": 6.92622877983035,
+          "phase_deg": 3.248,
+          "ra_deg": 245.49703,
+          "dec_deg": -1.0444,
+          "vmag": null,
+          "ra_jnow_deg": 245.83138197044175,
+          "dec_jnow_deg": -1.1038212327768675,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.291452452347773
+        },
+        {
+          "epoch_utc": "2025-11-27T16:53:35Z",
+          "r_au": 6.013784791373,
+          "delta_au": 6.92955004362351,
+          "phase_deg": 3.259,
+          "ra_deg": 245.70169,
+          "dec_deg": -1.02517,
+          "vmag": null,
+          "ra_jnow_deg": 246.03603655557885,
+          "dec_jnow_deg": -1.0841277712466602,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.294051560201314
+        },
+        {
+          "epoch_utc": "2025-11-28T16:53:35Z",
+          "r_au": 6.017898360807,
+          "delta_au": 6.93266709192137,
+          "phase_deg": 3.2748,
+          "ra_deg": 245.90624,
+          "dec_deg": -1.00507,
+          "vmag": null,
+          "ra_jnow_deg": 246.24057895335355,
+          "dec_jnow_deg": -1.0635637137514762,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.296587183349775
+        },
+        {
+          "epoch_utc": "2025-11-29T16:53:35Z",
+          "r_au": 6.022017303806,
+          "delta_au": 6.93558040158629,
+          "phase_deg": 3.2951,
+          "ra_deg": 246.11065,
+          "dec_deg": -0.9841,
+          "vmag": null,
+          "ra_jnow_deg": 246.4449791550466,
+          "dec_jnow_deg": -1.0421291365043186,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.299059548774117
+        },
+        {
+          "epoch_utc": "2025-11-30T16:53:35Z",
+          "r_au": 6.026141603745,
+          "delta_au": 6.93829051063094,
+          "phase_deg": 3.3199,
+          "ra_deg": 246.3149,
+          "dec_deg": -0.96226,
+          "vmag": null,
+          "ra_jnow_deg": 246.64921715231225,
+          "dec_jnow_deg": -1.0198240930838365,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.301468896591008
+        },
+        {
+          "epoch_utc": "2025-12-01T16:53:35Z",
+          "r_au": 6.030271244032,
+          "delta_au": 6.94079799896576,
+          "phase_deg": 3.3489,
+          "ra_deg": 246.51897,
+          "dec_deg": -0.93954,
+          "vmag": null,
+          "ra_jnow_deg": 246.85327291387878,
+          "dec_jnow_deg": -0.9966386373866436,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.303815474066568
+        },
+        {
+          "epoch_utc": "2025-12-02T16:53:35Z",
+          "r_au": 6.034406208106,
+          "delta_au": 6.94310346016216,
+          "phase_deg": 3.3822,
+          "ra_deg": 246.72283,
+          "dec_deg": -0.91594,
+          "vmag": null,
+          "ra_jnow_deg": 247.057116431566,
+          "dec_jnow_deg": -0.9725728467307599,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.306099526834487
+        },
+        {
+          "epoch_utc": "2025-12-03T16:53:35Z",
+          "r_au": 6.038546479441,
+          "delta_au": 6.94520746618821,
+          "phase_deg": 3.4195,
+          "ra_deg": 246.92647,
+          "dec_deg": -0.89144,
+          "vmag": null,
+          "ra_jnow_deg": 247.26073765127447,
+          "dec_jnow_deg": -0.9476067525148918,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.308321287938952
+        },
+        {
+          "epoch_utc": "2025-12-04T16:53:35Z",
+          "r_au": 6.042692041545,
+          "delta_au": 6.94711053182798,
+          "phase_deg": 3.4606,
+          "ra_deg": 247.12987,
+          "dec_deg": -0.86605,
+          "vmag": null,
+          "ra_jnow_deg": 247.46411658840512,
+          "dec_jnow_deg": -0.9217504094164987,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.310480966794735
+        },
+        {
+          "epoch_utc": "2025-12-05T16:53:35Z",
+          "r_au": 6.046842877963,
+          "delta_au": 6.94881308919687,
+          "phase_deg": 3.5053,
+          "ra_deg": 247.33301,
+          "dec_deg": -0.83975,
+          "vmag": null,
+          "ra_jnow_deg": 247.66723318888168,
+          "dec_jnow_deg": -0.8949838724590979,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.31257874131515
+        },
+        {
+          "epoch_utc": "2025-12-06T16:53:35Z",
+          "r_au": 6.050998972279,
+          "delta_au": 6.95031548182623,
+          "phase_deg": 3.5536,
+          "ra_deg": 247.53586,
+          "dec_deg": -0.81254,
+          "vmag": null,
+          "ra_jnow_deg": 247.8700574450724,
+          "dec_jnow_deg": -0.8673072201819152,
+          "photometry": {
+            "M1": 8.0,
+            "K1": 5.25,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 16.3146147561543
+        }
+      ],
+      "v_pred_now": 16.280417255306006,
+      "cobs_mag": 15.0,
+      "name_full": "C/2021 G2 (Atlas)",
+      "display_name": "C/2021 G2 (Atlas)"
     }
   ],
   "script": "horizons_orbit_ephem.py",
@@ -3421,22 +2849,23 @@
     "max_items": 15
   },
   "_debug_first_names": [
-    "3I/ATLAS",
-    "141P-B/Machholz",
-    "210P/Christensen",
-    "240P/NEAT",
-    "24P/Schaumasse",
-    "29P/Schwassmann-Wachmann",
-    "P/2010 B2 (WISE)",
-    "P/2010 H2 (Vales)",
-    "P/2019 Y2 (Fuls)",
-    "C/2022 N2 (PANSTARRS)"
+    "CK24G060",
+    "CK23H050",
+    "CK21G020",
+    "CK25V010",
+    "CK24E010",
+    "141P-B",
+    "CK24G040",
+    "CK23A030",
+    "CK25T010",
+    "CK25R010",
+    "CK24J030",
+    "CK23R010"
   ],
   "_debug_counts": {
-    "total_objects": 18,
-    "with_mpc_name": 18,
-    "within_mag_limit": 18,
-    "pages_fetched": 1
+    "packed_unpacked": 36,
+    "fragments": 0,
+    "plain": 55
   },
   "units": {
     "angles": "deg",
