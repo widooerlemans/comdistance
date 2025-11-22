@@ -164,6 +164,28 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         jd = float(row["datetime_jd"])
         t_tdb = Time(jd, format="jd", scale="tdb")
         t_utc = t_tdb.utc
+
+        # --- NEW: compute JNow (equinox-of-date) from J2000 ---
+        ra = core.get("ra_deg")
+        dec = core.get("dec_deg")
+        if (ra is not None) and (dec is not None):
+            try:
+                # Treat Horizons RA/DEC as FK5 at J2000 equinox
+                c_j2000 = SkyCoord(
+                    ra * u.deg,
+                    dec * u.deg,
+                    frame=FK5(equinox=Time("J2000"))
+                )
+                # Transform to FK5 with equinox at the current observation time
+                c_jnow = c_j2000.transform_to(FK5(equinox=t_utc))
+
+                core["ra_jnow_deg"] = float(c_jnow.ra.deg)
+                core["dec_jnow_deg"] = float(c_jnow.dec.deg)
+            except Exception:
+                # If anything goes wrong, keep whatever core already had
+                pass
+        # --- END NEW BLOCK ---
+
         dt = t_utc.to_datetime(timezone=timezone.utc)
         epoch_iso = dt.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
@@ -172,7 +194,6 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         out.append(entry)
 
     return out
-
 
 def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
     """
@@ -309,3 +330,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
