@@ -133,7 +133,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
         page += 1
 
     # Build debug helper fields expected by main()
-    comet_ids = sorted(cobs_map.keys(), key=_sort_key)
+    comet_ids = sorted(cobs_map.keys())
     debug_first_names = [fullname_map[cid] for cid in comet_ids[:10]]
 
     result: Dict[str, Any] = dict(cobs_map)
@@ -459,6 +459,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
