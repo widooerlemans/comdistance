@@ -49,19 +49,11 @@ PAUSE_S = 0.25  # small courtesy delay between Horizons calls
 # ---------- COBS ↔ Horizons ID mapping helpers ----------
 
 # Hard-coded overrides for known weird cases.
-# NOTE: we'll normalize COBS IDs before looking them up here.
+# For now we keep this empty so Horizons sees the original IDs
+# exactly as load_cobs_designations() returns them.
 SPECIAL_ID_ALIASES: Dict[str, str] = {
-    # Interstellar object 3I/ATLAS:
-    # If COBS ever gives you a zero-padded code like 0003I/003I, we can
-    # map that to the proper Horizons/SBDB designation. In your *current*
-    # working environment this may not be needed for 3I, but we leave it
-    # here as a safety net.
-    "3I": "C/2025 N1 (ATLAS)",
-    "0003I": "C/2025 N1 (ATLAS)",
-    "003I": "C/2025 N1 (ATLAS)",
-
-    # Example for a periodic comet; only used if the raw ID matches:
-    "210P": "210P/Christensen",
+    # Example placeholder for future use:
+    # "SOME_WEIRD_ID": "Some Horizons-friendly designation",
 }
 
 
@@ -100,8 +92,8 @@ def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     """
     Map a COBS MPC/name-style ID to the Horizons target string.
 
-    For almost all objects this is just an identity mapping, but it
-    allows us to fix known mismatches like 0003I → C/2025 N1 (ATLAS).
+    With SPECIAL_ID_ALIASES empty, this just returns the original ID.
+    The mapping hook is kept so we can safely add overrides later.
     """
     key = normalize_cobs_code(raw_id)
     if key in SPECIAL_ID_ALIASES:
@@ -191,6 +183,53 @@ def sbdb_orbit_extended(label: str) -> Optional[Dict[str, Any]]:
     return out
 
 
+# ---------- Horizons ephemeris helper with fallback ----------
+
+def _get_horizons_ephemerides(
+    designation: str,
+    observer: str,
+    epochs: List[float],
+):
+    """
+    Call astroquery.Horizons.ephemerides() with a small set of fallback
+    id/id_type combinations.
+
+    This keeps the old behaviour as the *first* attempt, and only tries
+    alternatives if that fails (e.g. different id_type).
+    """
+    errors: List[Exception] = []
+
+    # Use the same ambiguity-resolution logic as horizons_pull.py
+    rec_id = resolve_ambiguous_to_record_id(designation)
+    candidates: List[tuple[str, str]] = []
+
+    if rec_id:
+        # Old behaviour first: rec_id with smallbody
+        candidates.append((rec_id, "smallbody"))
+        # Fallbacks: rec_id with other id_types
+        candidates.append((rec_id, "id"))
+        candidates.append((rec_id, "designation"))
+    else:
+        # Old behaviour first: designation with id_type="designation"
+        candidates.append((designation, "designation"))
+        # Fallbacks:
+        candidates.append((designation, "smallbody"))
+        candidates.append((designation, "id"))
+
+    last_error: Optional[Exception] = None
+    for obj_id, id_type in candidates:
+        try:
+            obj = Horizons(id=obj_id, id_type=id_type, location=observer, epochs=epochs)
+            return obj.ephemerides()
+        except Exception as e:
+            last_error = e
+            errors.append(e)
+
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"Horizons ephemerides failed for {designation!r} with no detail")
+
+
 # ---------- ephemeris helpers ----------
 
 def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> List[Dict[str, Any]]:
@@ -202,19 +241,7 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
     jd0 = Time.now().jd
     epochs = [jd0 + float(i) for i in range(days)]
 
-    # Use the same ambiguity-resolution logic as horizons_pull.py
-    rec_id = resolve_ambiguous_to_record_id(designation)
-    if rec_id:
-        id_value = rec_id
-        id_type = "smallbody"
-    else:
-        id_value = designation
-        id_type = "designation"
-
-    # IMPORTANT: let Horizons return the full default ephemeris
-    # so that r, alpha (phase angle), V, m1, k1 are all available.
-    obj = Horizons(id=id_value, id_type=id_type, location=observer, epochs=epochs)
-    eph = obj.ephemerides()  # <- no quantities=QUANTITIES here on purpose
+    eph = _get_horizons_ephemerides(designation, observer, epochs)
 
     out: List[Dict[str, Any]] = []
     for row in eph:
