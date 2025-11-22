@@ -16,6 +16,7 @@ existing pipeline remains unchanged.
 import json
 import math
 import time
+import re
 from datetime import timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -40,6 +41,73 @@ from horizons_pull import (
     horizons_elements,
     QUANTITIES,  # still imported, but not used here on purpose
 )
+
+OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
+DAYS = 15
+PAUSE_S = 0.25  # small courtesy delay between Horizons calls
+
+
+# ---------- COBS ↔ Horizons ID mapping helpers ----------
+
+# Hard-coded overrides for known weird cases.
+# Keys are normalized COBS IDs (after stripping, uppercasing, and the
+# interstellar zero-stripping helper below).
+# Values are the Horizons target strings that are known to work.
+SPECIAL_ID_ALIASES: Dict[str, str] = {
+    # Interstellar object 3I/ATLAS
+    # COBS may use zero-padded codes like "0003I" or "003I";
+    # Horizons expects "3I/ATLAS".
+    "3I": "3I/ATLAS",
+    "0003I": "3I/ATLAS",
+    "003I": "3I/ATLAS",
+    # Add more oddballs here as you encounter them, e.g.:
+    # "00XYZ": "C/20XX A1 (FOO)",
+}
+
+
+def _strip_leading_zeros_in_interstellar(code: str) -> str:
+    """
+    Normalize interstellar-style IDs like '0003I' / '003I' / '3I' → '3I'.
+
+    Only touches patterns ending in 'I' with digits in front.
+    Other comet designations remain unchanged.
+    """
+    if not code:
+        return code
+    code = code.strip().upper()
+    m = re.fullmatch(r"0*(\d+I)", code)
+    if m:
+        return m.group(1)  # e.g. '0003I' → '3I'
+    return code
+
+
+def normalize_cobs_code(raw_code: Optional[str]) -> str:
+    """
+    Produce a key we can reliably look up in SPECIAL_ID_ALIASES.
+
+    - Trim whitespace
+    - Uppercase
+    - Apply the interstellar zero-stripping helper
+    """
+    if not raw_code:
+        return ""
+    code = raw_code.strip().upper()
+    code = _strip_leading_zeros_in_interstellar(code)
+    return code
+
+
+def map_cobs_id_to_horizons_target(raw_id: str) -> str:
+    """
+    Map a COBS MPC/name-style ID to the Horizons target string.
+
+    For almost all objects this is just an identity mapping, but it
+    allows us to fix known mismatches like 0003I/003I → 3I/ATLAS.
+    """
+    key = normalize_cobs_code(raw_id)
+    if key in SPECIAL_ID_ALIASES:
+        return SPECIAL_ID_ALIASES[key]
+    return raw_id
+
 
 def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     """
@@ -167,10 +235,6 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
     return result
 
-OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
-DAYS = 15
-PAUSE_S = 0.25  # small courtesy delay between Horizons calls
-
 
 # ---------- orbit helpers ----------
 
@@ -294,7 +358,7 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
         t_tdb = Time(jd, format="jd", scale="tdb")
         t_utc = t_tdb.utc
 
-        # --- NEW: compute JNow (equinox-of-date) from J2000 ---
+        # --- compute JNow (equinox-of-date) from J2000 ---
         ra = core.get("ra_deg")
         dec = core.get("dec_deg")
         if (ra is not None) and (dec is not None):
@@ -313,7 +377,7 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
             except Exception:
                 # If anything goes wrong, keep whatever core already had
                 pass
-        # --- END NEW BLOCK ---
+        # --- END JNow block ---
 
         dt = t_utc.to_datetime(timezone=timezone.utc)
         epoch_iso = dt.replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -324,24 +388,34 @@ def build_ephemeris_span(designation: str, observer: str, days: int = DAYS) -> L
 
     return out
 
+
 def fetch_orbit_and_ephem(comet_id: str, observer: str) -> Dict[str, Any]:
     """
-    For a comet designation:
-      - fetch extended orbit from SBDB/Horizons
-      - build 15-day Horizons ephemeris
-      - derive v_pred_now from the first ephemeris row (if available)
+    For a *COBS* comet ID (mpc_name key from COBS):
+
+      - Map it (if needed) to the Horizons/SBDB target string via
+        map_cobs_id_to_horizons_target().
+      - Fetch extended orbit from SBDB/Horizons using that target.
+      - Build 15-day Horizons ephemeris using that target.
+      - Derive v_pred_now from the first ephemeris row (if available).
+
+    We keep the original COBS ID in the 'id' field, and store the
+    Horizons label in 'horizons_target' for transparency.
     """
-    orbit = sbdb_orbit_extended(comet_id)
+    horizons_target = map_cobs_id_to_horizons_target(comet_id)
+
+    orbit = sbdb_orbit_extended(horizons_target)
     ephem: List[Dict[str, Any]] = []
     error: Optional[str] = None
 
     try:
-        ephem = build_ephemeris_span(comet_id, observer, days=DAYS)
+        ephem = build_ephemeris_span(horizons_target, observer, days=DAYS)
     except Exception as e:
         error = str(e)
 
     item: Dict[str, Any] = {
-        "id": comet_id,
+        "id": comet_id,  # original COBS ID
+        "horizons_target": horizons_target,  # what we actually fed to Horizons/SBDB
         "epoch_utc": now_iso(),
     }
 
@@ -459,8 +533,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
