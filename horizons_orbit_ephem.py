@@ -58,7 +58,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     we use it as the place to write a snapshot JSON for debugging.
     """
     # Read brightness limit from env, same as elsewhere
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV, BRIGHT_LIMIT_DEFAULT)
+    limit_mag = try_float_env(BRIGHT_LIMIT_ENV)
     print(f"[orbit_ephem] COBS global list: using BRIGHT_LIMIT={limit_mag}")
 
     base_url = "https://cobs.si/api/comet_list.api"
@@ -459,6 +459,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
