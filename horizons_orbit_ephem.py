@@ -20,14 +20,13 @@ Key points:
   (COBS mag OR v_pred_now <= BRIGHT_LIMIT), sorts by brightness,
   and truncates to the 15 brightest.
 
-No per-comet manual mapping is used. The only normalization is:
+Normalization:
 
 - Strip leading zeros from interstellar-style IDs like "0003I" → "3I"
   (applied generically to any NNNI pattern).
 - For packed MPC codes like "K10B020" where Horizons doesn't recognise
-  the short code, we automatically fall back to using the full COBS
-  name "P/2010 B2 (WISE)" when querying Horizons, without hard-coding
-  that name in the script.
+  the short code, we use a specific Horizons alias mapping to a numeric
+  Horizons ID.
 """
 
 import json
@@ -195,12 +194,13 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
 # Specific Horizons alias for periodic comets where COBS uses the
 # provisional / packed designation but Horizons only knows the
-# numbered periodic one.
+# numbered periodic one (via numeric Horizons ID).
 SPECIAL_HORIZONS_ALIASES: Dict[str, str] = {
     # P/2010 B2 (WISE) – COBS uses packed code K10B020.
     # Use the numeric Horizons ID (Rec #) instead of the name.
     "K10B020": "90001394",
 }
+
 
 def _strip_leading_zeros_in_interstellar(code: str) -> str:
     """
@@ -224,7 +224,7 @@ def map_cobs_id_to_horizons_target(raw_id: str) -> str:
 
     - Trim + uppercase
     - Strip leading zeros for generic interstellar patterns (NNNI)
-    - If we have a known Horizons alias (e.g. K10B020 → 412P/WISE),
+    - If we have a known Horizons alias (e.g. K10B020 → 90001394),
       use that.
     - Otherwise return the normalized ID unchanged.
     """
@@ -234,12 +234,11 @@ def map_cobs_id_to_horizons_target(raw_id: str) -> str:
     rid = raw_id.strip().upper()
     rid = _strip_leading_zeros_in_interstellar(rid)
 
-    # Check for special Horizons aliases (like K10B020 → 412P/WISE)
+    # Check for special Horizons aliases (like K10B020 → 90001394)
     if rid in SPECIAL_HORIZONS_ALIASES:
         return SPECIAL_HORIZONS_ALIASES[rid]
 
     return rid
-
 
 
 # ---------- orbit helpers ----------
@@ -369,7 +368,7 @@ def build_ephemeris_span(
     observer: str,
     days: int = DAYS,
     alt_label: Optional[str] = None,
-) -> Tuple[List[Dict[str, Any]], str]:
+) -> Tuple[List[Dict[str, Any]], str, Optional[str]]:
     """
     Build a multi-day ephemeris with RA/DEC, r, delta, phase, V, v_pred.
 
@@ -380,7 +379,7 @@ def build_ephemeris_span(
 
     This will try the primary label first; if that fails, it will try
     the alt_label (if provided). The first one that works wins, and the
-    function returns (ephemeris_list, label_used_for_horizons).
+    function returns (ephemeris_list, label_used_for_horizons, horizons_target_name).
     """
     jd0 = Time.now().jd
     epochs = [jd0 + float(i) for i in range(days)]
@@ -388,6 +387,7 @@ def build_ephemeris_span(
     errors: List[str] = []
     eph = None
     label_used = primary_label
+    horizons_name: Optional[str] = None
 
     # Try primary label
     try:
@@ -396,6 +396,13 @@ def build_ephemeris_span(
         )
         eph = eph_primary
         label_used = used_id  # what we actually passed to Horizons
+        # Try to extract the official target name from Horizons
+        try:
+            horizons_name = eph_primary.meta.get("targetname") or str(
+                eph_primary["targetname"][0]
+            )
+        except Exception:
+            horizons_name = None
     except Exception as e:
         errors.append(f"{primary_label}: {e}")
 
@@ -407,6 +414,12 @@ def build_ephemeris_span(
             )
             eph = eph_alt
             label_used = used_id
+            try:
+                horizons_name = eph_alt.meta.get("targetname") or str(
+                    eph_alt["targetname"][0]
+                )
+            except Exception:
+                pass
         except Exception as e:
             errors.append(f"{alt_label}: {e}")
 
@@ -458,7 +471,7 @@ def build_ephemeris_span(
         entry.update(core)
         out.append(entry)
 
-    return out, label_used
+    return out, label_used, horizons_name
 
 
 # ---------- per-comet wrapper ----------
@@ -480,7 +493,8 @@ def fetch_orbit_and_ephem(
 
     We keep the original COBS ID in the 'id' field, and store the
     actual Horizons label we ended up using in 'horizons_target' for
-    transparency. No manual per-comet name mapping is used.
+    transparency. No manual per-comet *display* name mapping is used;
+    instead we prefer the official Horizons target name when available.
     """
     primary_label = map_cobs_id_to_horizons_target(comet_id)
 
@@ -493,9 +507,10 @@ def fetch_orbit_and_ephem(
     ephem: List[Dict[str, Any]] = []
     error: Optional[str] = None
     label_used_for_ephem: str = primary_label
+    horizons_name: Optional[str] = None
 
     try:
-        ephem, label_used_for_ephem = build_ephemeris_span(
+        ephem, label_used_for_ephem, horizons_name = build_ephemeris_span(
             primary_label, observer, days=DAYS, alt_label=full_name
         )
     except Exception as e:
@@ -513,6 +528,9 @@ def fetch_orbit_and_ephem(
         item["ephemeris_15d"] = ephem
     if error and not ephem:
         item["error"] = error
+
+    if horizons_name:
+        item["horizons_name"] = horizons_name
 
     # v_pred_now from the first ephemeris row if available
     if ephem:
@@ -553,8 +571,17 @@ def main() -> None:
         if full_name:
             item["name_full"] = full_name
 
-        # display_name fallback
-        item["display_name"] = item.get("name_full") or item["id"]
+        # Derive display_name:
+        # - default: full COBS name (or raw ID)
+        # - but if Horizons gives us a numbered periodic designation
+        #   (e.g. "412P/WISE"), prefer that.
+        display_name = item.get("name_full") or item["id"]
+        hname = item.get("horizons_name")
+        if isinstance(hname, str):
+            hname_stripped = hname.strip()
+            if re.match(r"^\d+P/", hname_stripped):
+                display_name = hname_stripped
+        item["display_name"] = display_name
 
         results.append(item)
         time.sleep(PAUSE_S)
@@ -622,5 +649,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
