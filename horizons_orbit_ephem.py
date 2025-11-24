@@ -197,9 +197,9 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 # provisional / packed designation but Horizons only knows the
 # numbered periodic one.
 SPECIAL_HORIZONS_ALIASES: Dict[str, str] = {
-    # P/2010 B2 (WISE) – COBS uses packed code K10B020,
-    # Horizons knows it as numbered 412P/WISE.
-    "K10B020": "412P/WISE",
+    # P/2010 B2 (WISE) – COBS uses packed code K10B020.
+    # Use the numeric Horizons ID (Rec #) instead of the name.
+    "K10B020": "90001394",
 }
 
 def _strip_leading_zeros_in_interstellar(code: str) -> str:
@@ -622,4 +622,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
