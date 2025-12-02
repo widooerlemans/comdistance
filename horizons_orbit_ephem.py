@@ -199,6 +199,10 @@ SPECIAL_HORIZONS_ALIASES: Dict[str, str] = {
     # P/2010 B2 (WISE) – COBS uses packed code K10B020.
     # Use the numeric Horizons ID (Rec #) instead of the name.
     "K10B020": "90001394",
+  # 141P-B/Machholz fragment:
+    # COBS ID = "141P-B", but Horizons only knows the parent "141P"
+    # (which resolves to 141P/Machholz 2, Rec #90001061).
+    "141P-B": "141P",
 }
 
 
@@ -649,3 +653,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
