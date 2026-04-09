@@ -574,7 +574,8 @@ def main():
             pred_ok = (pred is not None) and (float(pred) <= limit)
         except Exception:
             pred_ok = False
-        if obs_ok or pred_ok:
+        # Only keep comets if they passed the brightness filter AND do not have an error
+        if (obs_ok or pred_ok) and "error" not in it:
             filtered.append(it)
     results = filtered
     print(f"Brightness filter (<= {limit}) by COBS OR Horizons: kept {len(results)}/{before}")
