@@ -608,7 +608,8 @@ def main() -> None:
             except Exception:
                 return False
 
-        if _ok(obs) or _ok(pred):
+        # Only keep comets if they passed the brightness filter AND do not have an error
+        if (_ok(obs) or _ok(pred)) and "error" not in it:
             filtered.append(it)
 
     results = filtered
