@@ -458,9 +458,7 @@ def build_ephemeris_span(
                     dec * u.deg,
                     frame=FK5(equinox=Time("J2000"))
                 )
-              # This line looks up the official IAU constellation name
-              core["constellation"] = get_constellation(c_j2000)
-                # Transform to FK5 with equinox at the current observation time
+               # Transform to FK5 with equinox at the current observation time
                 c_jnow = c_j2000.transform_to(FK5(equinox=t_utc))
 
                 core["ra_jnow_deg"] = float(c_jnow.ra.deg)
