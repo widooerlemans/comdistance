@@ -35,7 +35,7 @@ from horizons_pull import (
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
 DAYS = 15
 PAUSE_S = 0.2
-MAX_CANDIDATES = 20
+MAX_CANDIDATES = 25
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
 def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, str]:
@@ -53,10 +53,12 @@ def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, st
             line = line.strip()
             if not line:
                 continue
+
             match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
             if match:
                 desig = match.group(1).strip()
-                comet_map[desig] = line[:40].strip()
+                full_name = line[:40].strip()
+                comet_map[desig] = full_name
                 if len(comet_map) >= max_items:
                     break
     except Exception as e:
@@ -80,7 +82,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Try COBS first
+    # Try COBS API first
     page = 1
     while True:
         params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
@@ -115,16 +117,15 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
         except Exception:
             break
 
-    # Fallback to MPC list capped at MAX_CANDIDATES
+    # Fallback to Minor Planet Center if COBS API is blocked or offline
     if len(cobs_map) == 0:
         print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
         mpc_comets = parse_mpc_observable_comets(max_items=MAX_CANDIDATES)
         for desig, full_name in mpc_comets.items():
-            cobs_map[desig] = 12.0
             fullname_map[desig] = full_name
 
-    comet_ids = sorted(cobs_map.keys())[:MAX_CANDIDATES]
-    result: Dict[str, Any] = {cid: cobs_map[cid] for cid in comet_ids}
+    comet_ids = sorted(fullname_map.keys())[:MAX_CANDIDATES]
+    result: Dict[str, Any] = {cid: cobs_map.get(cid) for cid in comet_ids if cid in cobs_map}
     result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
     result["_debug_counts"] = debug_counts
     result["_fullname_map"] = fullname_map
@@ -366,7 +367,7 @@ def main() -> None:
     debug_counts = cobs_map.pop("_debug_counts", {})
     fullname_map = cobs_map.pop("_fullname_map", {})
 
-    comet_ids: List[str] = sorted(cobs_map.keys())
+    comet_ids: List[str] = sorted(fullname_map.keys())
     results: List[Dict[str, Any]] = []
 
     for cid in comet_ids:
@@ -374,25 +375,41 @@ def main() -> None:
         full_name = fullname_map.get(cid)
         item = fetch_orbit_and_ephem(cid, OBSERVER, full_name=full_name)
 
-        if cid in cobs_map:
+        if cid in cobs_map and cobs_map[cid] is not None:
             item["cobs_mag"] = cobs_map[cid]
         if full_name:
             item["name_full"] = full_name
 
-        display_name = item.get("name_full") or item["id"]
-        hname = item.get("horizons_name")
-        if isinstance(hname, str):
-            hname_stripped = hname.strip()
-            if re.match(r"^\d+P/", hname_stripped):
-                display_name = hname_stripped
+        # Construct clean human-readable display name
+        display_name = item.get("horizons_name") or item.get("name_full") or item["id"]
+        if isinstance(display_name, str):
+            paren_match = re.search(r"\(([^)]+)\)", display_name)
+            if paren_match:
+                display_name = paren_match.group(1).strip()
+            else:
+                display_name = re.sub(r"\s+\d{4}\s+\d{2}\s+[\d\.]+$", "", display_name).strip()
+
         item["display_name"] = display_name
-        
+
         if "ephemeris_15d" in item:
             results.append(item)
             
         time.sleep(PAUSE_S)
 
     limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
+    
+    # Keep only comets with predicted/observed magnitude <= BRIGHT_LIMIT (15.0)
+    filtered_results = []
+    for it in results:
+        vpred = it.get("v_pred_now")
+        cmag = it.get("cobs_mag")
+        if (vpred is not None and vpred <= limit) or (cmag is not None and cmag <= limit):
+            filtered_results.append(it)
+
+    # If all fail mag thresholding, keep top brightest based on JPL predicted mag
+    if len(filtered_results) > 0:
+        results = filtered_results
+
     results.sort(key=_sort_key)
 
     if len(results) > 15:
