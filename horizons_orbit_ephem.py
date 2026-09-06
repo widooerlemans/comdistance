@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/init/env python3
 """
-Standalone generator for data/comets_orbit_ephem.json for the brightest comets.
+Standalone generator for data/comets_orbit_ephem.json using MPC targets and JPL ephemerides.
 """
 
 import json
@@ -35,21 +35,21 @@ from horizons_pull import (
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
 DAYS = 15
 PAUSE_S = 0.2
-COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
 def parse_mpc_observable_comets() -> Dict[str, str]:
-    """Fetch active comet designations directly from the Minor Planet Center, capped for speed."""
+    """Fetch active comet designations directly from the Minor Planet Center."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     comet_map = {}
     
     try:
         print("[orbit_ephem] Fetching active comets from Minor Planet Center...")
-        resp = requests.get(mpc_url, headers=headers, timeout=15)
+        resp = requests.get(mpc_url, headers=headers, timeout=20)
         resp.raise_for_status()
         
         lines = resp.text.splitlines()
         priority_targets = []
+        secondary_targets = []
 
         for line in lines:
             line_str = line.strip()
@@ -64,11 +64,12 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
                 if re.search(r"[CP]/19\d{2}|[CP]/200\d|[CP]/201\d|[CP]/202[0-2]", desig):
                     continue
 
-                if re.match(r"^\d+P", desig) or "2024" in desig or "2025" in desig or "2026" in desig:
+                if re.match(r"^\d+P", desig) or any(y in desig for y in ("2024", "2025", "2026")):
                     priority_targets.append((desig, full_name))
+                else:
+                    secondary_targets.append((desig, full_name))
 
-        # SAFETY CAP: Take only the first 15 priority targets to keep runtime under ~1.5 minutes
-        for desig, full_name in priority_targets[:15]:
+        for desig, full_name in priority_targets + secondary_targets:
             if desig not in comet_map:
                 comet_map[desig] = full_name
 
@@ -76,50 +77,6 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
         print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
         
     return comet_map
-
-def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    print(f"[orbit_ephem] Loading active comet targets (BRIGHT_LIMIT={limit_mag})")
-
-    cobs_map: Dict[str, float] = {}
-    fullname_map: Dict[str, str] = {}
-    debug_counts = {"total_objects": 0, "pages_fetched": 0}
-
-    # 1. Try loading from the local snapshot file first (instant & avoids network blocks)
-    if cobs_list_path.exists():
-        try:
-            print(f"[orbit_ephem] Reading local snapshot from {cobs_list_path}...")
-            data = json.loads(cobs_list_path.read_text())
-            objects = data.get("objects", [])
-            for obj in objects:
-                mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
-                cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-                if mpc_name:
-                    try:
-                        mag_val = float(cur_mag)
-                        if mag_val <= limit_mag:
-                            cobs_map[mpc_name] = mag_val
-                            fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
-                    except (TypeError, ValueError):
-                        pass
-            debug_counts["total_objects"] = len(objects)
-        except Exception as e:
-            print(f"[orbit_ephem] Local snapshot read failed: {e}")
-
-    # 2. If local snapshot is missing or empty, fallback to the safe MPC feed
-    if len(fullname_map) == 0:
-        print("[orbit_ephem] Local snapshot unavailable. Switching to Minor Planet Center feed...")
-        mpc_comets = parse_mpc_observable_comets()
-        for desig, full_name in mpc_comets.items():
-            fullname_map[desig] = full_name
-
-    comet_ids = list(fullname_map.keys())
-    result: Dict[str, Any] = {cid: cobs_map.get(cid) for cid in comet_ids if cid in cobs_map}
-    result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
-    result["_debug_counts"] = debug_counts
-    result["_fullname_map"] = fullname_map
-
-    return result
 
 SPECIAL_HORIZONS_ALIASES: Dict[str, str] = {
     "K10B020": "90001394",
@@ -135,7 +92,7 @@ def _strip_leading_zeros_in_interstellar(code: str) -> str:
         return m.group(1)
     return code
 
-def map_cobs_id_to_horizons_target(raw_id: str) -> str:
+def map_target_to_horizons(raw_id: str) -> str:
     if not raw_id:
         return raw_id
     rid = raw_id.strip().upper()
@@ -307,7 +264,7 @@ def fetch_orbit_and_ephem(
     observer: str,
     full_name: Optional[str] = None,
 ) -> Dict[str, Any]:
-    primary_label = map_cobs_id_to_horizons_target(comet_id)
+    primary_label = map_target_to_horizons(comet_id)
     orbit = sbdb_orbit_extended(primary_label)
     if not orbit and full_name and full_name != primary_label:
         orbit = sbdb_orbit_extended(full_name)
@@ -352,15 +309,11 @@ def fetch_orbit_and_ephem(
 
 def main() -> None:
     limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    cobs_map = load_cobs_designations(COBS_SNAPSHOT_PATH)
-    debug_first_names = cobs_map.pop("_debug_first_names", [])
-    debug_counts = cobs_map.pop("_debug_counts", {})
-    fullname_map = cobs_map.pop("_fullname_map", {})
-
-    comet_ids: List[str] = list(fullname_map.keys())
+    print(f"[orbit_ephem] Fetching targets from Minor Planet Center (BRIGHT_LIMIT <= {limit})...")
+    
+    fullname_map = parse_mpc_observable_comets()
+    comet_ids = list(fullname_map.keys())
     results: List[Dict[str, Any]] = []
-
-    print(f"[orbit_ephem] Checking active candidates (BRIGHT_LIMIT <= {limit})...")
 
     for cid in comet_ids:
         full_name = fullname_map.get(cid)
@@ -370,17 +323,12 @@ def main() -> None:
             continue
 
         vpred = item.get("v_pred_now")
-        cmag = cobs_map.get(cid)
-        eff_mag = cmag if cmag is not None else vpred
-
-        if eff_mag is None or eff_mag > limit:
-            print(f"[orbit_ephem] Skipping {cid} (mag={eff_mag})")
+        if vpred is None or vpred > limit:
+            print(f"[orbit_ephem] Skipping {cid} (mag={vpred})")
             continue
 
-        print(f"[orbit_ephem] ACCEPTED: {cid} (mag={eff_mag})")
+        print(f"[orbit_ephem] ACCEPTED: {cid} (mag={vpred})")
 
-        if cmag is not None:
-            item["cobs_mag"] = cmag
         if full_name:
             item["name_full"] = full_name
 
@@ -400,7 +348,6 @@ def main() -> None:
 
         time.sleep(PAUSE_S)
 
-    # Sort accepted comets by brightness
     results.sort(key=lambda x: (
         x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
     ))
@@ -412,12 +359,10 @@ def main() -> None:
         "items": results,
         "script": "horizons_orbit_ephem.py",
         "filter": {
-            "mode": "jpl_clean_run",
+            "mode": "mpc_and_jpl",
             "bright_limit": limit,
             "max_items": 15,
         },
-        "_debug_first_names": debug_first_names,
-        "_debug_counts": debug_counts,
         "units": {
             "angles": "deg",
             "dist": "au",
