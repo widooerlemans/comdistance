@@ -35,10 +35,9 @@ from horizons_pull import (
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
 DAYS = 15
 PAUSE_S = 0.2
-MAX_CANDIDATES = 20
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
-def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, str]:
+def parse_mpc_observable_comets() -> Dict[str, str]:
     """Fetch active comet designations directly from the Minor Planet Center."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
@@ -49,16 +48,35 @@ def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, st
         resp = requests.get(mpc_url, headers=headers, timeout=20)
         resp.raise_for_status()
         
-        for line in resp.text.splitlines():
-            line = line.strip()
-            if not line:
+        lines = resp.text.splitlines()
+        priority_targets = []
+        secondary_targets = []
+
+        for line in lines:
+            line_str = line.strip()
+            if not line_str or len(line_str) < 40:
                 continue
-            match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
+
+            match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line_str)
             if match:
                 desig = match.group(1).strip()
-                comet_map[desig] = line[:40].strip()
-                if len(comet_map) >= max_items:
-                    break
+                full_name = line_str[:40].strip()
+
+                # Filter out historical designations prior to 2023
+                if re.search(r"[CP]/19\d{2}|[CP]/200\d|[CP]/201\d|[CP]/202[0-2]", desig):
+                    continue
+
+                # Priority 1: Periodic comets (e.g. 10P, 78P) & recent 2024-2026 comets
+                if re.match(r"^\d+P", desig) or "2024" in desig or "2025" in desig or "2026" in desig:
+                    priority_targets.append((desig, full_name))
+                else:
+                    secondary_targets.append((desig, full_name))
+
+        # Add priority targets first
+        for desig, full_name in priority_targets + secondary_targets:
+            if desig not in comet_map:
+                comet_map[desig] = full_name
+
     except Exception as e:
         print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
         
@@ -80,7 +98,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Try COBS first
+    # Try COBS API
     page = 1
     while True:
         params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
@@ -109,22 +127,21 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
                         pass
 
             info = data.get("info", {})
-            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= MAX_CANDIDATES:
+            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= 30:
                 break
             page += 1
         except Exception:
             break
 
-    # Fallback to MPC list capped at MAX_CANDIDATES
+    # Fallback to MPC if COBS blocked/offline
     if len(cobs_map) == 0:
         print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
-        mpc_comets = parse_mpc_observable_comets(max_items=MAX_CANDIDATES)
+        mpc_comets = parse_mpc_observable_comets()
         for desig, full_name in mpc_comets.items():
-            cobs_map[desig] = 12.0
             fullname_map[desig] = full_name
 
-    comet_ids = sorted(cobs_map.keys())[:MAX_CANDIDATES]
-    result: Dict[str, Any] = {cid: cobs_map[cid] for cid in comet_ids}
+    comet_ids = list(fullname_map.keys())
+    result: Dict[str, Any] = {cid: cobs_map.get(cid) for cid in comet_ids if cid in cobs_map}
     result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
     result["_debug_counts"] = debug_counts
     result["_fullname_map"] = fullname_map
@@ -361,42 +378,60 @@ def fetch_orbit_and_ephem(
     return item
 
 def main() -> None:
+    limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
     cobs_map = load_cobs_designations(COBS_SNAPSHOT_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
     fullname_map = cobs_map.pop("_fullname_map", {})
 
-    comet_ids: List[str] = sorted(cobs_map.keys())
+    comet_ids: List[str] = list(fullname_map.keys())
     results: List[Dict[str, Any]] = []
 
+    print(f"[orbit_ephem] Checking active candidates (BRIGHT_LIMIT <= {limit})...")
+
     for cid in comet_ids:
-        print(f"[orbit_ephem] Fetching {cid} ...")
         full_name = fullname_map.get(cid)
         item = fetch_orbit_and_ephem(cid, OBSERVER, full_name=full_name)
 
-        if cid in cobs_map:
-            item["cobs_mag"] = cobs_map[cid]
+        if "ephemeris_15d" not in item:
+            continue
+
+        vpred = item.get("v_pred_now")
+        cmag = cobs_map.get(cid)
+        eff_mag = cmag if cmag is not None else vpred
+
+        # Discard objects fainter than threshold or without mag predictions
+        if eff_mag is None or eff_mag > limit:
+            print(f"[orbit_ephem] Skipping {cid} (mag={eff_mag})")
+            continue
+
+        print(f"[orbit_ephem] ACCEPTED: {cid} (mag={eff_mag})")
+
+        if cmag is not None:
+            item["cobs_mag"] = cmag
         if full_name:
             item["name_full"] = full_name
 
-        display_name = item.get("name_full") or item["id"]
-        hname = item.get("horizons_name")
-        if isinstance(hname, str):
-            hname_stripped = hname.strip()
-            if re.match(r"^\d+P/", hname_stripped):
-                display_name = hname_stripped
+        display_name = item.get("horizons_name") or item.get("name_full") or item["id"]
+        if isinstance(display_name, str):
+            paren_match = re.search(r"\(([^)]+)\)", display_name)
+            if paren_match:
+                display_name = paren_match.group(1).strip()
+            else:
+                display_name = re.sub(r"\s+\d{4}\s+\d{2}\s+[\d\.]+$", "", display_name).strip()
+
         item["display_name"] = display_name
+        results.append(item)
         
-        if "ephemeris_15d" in item:
-            results.append(item)
-            
+        if len(results) >= 15:
+            break
+
         time.sleep(PAUSE_S)
 
-    limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    results.sort(key=_sort_key)
-
-    if len(results) > 15:
-        results = results[:15]
+    # Sort accepted comets by brightness
+    results.sort(key=lambda x: (
+        x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
+    ))
 
     payload: Dict[str, Any] = {
         "generated_utc": now_iso(),
@@ -423,7 +458,7 @@ def main() -> None:
     }
 
     if len(results) == 0:
-        print("[orbit_ephem] ERROR: Found 0 comets across all feeds! Skipping JSON write.")
+        print("[orbit_ephem] ERROR: Found 0 comets under magnitude 15! Skipping JSON write.")
         sys.exit(1)
 
     OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
