@@ -1,4320 +1,600 @@
 {
-  "generated_utc": "2026-09-06T12:38:41Z",
+  "generated_utc": "2026-09-06T20:05:24Z",
   "observer": "500",
   "days": 15,
   "items": [
     {
-      "id": "C/1942 EA",
-      "horizons_target": "C/1942 EA",
-      "epoch_utc": "2026-09-06T12:37:41Z",
+      "id": "C/2024 T5",
+      "horizons_target": "C/2024 T5",
+      "epoch_utc": "2026-09-06T19:16:43Z",
       "orbit": {
-        "epoch_jd_tdb": 2461290.026147386,
+        "epoch_jd_tdb": 2461290.303264363,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 1.276869483816632,
-        "e": 0.9351230059673388,
-        "i_deg": 37.80210261665891,
-        "Omega_deg": 172.2924960681593,
-        "omega_deg": 335.5777274487448,
-        "Tp_jd_tdb": 2462073.404425739,
-        "a_au": 19.681390959233,
-        "Q_au": 38.085912434649366,
-        "period_years": 87.31395943249336,
-        "period_days": 31891.4236827182,
-        "n_deg_per_day": 0.011288301318297125,
+        "q_au": 3.83947066020226,
+        "e": 1.00223646679084,
+        "i_deg": 52.38795340728143,
+        "Omega_deg": 100.6765638410356,
+        "omega_deg": 352.4843033064619,
+        "Tp_jd_tdb": 2461531.811741015,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2026-09-06T12:36:30Z",
-          "r_au": 7.781245192971,
-          "delta_au": 6.89055903747318,
-          "phase_deg": 3.699,
-          "ra_deg": 14.89675,
-          "dec_deg": -7.55557,
+          "epoch_utc": "2026-09-06T19:15:33Z",
+          "r_au": 4.375317736099,
+          "delta_au": 4.38222425231976,
+          "phase_deg": 13.2196,
+          "ra_deg": 83.83532,
+          "dec_deg": -13.01971,
           "vmag": null,
-          "ra_jnow_deg": 15.23352394959352,
-          "dec_jnow_deg": -7.412148644444733,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.14304026019556,
+          "dec_jnow_deg": -13.004158280111573,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.076297367012295,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-07T12:36:30Z",
-          "r_au": 7.774246767146,
-          "delta_au": 6.8765483719288,
-          "phase_deg": 3.5945,
-          "ra_deg": 14.81579,
-          "dec_deg": -7.62489,
+          "epoch_utc": "2026-09-07T19:15:33Z",
+          "r_au": 4.371248232537,
+          "delta_au": 4.36636739928184,
+          "phase_deg": 13.2469,
+          "ra_deg": 83.96901,
+          "dec_deg": -13.03308,
           "vmag": null,
-          "ra_jnow_deg": 15.152577884905366,
-          "dec_jnow_deg": -7.481399518716278,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.27671675586845,
+          "dec_jnow_deg": -13.017871411046139,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.065293769065603,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-08T12:36:30Z",
-          "r_au": 7.767245025594,
-          "delta_au": 6.86281235526295,
-          "phase_deg": 3.4897,
-          "ra_deg": 14.73329,
-          "dec_deg": -7.69445,
+          "epoch_utc": "2026-09-08T19:15:33Z",
+          "r_au": 4.367190471525,
+          "delta_au": 4.3504845004133,
+          "phase_deg": 13.2724,
+          "ra_deg": 84.09984,
+          "dec_deg": -13.04699,
           "vmag": null,
-          "ra_jnow_deg": 15.07009266359241,
-          "dec_jnow_deg": -7.550889641654413,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.40753212060206,
+          "dec_jnow_deg": -13.03211731564608,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.054254665107043,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-09T12:36:30Z",
-          "r_au": 7.760239963715,
-          "delta_au": 6.84935429434684,
-          "phase_deg": 3.3848,
-          "ra_deg": 14.64927,
-          "dec_deg": -7.76424,
+          "epoch_utc": "2026-09-09T19:15:33Z",
+          "r_au": 4.363144500298,
+          "delta_au": 4.33457805271869,
+          "phase_deg": 13.2961,
+          "ra_deg": 84.22777,
+          "dec_deg": -13.06142,
           "vmag": null,
-          "ra_jnow_deg": 14.986088303585516,
-          "dec_jnow_deg": -7.620609043076049,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.53544639894554,
+          "dec_jnow_deg": -13.046875881589976,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.043181010243469,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-10T12:36:30Z",
-          "r_au": 7.753231576914,
-          "delta_au": 6.83617733269051,
-          "phase_deg": 3.2798,
-          "ra_deg": 14.56377,
-          "dec_deg": -7.83421,
+          "epoch_utc": "2026-09-10T19:15:33Z",
+          "r_au": 4.359110366149,
+          "delta_au": 4.3186506378339,
+          "phase_deg": 13.3181,
+          "ra_deg": 84.35275,
+          "dec_deg": -13.07633,
           "vmag": null,
-          "ra_jnow_deg": 14.900604842581966,
-          "dec_jnow_deg": -7.690507766031138,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.66040969062905,
+          "dec_jnow_deg": -13.062106971016537,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.032073816140125,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-11T12:36:30Z",
-          "r_au": 7.74621986058,
-          "delta_au": 6.82328442508683,
-          "phase_deg": 3.1751,
-          "ra_deg": 14.47682,
-          "dec_deg": -7.90435,
+          "epoch_utc": "2026-09-11T19:15:33Z",
+          "r_au": 4.355088116438,
+          "delta_au": 4.3027048982758,
+          "phase_deg": 13.3383,
+          "ra_deg": 84.47474,
+          "dec_deg": -13.0917,
           "vmag": null,
-          "ra_jnow_deg": 14.813672293903425,
-          "dec_jnow_deg": -7.7605758467275265,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.78238204055992,
+          "dec_jnow_deg": -13.077790471986939,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.02093414015504,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-12T12:36:30Z",
-          "r_au": 7.739204810084,
-          "delta_au": 6.81067832413793,
-          "phase_deg": 3.0707,
-          "ra_deg": 14.38847,
-          "dec_deg": -7.97462,
+          "epoch_utc": "2026-09-12T19:15:33Z",
+          "r_au": 4.351077798583,
+          "delta_au": 4.28674351341652,
+          "phase_deg": 13.3566,
+          "ra_deg": 84.5937,
+          "dec_deg": -13.10749,
           "vmag": null,
-          "ra_jnow_deg": 14.725340683403322,
-          "dec_jnow_deg": -7.830773334266866,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 84.90132354827414,
+          "dec_jnow_deg": -13.093886272833478,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.009763074073621,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-13T12:36:30Z",
-          "r_au": 7.73218642078,
-          "delta_au": 6.79836157911547,
-          "phase_deg": 2.9671,
-          "ra_deg": 14.29874,
-          "dec_deg": -8.04499,
+          "epoch_utc": "2026-09-13T19:15:33Z",
+          "r_au": 4.347079460064,
+          "delta_au": 4.27076917920811,
+          "phase_deg": 13.3731,
+          "ra_deg": 84.70959,
+          "dec_deg": -13.12367,
           "vmag": null,
-          "ra_jnow_deg": 14.635630039737736,
-          "dec_jnow_deg": -7.901070257830083,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.0171942863373,
+          "dec_jnow_deg": -13.110364262051267,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.998561734502335,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-14T12:36:30Z",
-          "r_au": 7.725164688003,
-          "delta_au": 6.78633654460352,
-          "phase_deg": 2.8644,
-          "ra_deg": 14.20769,
-          "dec_deg": -8.11543,
+          "epoch_utc": "2026-09-14T19:15:33Z",
+          "r_au": 4.343093148418,
+          "delta_au": 4.25478459413295,
+          "phase_deg": 13.3877,
+          "ra_deg": 84.82236,
+          "dec_deg": -13.14022,
           "vmag": null,
-          "ra_jnow_deg": 14.544600376721124,
-          "dec_jnow_deg": -7.971436672322869,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.12994430085804,
+          "dec_jnow_deg": -13.127204302450313,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.98733125620976,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-15T12:36:30Z",
-          "r_au": 7.718139607071,
-          "delta_au": 6.77460539464235,
-          "phase_deg": 2.7631,
-          "ra_deg": 14.11536,
-          "dec_deg": -8.18592,
+          "epoch_utc": "2026-09-15T19:15:33Z",
+          "r_au": 4.339118911238,
+          "delta_au": 4.23879245179358,
+          "phase_deg": 13.4003,
+          "ra_deg": 84.93199,
+          "dec_deg": -13.15709,
           "vmag": null,
-          "ra_jnow_deg": 14.452291707625475,
-          "dec_jnow_deg": -8.04185261915908,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.23955371821756,
+          "dec_jnow_deg": -13.144356334663593,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.976072788714031,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-16T12:36:30Z",
-          "r_au": 7.711111173288,
-          "delta_au": 6.76317013809634,
-          "phase_deg": 2.6633,
-          "ra_deg": 14.02177,
-          "dec_deg": -8.25642,
+          "epoch_utc": "2026-09-16T19:15:33Z",
+          "r_au": 4.335156796174,
+          "delta_au": 4.22279543889944,
+          "phase_deg": 13.411,
+          "ra_deg": 85.03843,
+          "dec_deg": -13.17425,
           "vmag": null,
-          "ra_jnow_deg": 14.358724065162153,
-          "dec_jnow_deg": -8.11227812663619,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.34597261229935,
+          "dec_jnow_deg": -13.161790221921793,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.964787495561659,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-17T12:36:30Z",
-          "r_au": 7.704079381941,
-          "delta_au": 6.75203263220762,
-          "phase_deg": 2.5656,
-          "ra_deg": 13.92699,
-          "dec_deg": -8.32691,
+          "epoch_utc": "2026-09-17T19:15:33Z",
+          "r_au": 4.331206850929,
+          "delta_au": 4.20679623662397,
+          "phase_deg": 13.4197,
+          "ra_deg": 85.14165,
+          "dec_deg": -13.19168,
           "vmag": null,
-          "ra_jnow_deg": 14.263967450024664,
-          "dec_jnow_deg": -8.182693254550284,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.44917102884226,
+          "dec_jnow_deg": -13.179485879305304,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.953476555317517,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-18T12:36:30Z",
-          "r_au": 7.697044228301,
-          "delta_au": 6.74119459291421,
-          "phase_deg": 2.4704,
-          "ra_deg": 13.83105,
-          "dec_deg": -8.39736,
+          "epoch_utc": "2026-09-18T19:15:33Z",
+          "r_au": 4.327269123258,
+          "delta_au": 4.19079752331424,
+          "phase_deg": 13.4263,
+          "ra_deg": 85.24161,
+          "dec_deg": -13.20933,
           "vmag": null,
-          "ra_jnow_deg": 14.168051882844368,
-          "dec_jnow_deg": -8.253068036651557,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.54910909624921,
+          "dec_jnow_deg": -13.197393196333458,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.942141163272375,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-19T12:36:30Z",
-          "r_au": 7.690005707625,
-          "delta_au": 6.7306576018884,
-          "phase_deg": 2.3781,
-          "ra_deg": 13.73399,
-          "dec_deg": -8.46774,
+          "epoch_utc": "2026-09-19T19:15:33Z",
+          "r_au": 4.323343660968,
+          "delta_au": 4.17480197699968,
+          "phase_deg": 13.431,
+          "ra_deg": 85.33826,
+          "dec_deg": -13.22718,
           "vmag": null,
-          "ra_jnow_deg": 14.07101737967113,
-          "dec_jnow_deg": -8.323372512625138,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.64573686187128,
+          "dec_jnow_deg": -13.215492036715803,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.930782533077455,
+          "constellation": "Lepus"
         },
         {
-          "epoch_utc": "2026-09-20T12:36:30Z",
-          "r_au": 7.682963815154,
-          "delta_au": 6.72042311116939,
-          "phase_deg": 2.2894,
-          "ra_deg": 13.63587,
-          "dec_deg": -8.53802,
+          "epoch_utc": "2026-09-20T19:15:33Z",
+          "r_au": 4.319430511915,
+          "delta_au": 4.15881227675805,
+          "phase_deg": 13.4336,
+          "ra_deg": 85.43159,
+          "dec_deg": -13.24518,
           "vmag": null,
-          "ra_jnow_deg": 13.972923948034706,
-          "dec_jnow_deg": -8.393576734056301,
-          "constellation": "Cetus"
+          "ra_jnow_deg": 85.73904445318105,
+          "dec_jnow_deg": -13.233732367945017,
+          "photometry": {
+            "M1": 5.9,
+            "K1": 7.75,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 13.919401897808868,
+          "constellation": "Lepus"
         }
       ],
-      "horizons_name": "Vaisala (C/1942 EA)",
-      "cobs_mag": 12.0,
-      "name_full": "CJ42E00A  2028 09 13.9648  1.277797  0.9",
-      "display_name": "CJ42E00A  2028 09 13.9648  1.277797  0.9"
+      "horizons_name": "ATLAS (C/2024 T5)",
+      "v_pred_now": 14.076297367012295,
+      "name_full": "CK24T050  2027 05  6.3116  3.839472  1.0",
+      "display_name": "C/2024 T5"
     },
     {
-      "id": "C/1947 X1-B",
-      "horizons_target": "C/1947 X1-B",
-      "epoch_utc": "2026-09-06T12:37:44Z",
+      "id": "C/2024 J3",
+      "horizons_target": "C/2024 J3",
+      "epoch_utc": "2026-09-06T19:15:47Z",
       "orbit": {
-        "epoch_jd_tdb": 2461290.026183703,
+        "epoch_jd_tdb": 2461290.302576205,
         "frame": "ecliptic J2000",
         "type": "comet",
-        "q_au": 0.124043933625345,
-        "e": 0.9994405097655705,
-        "i_deg": 140.7411027800063,
-        "Omega_deg": 338.0361976136127,
-        "omega_deg": 196.919403244815,
-        "Tp_jd_tdb": 2432479.786036528,
-        "a_au": 221.70884493066472,
-        "Q_au": 443.2936459277041,
-        "period_years": 3301.220467293241,
-        "period_days": 1205770.7756788563,
-        "n_deg_per_day": 0.0002985642107616332,
+        "q_au": 3.865514077881226,
+        "e": 0.9999841479320823,
+        "i_deg": 75.63916144729063,
+        "Omega_deg": 285.9595629789819,
+        "omega_deg": 74.09033871592075,
+        "Tp_jd_tdb": 2461369.925213347,
+        "a_au": 243849.19986219733,
+        "Q_au": 487694.5342103168,
+        "period_years": 120415391.58985011,
+        "period_days": 43981721778.19276,
+        "n_deg_per_day": 8.185218437230374e-09,
         "solution": "osculating",
         "reference": "JPL SBDB (via Horizons)"
       },
       "ephemeris_15d": [
         {
-          "epoch_utc": "2026-09-06T12:36:33Z",
-          "r_au": 98.34547244695,
-          "delta_au": 97.3870737147533,
-          "phase_deg": 0.1782,
-          "ra_deg": 326.76361,
-          "dec_deg": -4.37954,
+          "epoch_utc": "2026-09-06T19:14:33Z",
+          "r_au": 3.927652501505,
+          "delta_au": 3.58881932680411,
+          "phase_deg": 14.5268,
+          "ra_deg": 278.48165,
+          "dec_deg": 43.19346,
           "vmag": null,
-          "ra_jnow_deg": 327.1115726099117,
-          "dec_jnow_deg": -4.2550622833071134,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 278.6855660619016,
+          "dec_jnow_deg": 43.21563047852071,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.948356730242303,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-07T12:36:33Z",
-          "r_au": 98.34763463571,
-          "delta_au": 97.3942889613551,
-          "phase_deg": 0.1865,
-          "ra_deg": 326.75466,
-          "dec_deg": -4.38316,
+          "epoch_utc": "2026-09-07T19:14:33Z",
+          "r_au": 3.926117869981,
+          "delta_au": 3.59448412650867,
+          "phase_deg": 14.5531,
+          "ra_deg": 278.32312,
+          "dec_deg": 43.15602,
           "vmag": null,
-          "ra_jnow_deg": 327.1026649342102,
-          "dec_jnow_deg": -4.258682140529616,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 278.5271815084827,
+          "dec_jnow_deg": 43.177786451857344,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.951017852740007,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-08T12:36:33Z",
-          "r_au": 98.3497967972,
-          "delta_au": 97.4017839165242,
-          "phase_deg": 0.1949,
-          "ra_deg": 326.74577,
-          "dec_deg": -4.38679,
+          "epoch_utc": "2026-09-08T19:14:33Z",
+          "r_au": 3.924601842118,
+          "delta_au": 3.60020611336269,
+          "phase_deg": 14.5785,
+          "ra_deg": 278.17105,
+          "dec_deg": 43.11694,
           "vmag": null,
-          "ra_jnow_deg": 327.0938172665504,
-          "dec_jnow_deg": -4.262311918451984,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 278.3752680799687,
+          "dec_jnow_deg": 43.13831876543275,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.953717040269005,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-09T12:36:33Z",
-          "r_au": 98.35195893142,
-          "delta_au": 97.409557368295,
-          "phase_deg": 0.2034,
-          "ra_deg": 326.73694,
-          "dec_deg": -4.39043,
+          "epoch_utc": "2026-09-09T19:14:33Z",
+          "r_au": 3.923104446819,
+          "delta_au": 3.60598209972859,
+          "phase_deg": 14.6029,
+          "ra_deg": 278.02547,
+          "dec_deg": 43.07633,
           "vmag": null,
-          "ra_jnow_deg": 327.08502960692255,
-          "dec_jnow_deg": -4.265951616988102,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 278.2298551027383,
+          "dec_jnow_deg": 43.09733752257806,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.956452250938948,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-10T12:36:33Z",
-          "r_au": 98.35412103839,
-          "delta_au": 97.4176079077366,
-          "phase_deg": 0.2119,
-          "ra_deg": 326.72817,
-          "dec_deg": -4.39406,
+          "epoch_utc": "2026-09-10T19:14:33Z",
+          "r_au": 3.921625712672,
+          "delta_au": 3.6118088869861,
+          "phase_deg": 14.6264,
+          "ra_deg": 277.8864,
+          "dec_deg": 43.03428,
           "vmag": null,
-          "ra_jnow_deg": 327.0763019268343,
-          "dec_jnow_deg": -4.269581236072486,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 278.0909620008718,
+          "dec_jnow_deg": 43.05493279972486,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.959221447730293,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-11T12:36:33Z",
-          "r_au": 98.3562831181,
-          "delta_au": 97.4259339299702,
-          "phase_deg": 0.2204,
-          "ra_deg": 326.71947,
-          "dec_deg": -4.3977,
+          "epoch_utc": "2026-09-11T19:14:33Z",
+          "r_au": 3.92016566796,
+          "delta_au": 3.61768327565276,
+          "phase_deg": 14.6488,
+          "ra_deg": 277.75385,
+          "dec_deg": 42.9909,
           "vmag": null,
-          "ra_jnow_deg": 327.06764425308137,
-          "dec_jnow_deg": -4.273220761435035,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.9585981042866,
+          "dec_jnow_deg": 43.01121464615822,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.962022604821785,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-12T12:36:33Z",
-          "r_au": 98.35844517057,
-          "delta_au": 97.4345336474995,
-          "phase_deg": 0.2289,
-          "ra_deg": 326.71083,
-          "dec_deg": -4.40134,
+          "epoch_utc": "2026-09-12T19:14:33Z",
+          "r_au": 3.918724340657,
+          "delta_au": 3.62360207798854,
+          "phase_deg": 14.6703,
+          "ra_deg": 277.62784,
+          "dec_deg": 42.94629,
           "vmag": null,
-          "ra_jnow_deg": 327.05904657305695,
-          "dec_jnow_deg": -4.276860207156254,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.8327828002676,
+          "dec_jnow_deg": 42.96628313562407,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.964853715319503,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-13T12:36:33Z",
-          "r_au": 98.36060719581,
-          "delta_au": 97.4434051124015,
-          "phase_deg": 0.2374,
-          "ra_deg": 326.70227,
-          "dec_deg": -4.40498,
+          "epoch_utc": "2026-09-13T19:14:33Z",
+          "r_au": 3.917301758424,
+          "delta_au": 3.6295621308859,
+          "phase_deg": 14.6908,
+          "ra_deg": 277.50836,
+          "dec_deg": 42.90056,
           "vmag": null,
-          "ra_jnow_deg": 327.0505288834164,
-          "dec_jnow_deg": -4.280499544803514,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.7135054248859,
+          "dec_jnow_deg": 42.920248263444826,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.967712799061253,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-14T12:36:33Z",
-          "r_au": 98.36276919384,
-          "delta_au": 97.4525462421842,
-          "phase_deg": 0.2459,
-          "ra_deg": 326.69378,
-          "dec_deg": -4.40862,
+          "epoch_utc": "2026-09-14T19:14:33Z",
+          "r_au": 3.91589794861,
+          "delta_au": 3.63556030713429,
+          "phase_deg": 14.7103,
+          "ra_deg": 277.3954,
+          "dec_deg": 42.85381,
           "vmag": null,
-          "ra_jnow_deg": 327.0420811857879,
-          "dec_jnow_deg": -4.284138788443635,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.6007553694139,
+          "dec_jnow_deg": 42.87321002373671,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.97059790935504,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-15T12:36:33Z",
-          "r_au": 98.36493116469,
-          "delta_au": 97.4619548443892,
-          "phase_deg": 0.2544,
-          "ra_deg": 326.68536,
-          "dec_deg": -4.41226,
+          "epoch_utc": "2026-09-15T19:14:33Z",
+          "r_au": 3.914512938249,
+          "delta_au": 3.64159352397485,
+          "phase_deg": 14.7287,
+          "ra_deg": 277.28896,
+          "dec_deg": 42.80612,
           "vmag": null,
-          "ra_jnow_deg": 327.0337034801421,
-          "dec_jnow_deg": -4.287777937979249,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.49453213114845,
+          "dec_jnow_deg": 42.825248435271334,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.973507138011806,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-16T12:36:33Z",
-          "r_au": 98.36709310838,
-          "delta_au": 97.4716286367445,
-          "phase_deg": 0.2628,
-          "ra_deg": 326.67702,
-          "dec_deg": -4.41589,
+          "epoch_utc": "2026-09-16T19:14:33Z",
+          "r_au": 3.913146754055,
+          "delta_au": 3.6476587487993,
+          "phase_deg": 14.7462,
+          "ra_deg": 277.18903,
+          "dec_deg": 42.7576,
           "vmag": null,
-          "ra_jnow_deg": 327.0254057505157,
-          "dec_jnow_deg": -4.291406979135616,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.39482506796844,
+          "dec_jnow_deg": 42.77647348978231,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.976438618605684,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-17T12:36:33Z",
-          "r_au": 98.36925502494,
-          "delta_au": 97.4815652617898,
-          "phase_deg": 0.2712,
-          "ra_deg": 326.66877,
-          "dec_deg": -4.41951,
+          "epoch_utc": "2026-09-17T19:14:33Z",
+          "r_au": 3.911799422422,
+          "delta_au": 3.65375300252729,
+          "phase_deg": 14.7626,
+          "ra_deg": 277.09558,
+          "dec_deg": 42.70833,
           "vmag": null,
-          "ra_jnow_deg": 327.01719799519554,
-          "dec_jnow_deg": -4.295025897610114,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.30160368293775,
+          "dec_jnow_deg": 42.72696512659584,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.979390528303522,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-18T12:36:33Z",
-          "r_au": 98.37141691439,
-          "delta_au": 97.4917622965734,
-          "phase_deg": 0.2795,
-          "ra_deg": 326.6606,
-          "dec_deg": -4.42313,
+          "epoch_utc": "2026-09-18T19:14:33Z",
+          "r_au": 3.910470969424,
+          "delta_au": 3.6598733615,
+          "phase_deg": 14.778,
+          "ra_deg": 277.00859,
+          "dec_deg": 42.65842,
           "vmag": null,
-          "ra_jnow_deg": 327.0090702300767,
-          "dec_jnow_deg": -4.298644707466847,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.2148473467731,
+          "dec_jnow_deg": 42.67683330951924,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.982361088775466,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-19T12:36:33Z",
-          "r_au": 98.37357877677,
-          "delta_au": 97.5022172589554,
-          "phase_deg": 0.2878,
-          "ra_deg": 326.65251,
-          "dec_deg": -4.42674,
+          "epoch_utc": "2026-09-19T19:14:33Z",
+          "r_au": 3.909161420808,
+          "delta_au": 3.6660169587282,
+          "phase_deg": 14.7924,
+          "ra_deg": 276.92804,
+          "dec_deg": 42.60794,
           "vmag": null,
-          "ra_jnow_deg": 327.0010224408414,
-          "dec_jnow_deg": -4.3022534086074415,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.1345356288516,
+          "dec_jnow_deg": 42.62614800159835,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.985348566691133,
+          "constellation": "Lyra"
         },
         {
-          "epoch_utc": "2026-09-20T12:36:33Z",
-          "r_au": 98.37574061211,
-          "delta_au": 97.5129276123461,
-          "phase_deg": 0.2961,
-          "ra_deg": 326.64451,
-          "dec_deg": -4.43035,
+          "epoch_utc": "2026-09-20T19:14:33Z",
+          "r_au": 3.907870801995,
+          "delta_au": 3.67218098516688,
+          "phase_deg": 14.8058,
+          "ra_deg": 276.85391,
+          "dec_deg": 42.55698,
           "vmag": null,
-          "ra_jnow_deg": 326.99306464006185,
-          "dec_jnow_deg": -4.305861986707814,
-          "constellation": "Aquarius"
+          "ra_jnow_deg": 277.060648010898,
+          "dec_jnow_deg": 42.57499916479955,
+          "photometry": {
+            "M1": 9.5,
+            "K1": 4.5,
+            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
+          },
+          "v_pred": 14.98835127421213,
+          "constellation": "Lyra"
         }
       ],
-      "horizons_name": "Southern comet (C/1947 X1-B)",
-      "cobs_mag": 12.0,
-      "name_full": "CJ47X01b  1947 10 21.2095  0.124034  0.9",
-      "display_name": "CJ47X01b  1947 10 21.2095  0.124034  0.9"
-    },
-    {
-      "id": "C/1995 O1",
-      "horizons_target": "C/1995 O1",
-      "epoch_utc": "2026-09-06T12:37:47Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026217961,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 0.9248267127458972,
-        "e": 0.9948920219567893,
-        "i_deg": 89.73800976811482,
-        "Omega_deg": 281.8009507332812,
-        "omega_deg": 130.7212337863032,
-        "Tp_jd_tdb": 2450536.53017839,
-        "a_au": 181.05534223568787,
-        "Q_au": 361.1858577586299,
-        "period_years": 2436.2228683353146,
-        "period_days": 889830.4026594737,
-        "n_deg_per_day": 0.0004045714766814584,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:36Z",
-          "r_au": 51.08036257385,
-          "delta_au": 50.8817703866795,
-          "phase_deg": 1.1103,
-          "ra_deg": 330.57624,
-          "dec_deg": -85.50974,
-          "vmag": null,
-          "ra_jnow_deg": 331.816260859953,
-          "dec_jnow_deg": -85.37958494406938,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.1658269540818,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:36Z",
-          "r_au": 51.08348364309,
-          "delta_au": 50.8917027235951,
-          "phase_deg": 1.1114,
-          "ra_deg": 330.35077,
-          "dec_deg": -85.5059,
-          "vmag": null,
-          "ra_jnow_deg": 331.596520130095,
-          "dec_jnow_deg": -85.37601058162961,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.166356933657966,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:36Z",
-          "r_au": 51.08660460513,
-          "delta_au": 50.901693498087,
-          "phase_deg": 1.1124,
-          "ra_deg": 330.12689,
-          "dec_deg": -85.50168,
-          "vmag": null,
-          "ra_jnow_deg": 331.3782286352749,
-          "dec_jnow_deg": -85.37205631333521,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.16688931334866,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:36Z",
-          "r_au": 51.08972546004,
-          "delta_au": 50.9117406259803,
-          "phase_deg": 1.1134,
-          "ra_deg": 329.90472,
-          "dec_deg": -85.49708,
-          "vmag": null,
-          "ra_jnow_deg": 331.1615021760591,
-          "dec_jnow_deg": -85.36772194485805,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.167424002828753,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:36Z",
-          "r_au": 51.09284620786,
-          "delta_au": 50.9218419609776,
-          "phase_deg": 1.1144,
-          "ra_deg": 329.68436,
-          "dec_deg": -85.49211,
-          "vmag": null,
-          "ra_jnow_deg": 330.9464392189457,
-          "dec_jnow_deg": -85.363017302111,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.167960909186107,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:36Z",
-          "r_au": 51.09596684866,
-          "delta_au": 50.9319953101595,
-          "phase_deg": 1.1153,
-          "ra_deg": 329.46594,
-          "dec_deg": -85.48677,
-          "vmag": null,
-          "ra_jnow_deg": 330.73316554070857,
-          "dec_jnow_deg": -85.35794217101405,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.168499937588024,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:36Z",
-          "r_au": 51.0990873825,
-          "delta_au": 50.9421984514683,
-          "phase_deg": 1.1162,
-          "ra_deg": 329.24956,
-          "dec_deg": -85.48105,
-          "vmag": null,
-          "ra_jnow_deg": 330.5217758606632,
-          "dec_jnow_deg": -85.35248637336764,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.169040992028023,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:36Z",
-          "r_au": 51.10220780943,
-          "delta_au": 50.9524491501994,
-          "phase_deg": 1.117,
-          "ra_deg": 329.03533,
-          "dec_deg": -85.47497,
-          "vmag": null,
-          "ra_jnow_deg": 330.3123807557565,
-          "dec_jnow_deg": -85.3466697112682,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.16958397603081,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:36Z",
-          "r_au": 51.10532812951,
-          "delta_au": 50.9627451721443,
-          "phase_deg": 1.1177,
-          "ra_deg": 328.82336,
-          "dec_deg": -85.46853,
-          "vmag": null,
-          "ra_jnow_deg": 330.1050869318588,
-          "dec_jnow_deg": -85.34049198634247,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.17012879321433,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:36Z",
-          "r_au": 51.10844834281,
-          "delta_au": 50.9730842923363,
-          "phase_deg": 1.1184,
-          "ra_deg": 328.61374,
-          "dec_deg": -85.46173,
-          "vmag": null,
-          "ra_jnow_deg": 329.89998175982606,
-          "dec_jnow_deg": -85.3339530234119,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.170675347663128,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:36Z",
-          "r_au": 51.11156844939,
-          "delta_au": 50.9834642996693,
-          "phase_deg": 1.119,
-          "ra_deg": 328.40658,
-          "dec_deg": -85.45458,
-          "vmag": null,
-          "ra_jnow_deg": 329.6971742110634,
-          "dec_jnow_deg": -85.32706261738572,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.171223544124736,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:36Z",
-          "r_au": 51.11468844931,
-          "delta_au": 50.9938829984982,
-          "phase_deg": 1.1196,
-          "ra_deg": 328.20197,
-          "dec_deg": -85.44707,
-          "vmag": null,
-          "ra_jnow_deg": 329.49674985533596,
-          "dec_jnow_deg": -85.31981058962253,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.1717732880783,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:36Z",
-          "r_au": 51.11780834264,
-          "delta_au": 51.0043382085877,
-          "phase_deg": 1.1201,
-          "ra_deg": 328.0,
-          "dec_deg": -85.43922,
-          "vmag": null,
-          "ra_jnow_deg": 329.2988004973668,
-          "dec_jnow_deg": -85.3122167552988,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.17232448573269,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:36Z",
-          "r_au": 51.12092812943,
-          "delta_au": 51.0148277646192,
-          "phase_deg": 1.1206,
-          "ra_deg": 327.80075,
-          "dec_deg": -85.43103,
-          "vmag": null,
-          "ra_jnow_deg": 329.10340425383976,
-          "dec_jnow_deg": -85.30428094379289,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.172877044004476,
-          "constellation": "Octans"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:36Z",
-          "r_au": 51.12404780976,
-          "delta_au": 51.0253495161078,
-          "phase_deg": 1.121,
-          "ra_deg": 327.6043,
-          "dec_deg": -85.4225,
-          "vmag": null,
-          "ra_jnow_deg": 328.91063934289673,
-          "dec_jnow_deg": -85.29600298295715,
-          "photometry": {
-            "M1": 4.8,
-            "K1": 4.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 20.173430870515975,
-          "constellation": "Octans"
-        }
-      ],
-      "horizons_name": "Hale-Bopp (C/1995 O1)",
-      "v_pred_now": 20.1658269540818,
-      "cobs_mag": 12.0,
-      "name_full": "CJ95O010  1997 03 29.0338  0.924783  0.9",
-      "display_name": "CJ95O010  1997 03 29.0338  0.924783  0.9"
-    },
-    {
-      "id": "C/1997 BA6",
-      "horizons_target": "C/1997 BA6",
-      "epoch_utc": "2026-09-06T12:37:49Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026251171,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 3.453786016412166,
-        "e": 0.9987859347253387,
-        "i_deg": 72.76338941607129,
-        "Omega_deg": 317.9487957519945,
-        "omega_deg": 285.8782093593679,
-        "Tp_jd_tdb": 2451500.132518932,
-        "a_au": 2844.8108091846707,
-        "Q_au": 5686.1678323529295,
-        "period_years": 151733.01382665787,
-        "period_days": 55420483.30018679,
-        "n_deg_per_day": 6.4957932259458775e-06,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:39Z",
-          "r_au": 47.04970977563,
-          "delta_au": 46.6926894175508,
-          "phase_deg": 1.153,
-          "ra_deg": 318.17994,
-          "dec_deg": 60.12248,
-          "vmag": null,
-          "ra_jnow_deg": 318.34930044162576,
-          "dec_jnow_deg": 60.233315976938464,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.626231646338166,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:39Z",
-          "r_au": 47.05310850257,
-          "delta_au": 46.6937935453727,
-          "phase_deg": 1.1515,
-          "ra_deg": 318.14488,
-          "dec_deg": 60.11237,
-          "vmag": null,
-          "ra_jnow_deg": 318.3142102235223,
-          "dec_jnow_deg": 60.22315679619724,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.62662023180869,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:39Z",
-          "r_au": 47.05650711445,
-          "delta_au": 46.6950046380174,
-          "phase_deg": 1.1501,
-          "ra_deg": 318.11016,
-          "dec_deg": 60.10196,
-          "vmag": null,
-          "ra_jnow_deg": 318.27946335679394,
-          "dec_jnow_deg": 60.212698152037554,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.627013754515414,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:39Z",
-          "r_au": 47.05990561124,
-          "delta_au": 46.6963235929676,
-          "phase_deg": 1.1487,
-          "ra_deg": 318.07582,
-          "dec_deg": 60.09126,
-          "vmag": null,
-          "ra_jnow_deg": 318.24509990402913,
-          "dec_jnow_deg": 60.20195011509308,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.62741225580912,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:39Z",
-          "r_au": 47.06330399293,
-          "delta_au": 46.6977512513906,
-          "phase_deg": 1.1474,
-          "ra_deg": 318.04185,
-          "dec_deg": 60.08025,
-          "vmag": null,
-          "ra_jnow_deg": 318.2111099687845,
-          "dec_jnow_deg": 60.190892669682164,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.627815774384636,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:39Z",
-          "r_au": 47.06670225952,
-          "delta_au": 46.6992883867963,
-          "phase_deg": 1.1461,
-          "ra_deg": 318.00827,
-          "dec_deg": 60.06896,
-          "vmag": null,
-          "ra_jnow_deg": 318.17751340571704,
-          "dec_jnow_deg": 60.17955585180956,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.628224345751935,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:39Z",
-          "r_au": 47.07010041099,
-          "delta_au": 46.700935698646,
-          "phase_deg": 1.1448,
-          "ra_deg": 317.97509,
-          "dec_deg": 60.05738,
-          "vmag": null,
-          "ra_jnow_deg": 318.14432031519,
-          "dec_jnow_deg": 60.167929680445134,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.628638001935617,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:39Z",
-          "r_au": 47.07349844735,
-          "delta_au": 46.7026938113618,
-          "phase_deg": 1.1436,
-          "ra_deg": 317.94232,
-          "dec_deg": 60.04551,
-          "vmag": null,
-          "ra_jnow_deg": 318.11154072734524,
-          "dec_jnow_deg": 60.15601417453313,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.62905677143363,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:39Z",
-          "r_au": 47.07689636857,
-          "delta_au": 46.7045632778169,
-          "phase_deg": 1.1424,
-          "ra_deg": 317.90997,
-          "dec_deg": 60.03337,
-          "vmag": null,
-          "ra_jnow_deg": 318.0791845321515,
-          "dec_jnow_deg": 60.14382935292997,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.629480679372566,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:39Z",
-          "r_au": 47.08029417467,
-          "delta_au": 46.7065445855331,
-          "phase_deg": 1.1413,
-          "ra_deg": 317.87806,
-          "dec_deg": 60.02095,
-          "vmag": null,
-          "ra_jnow_deg": 318.0472718625762,
-          "dec_jnow_deg": 60.13136525210879,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.62990974780473,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:39Z",
-          "r_au": 47.08369186563,
-          "delta_au": 46.7086381637077,
-          "phase_deg": 1.1402,
-          "ra_deg": 317.84659,
-          "dec_deg": 60.00826,
-          "vmag": null,
-          "ra_jnow_deg": 318.0158026444167,
-          "dec_jnow_deg": 60.118631873670566,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.63034399602597,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:39Z",
-          "r_au": 47.08708944146,
-          "delta_au": 46.7108443896621,
-          "phase_deg": 1.1392,
-          "ra_deg": 317.81557,
-          "dec_deg": 59.9953,
-          "vmag": null,
-          "ra_jnow_deg": 317.9847869066647,
-          "dec_jnow_deg": 60.105629236683875,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.63078344088253,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:39Z",
-          "r_au": 47.09048690216,
-          "delta_au": 46.7131635939806,
-          "phase_deg": 1.1382,
-          "ra_deg": 317.78501,
-          "dec_deg": 59.98209,
-          "vmag": null,
-          "ra_jnow_deg": 317.9542345381993,
-          "dec_jnow_deg": 60.09237736012333,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.631228097006094,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:39Z",
-          "r_au": 47.09388424772,
-          "delta_au": 46.7155960642241,
-          "phase_deg": 1.1373,
-          "ra_deg": 317.75492,
-          "dec_deg": 59.96862,
-          "vmag": null,
-          "ra_jnow_deg": 317.924155637416,
-          "dec_jnow_deg": 60.07886626317171,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.63167797698655,
-          "constellation": "Cepheus"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:39Z",
-          "r_au": 47.09728147816,
-          "delta_au": 46.7181420475204,
-          "phase_deg": 1.1364,
-          "ra_deg": 317.72532,
-          "dec_deg": 59.9549,
-          "vmag": null,
-          "ra_jnow_deg": 317.89457019593794,
-          "dec_jnow_deg": 60.065105982378164,
-          "photometry": {
-            "M1": 4.3,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 30.632133091496566,
-          "constellation": "Cepheus"
-        }
-      ],
-      "horizons_name": "Spacewatch (C/1997 BA6)",
-      "v_pred_now": 30.626231646338166,
-      "cobs_mag": 12.0,
-      "name_full": "CJ97B06A  1999 11 17.6143  3.453865  0.9",
-      "display_name": "CJ97B06A  1999 11 17.6143  3.453865  0.9"
-    },
-    {
-      "id": "C/1999 F1",
-      "horizons_target": "C/1999 F1",
-      "epoch_utc": "2026-09-06T12:37:52Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026284009,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 5.824838910854245,
-        "e": 0.9996509475218026,
-        "i_deg": 92.00241438724711,
-        "Omega_deg": 20.01649434281414,
-        "omega_deg": 255.3114780987726,
-        "Tp_jd_tdb": 2452302.788899453,
-        "a_au": 16687.57357327896,
-        "Q_au": 33369.32230764707,
-        "period_years": 2155707.289007979,
-        "period_days": 787372087.3101643,
-        "n_deg_per_day": 4.5721712237709484e-07,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:42Z",
-          "r_au": 42.48722802643,
-          "delta_au": 41.7938281255473,
-          "phase_deg": 0.9977,
-          "ra_deg": 3.44413,
-          "dec_deg": 37.26083,
-          "vmag": null,
-          "ra_jnow_deg": 3.7931272721066818,
-          "dec_jnow_deg": 37.40906031590935,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.110434144112133,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:42Z",
-          "r_au": 42.49069250857,
-          "delta_au": 41.7890798317917,
-          "phase_deg": 0.9866,
-          "ra_deg": 3.41735,
-          "dec_deg": 37.25969,
-          "vmag": null,
-          "ra_jnow_deg": 3.766329927911664,
-          "dec_jnow_deg": 37.40793989391953,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11044415876151,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:42Z",
-          "r_au": 42.49415686859,
-          "delta_au": 41.784538406162,
-          "phase_deg": 0.9754,
-          "ra_deg": 3.39042,
-          "dec_deg": 37.25827,
-          "vmag": null,
-          "ra_jnow_deg": 3.7393822077494208,
-          "dec_jnow_deg": 37.40653946463312,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11046486601137,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:42Z",
-          "r_au": 42.49762110641,
-          "delta_au": 41.78020681155,
-          "phase_deg": 0.9643,
-          "ra_deg": 3.36334,
-          "dec_deg": 37.25658,
-          "vmag": null,
-          "ra_jnow_deg": 3.712284115698589,
-          "dec_jnow_deg": 37.404869027498066,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11049642335328,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:42Z",
-          "r_au": 42.50108522196,
-          "delta_au": 41.7760879104723,
-          "phase_deg": 0.9532,
-          "ra_deg": 3.33611,
-          "dec_deg": 37.25463,
-          "vmag": null,
-          "ra_jnow_deg": 3.685035655780803,
-          "dec_jnow_deg": 37.402938581959,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11053898296472,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:42Z",
-          "r_au": 42.50454921518,
-          "delta_au": 41.772184439054,
-          "phase_deg": 0.9422,
-          "ra_deg": 3.30876,
-          "dec_deg": 37.2524,
-          "vmag": null,
-          "ra_jnow_deg": 3.6576668837537727,
-          "dec_jnow_deg": 37.400728122724935,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.110592690346323,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:42Z",
-          "r_au": 42.50801308601,
-          "delta_au": 41.7684989903978,
-          "phase_deg": 0.9313,
-          "ra_deg": 3.28127,
-          "dec_deg": 37.24991,
-          "vmag": null,
-          "ra_jnow_deg": 3.630157766659228,
-          "dec_jnow_deg": 37.39825765247498,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11065768344585,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:42Z",
-          "r_au": 42.51147683437,
-          "delta_au": 41.7650340088508,
-          "phase_deg": 0.9204,
-          "ra_deg": 3.25367,
-          "dec_deg": 37.24715,
-          "vmag": null,
-          "ra_jnow_deg": 3.602538362832025,
-          "dec_jnow_deg": 37.39551716602283,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.110734092348014,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:42Z",
-          "r_au": 42.51494046022,
-          "delta_au": 41.7617917938438,
-          "phase_deg": 0.9096,
-          "ra_deg": 3.22597,
-          "dec_deg": 37.24412,
-          "vmag": null,
-          "ra_jnow_deg": 3.574818693621644,
-          "dec_jnow_deg": 37.392506661409065,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.110822039468367,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:42Z",
-          "r_au": 42.5184039635,
-          "delta_au": 41.7587745100035,
-          "phase_deg": 0.899,
-          "ra_deg": 3.19816,
-          "dec_deg": 37.24083,
-          "vmag": null,
-          "ra_jnow_deg": 3.5469887432854956,
-          "dec_jnow_deg": 37.38923613977848,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.110921640065037,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:42Z",
-          "r_au": 42.52186734416,
-          "delta_au": 41.755984199765,
-          "phase_deg": 0.8885,
-          "ra_deg": 3.17027,
-          "dec_deg": 37.23728,
-          "vmag": null,
-          "ra_jnow_deg": 3.5190785726662486,
-          "dec_jnow_deg": 37.38570559616156,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11103300288804,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:42Z",
-          "r_au": 42.52533060215,
-          "delta_au": 41.7534227954583,
-          "phase_deg": 0.8781,
-          "ra_deg": 3.1423,
-          "dec_deg": 37.23346,
-          "vmag": null,
-          "ra_jnow_deg": 3.4910881809572794,
-          "dec_jnow_deg": 37.38190503024714,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.111156230798883,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:42Z",
-          "r_au": 42.52879373742,
-          "delta_au": 41.7510921291438,
-          "phase_deg": 0.868,
-          "ra_deg": 3.11425,
-          "dec_deg": 37.22939,
-          "vmag": null,
-          "ra_jnow_deg": 3.463017574511068,
-          "dec_jnow_deg": 37.377854441722526,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.111291421274643,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:42Z",
-          "r_au": 42.53225674994,
-          "delta_au": 41.7489939397049,
-          "phase_deg": 0.858,
-          "ra_deg": 3.08614,
-          "dec_deg": 37.22505,
-          "vmag": null,
-          "ra_jnow_deg": 3.4348867897082065,
-          "dec_jnow_deg": 37.37353382731845,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.11143866677137,
-          "constellation": "Andromeda"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:42Z",
-          "r_au": 42.53571963966,
-          "delta_au": 41.7471298776318,
-          "phase_deg": 0.8482,
-          "ra_deg": 3.05798,
-          "dec_deg": 37.22046,
-          "vmag": null,
-          "ra_jnow_deg": 3.406705852597884,
-          "dec_jnow_deg": 37.36896318533038,
-          "photometry": {
-            "M1": 6.2,
-            "K1": 7.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.111598054963487,
-          "constellation": "Andromeda"
-        }
-      ],
-      "horizons_name": "Catalina (C/1999 F1)",
-      "v_pred_now": 26.110434144112133,
-      "cobs_mag": 12.0,
-      "name_full": "CJ99F010  2002 01 28.2854  5.824847  0.9",
-      "display_name": "CJ99F010  2002 01 28.2854  5.824847  0.9"
-    },
-    {
-      "id": "C/1999 J2",
-      "horizons_target": "C/1999 J2",
-      "epoch_utc": "2026-09-06T12:37:56Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026319478,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 7.063035120718398,
-        "e": 1.000755981267283,
-        "i_deg": 86.38829498540548,
-        "Omega_deg": 50.19245003193695,
-        "omega_deg": 126.9417516876646,
-        "Tp_jd_tdb": 2451645.3176547,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:45Z",
-          "r_au": 43.90592848454,
-          "delta_au": 43.9323917323314,
-          "phase_deg": 1.3145,
-          "ra_deg": 111.13364,
-          "dec_deg": -75.55567,
-          "vmag": null,
-          "ra_jnow_deg": 110.93625213404249,
-          "dec_jnow_deg": -75.6089841004262,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.811586396809034,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:45Z",
-          "r_au": 43.90929606832,
-          "delta_au": 43.9389779187376,
-          "phase_deg": 1.3139,
-          "ra_deg": 111.17688,
-          "dec_deg": -75.57269,
-          "vmag": null,
-          "ra_jnow_deg": 110.97896055512099,
-          "dec_jnow_deg": -75.62611354608278,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.81214507545635,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:45Z",
-          "r_au": 43.91266354891,
-          "delta_au": 43.9455577576741,
-          "phase_deg": 1.3133,
-          "ra_deg": 111.21898,
-          "dec_deg": -75.58992,
-          "vmag": null,
-          "ra_jnow_deg": 111.02051565669268,
-          "dec_jnow_deg": -75.64345020967843,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.812703366643063,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:45Z",
-          "r_au": 43.91603092635,
-          "delta_au": 43.9521302136954,
-          "phase_deg": 1.3127,
-          "ra_deg": 111.2599,
-          "dec_deg": -75.60736,
-          "vmag": null,
-          "ra_jnow_deg": 111.0608771964674,
-          "dec_jnow_deg": -75.66099399561827,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.813261219375217,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:45Z",
-          "r_au": 43.91939820068,
-          "delta_au": 43.9586942431356,
-          "phase_deg": 1.3121,
-          "ra_deg": 111.29964,
-          "dec_deg": -75.62501,
-          "vmag": null,
-          "ra_jnow_deg": 111.10004507433013,
-          "dec_jnow_deg": -75.6787449052022,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.813818582283123,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:45Z",
-          "r_au": 43.92276537193,
-          "delta_au": 43.9652488044612,
-          "phase_deg": 1.3114,
-          "ra_deg": 111.33817,
-          "dec_deg": -75.64284,
-          "vmag": null,
-          "ra_jnow_deg": 111.13799026607302,
-          "dec_jnow_deg": -75.69667286844435,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.81437540413218,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:45Z",
-          "r_au": 43.92613244014,
-          "delta_au": 43.9717928677486,
-          "phase_deg": 1.3107,
-          "ra_deg": 111.37547,
-          "dec_deg": -75.66087,
-          "vmag": null,
-          "ra_jnow_deg": 111.17469181138947,
-          "dec_jnow_deg": -75.7147978371766,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.81493163429208,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:45Z",
-          "r_au": 43.92949940534,
-          "delta_au": 43.9783254218896,
-          "phase_deg": 1.31,
-          "ra_deg": 111.41154,
-          "dec_deg": -75.67909,
-          "vmag": null,
-          "ra_jnow_deg": 111.2101500056364,
-          "dec_jnow_deg": -75.73310981304445,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.815487223090656,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:45Z",
-          "r_au": 43.93286626758,
-          "delta_au": 43.9848454788502,
-          "phase_deg": 1.3093,
-          "ra_deg": 111.44634,
-          "dec_deg": -75.69749,
-          "vmag": null,
-          "ra_jnow_deg": 111.24432500027191,
-          "dec_jnow_deg": -75.7515987007943,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.816042122025348,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:45Z",
-          "r_au": 43.93623302687,
-          "delta_au": 43.9913520751556,
-          "phase_deg": 1.3086,
-          "ra_deg": 111.47988,
-          "dec_deg": -75.71606,
-          "vmag": null,
-          "ra_jnow_deg": 111.27722713213211,
-          "dec_jnow_deg": -75.77025452618383,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.816596283831366,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:45Z",
-          "r_au": 43.93959968327,
-          "delta_au": 43.9978442713611,
-          "phase_deg": 1.3079,
-          "ra_deg": 111.51213,
-          "dec_deg": -75.73481,
-          "vmag": null,
-          "ra_jnow_deg": 111.30882579383187,
-          "dec_jnow_deg": -75.78908721711268,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.817149662460743,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:45Z",
-          "r_au": 43.9429662368,
-          "delta_au": 44.0043211504611,
-          "phase_deg": 1.3071,
-          "ra_deg": 111.54307,
-          "dec_deg": -75.75371,
-          "vmag": null,
-          "ra_jnow_deg": 111.3391020135365,
-          "dec_jnow_deg": -75.80806672756724,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.817702212996558,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:45Z",
-          "r_au": 43.9463326875,
-          "delta_au": 44.0107818160639,
-          "phase_deg": 1.3063,
-          "ra_deg": 111.5727,
-          "dec_deg": -75.77278,
-          "vmag": null,
-          "ra_jnow_deg": 111.3680548936919,
-          "dec_jnow_deg": -75.82721305746155,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.818253891566034,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:45Z",
-          "r_au": 43.94969903541,
-          "delta_au": 44.0172253908807,
-          "phase_deg": 1.3056,
-          "ra_deg": 111.60099,
-          "dec_deg": -75.79201,
-          "vmag": null,
-          "ra_jnow_deg": 111.3956546258353,
-          "dec_jnow_deg": -75.84651613548799,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.81880465526369,
-          "constellation": "Mensa"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:45Z",
-          "r_au": 43.95306528055,
-          "delta_au": 44.023651015781,
-          "phase_deg": 1.3048,
-          "ra_deg": 111.62794,
-          "dec_deg": -75.81138,
-          "vmag": null,
-          "ra_jnow_deg": 111.4219019200852,
-          "dec_jnow_deg": -75.86595596335545,
-          "photometry": {
-            "M1": 6.1,
-            "K1": 7.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 25.819354462102517,
-          "constellation": "Mensa"
-        }
-      ],
-      "horizons_name": "Skiff (C/1999 J2)",
-      "v_pred_now": 25.811586396809034,
-      "cobs_mag": 12.0,
-      "name_full": "CJ99J020  2000 04 10.8114  7.063072  1.0",
-      "display_name": "CJ99J020  2000 04 10.8114  7.063072  1.0"
-    },
-    {
-      "id": "C/2001 M10",
-      "horizons_target": "C/2001 M10",
-      "epoch_utc": "2026-09-06T12:37:59Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026355945,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 5.355730646829855,
-        "e": 0.7993335538103272,
-        "i_deg": 27.96109956575794,
-        "Omega_deg": 293.9351503153977,
-        "omega_deg": 5.582983801869446,
-        "Tp_jd_tdb": 2452060.979508142,
-        "a_au": 26.68971693338079,
-        "Q_au": 48.023703219931726,
-        "period_years": 137.88465970773188,
-        "period_days": 50362.371958249074,
-        "n_deg_per_day": 0.0071481938995733504,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:48Z",
-          "r_au": 33.71113610708,
-          "delta_au": 34.0886629392181,
-          "phase_deg": 1.5781,
-          "ra_deg": 97.87571,
-          "dec_deg": 32.87012,
-          "vmag": null,
-          "ra_jnow_deg": 98.3125375740074,
-          "dec_jnow_deg": 32.84920561715306,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71997343397163,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:48Z",
-          "r_au": 33.71312598476,
-          "delta_au": 34.0750672835345,
-          "phase_deg": 1.5884,
-          "ra_deg": 97.89133,
-          "dec_deg": 32.87266,
-          "vmag": null,
-          "ra_jnow_deg": 98.32820787175689,
-          "dec_jnow_deg": 32.85170331527303,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.7192289719229,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:48Z",
-          "r_au": 33.71511567033,
-          "delta_au": 34.0613630889561,
-          "phase_deg": 1.5983,
-          "ra_deg": 97.90642,
-          "dec_deg": 32.87526,
-          "vmag": null,
-          "ra_jnow_deg": 98.34334850955102,
-          "dec_jnow_deg": 32.85426236667253,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71847722571105,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:48Z",
-          "r_au": 33.71710516375,
-          "delta_au": 34.0475548704625,
-          "phase_deg": 1.6077,
-          "ra_deg": 97.92099,
-          "dec_deg": 32.87791,
-          "vmag": null,
-          "ra_jnow_deg": 98.35796944943898,
-          "dec_jnow_deg": 32.85687274599898,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.717718474659936,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:48Z",
-          "r_au": 33.71909446495,
-          "delta_au": 34.0336472742288,
-          "phase_deg": 1.6167,
-          "ra_deg": 97.93501,
-          "dec_deg": 32.88062,
-          "vmag": null,
-          "ra_jnow_deg": 98.3720407358771,
-          "dec_jnow_deg": 32.8595445304768,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.716953006853206,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:48Z",
-          "r_au": 33.72108357389,
-          "delta_au": 34.019645048234,
-          "phase_deg": 1.6253,
-          "ra_deg": 97.9485,
-          "dec_deg": 32.88339,
-          "vmag": null,
-          "ra_jnow_deg": 98.38558236484319,
-          "dec_jnow_deg": 32.862277669053455,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71618111728843,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:48Z",
-          "r_au": 33.72307249051,
-          "delta_au": 34.0055530083779,
-          "phase_deg": 1.6334,
-          "ra_deg": 97.96144,
-          "dec_deg": 32.8862,
-          "vmag": null,
-          "ra_jnow_deg": 98.3985742691945,
-          "dec_jnow_deg": 32.8650522134475,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71540310573303,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:48Z",
-          "r_au": 33.72506121474,
-          "delta_au": 33.9913760059134,
-          "phase_deg": 1.6411,
-          "ra_deg": 97.97384,
-          "dec_deg": 32.88907,
-          "vmag": null,
-          "ra_jnow_deg": 98.41102652005462,
-          "dec_jnow_deg": 32.86788813818966,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.714619274662454,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:48Z",
-          "r_au": 33.72704974652,
-          "delta_au": 33.9771189009886,
-          "phase_deg": 1.6483,
-          "ra_deg": 97.98568,
-          "dec_deg": 32.89199,
-          "vmag": null,
-          "ra_jnow_deg": 98.42291908665061,
-          "dec_jnow_deg": 32.87077549497496,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.713829927583955,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:48Z",
-          "r_au": 33.72903808579,
-          "delta_au": 33.9627865445965,
-          "phase_deg": 1.6551,
-          "ra_deg": 97.99696,
-          "dec_deg": 32.89496,
-          "vmag": null,
-          "ra_jnow_deg": 98.4342519697203,
-          "dec_jnow_deg": 32.873714284117476,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71303536789153,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:48Z",
-          "r_au": 33.73102623249,
-          "delta_au": 33.9483837686223,
-          "phase_deg": 1.6614,
-          "ra_deg": 98.00769,
-          "dec_deg": 32.89798,
-          "vmag": null,
-          "ra_jnow_deg": 98.44503516752941,
-          "dec_jnow_deg": 32.876704480257864,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71223589823606,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:48Z",
-          "r_au": 33.73301418653,
-          "delta_au": 33.9339153819546,
-          "phase_deg": 1.6672,
-          "ra_deg": 98.01785,
-          "dec_deg": 32.90105,
-          "vmag": null,
-          "ra_jnow_deg": 98.45524868565815,
-          "dec_jnow_deg": 32.87974613507816,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.71143182027967,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:48Z",
-          "r_au": 33.73500194787,
-          "delta_au": 33.9193861700292,
-          "phase_deg": 1.6726,
-          "ra_deg": 98.02745,
-          "dec_deg": 32.90417,
-          "vmag": null,
-          "ra_jnow_deg": 98.4649025223267,
-          "dec_jnow_deg": 32.88283922323244,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.710623434675398,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:48Z",
-          "r_au": 33.73698951643,
-          "delta_au": 33.9048008954156,
-          "phase_deg": 1.6775,
-          "ra_deg": 98.03648,
-          "dec_deg": 32.90733,
-          "vmag": null,
-          "ra_jnow_deg": 98.4739866441998,
-          "dec_jnow_deg": 32.8859737707899,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.70981104110276,
-          "constellation": "Auriga"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:48Z",
-          "r_au": 33.73897689214,
-          "delta_au": 33.8901642977109,
-          "phase_deg": 1.682,
-          "ra_deg": 98.04494,
-          "dec_deg": 32.91053,
-          "vmag": null,
-          "ra_jnow_deg": 98.48250105188457,
-          "dec_jnow_deg": 32.88914977809992,
-          "photometry": {
-            "M1": 11.8,
-            "K1": 4.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 26.708994938267168,
-          "constellation": "Auriga"
-        }
-      ],
-      "horizons_name": "NEAT (C/2001 M10)",
-      "v_pred_now": 26.71997343397163,
-      "cobs_mag": 12.0,
-      "name_full": "CK01M100  2001 05 31.4949  5.355769  0.7",
-      "display_name": "CK01M100  2001 05 31.4949  5.355769  0.7"
-    },
-    {
-      "id": "C/2002 A1",
-      "horizons_target": "C/2002 A1",
-      "epoch_utc": "2026-09-06T12:38:02Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026393549,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 4.661343188638032,
-        "e": 0.7095285374039255,
-        "i_deg": 14.06970569266172,
-        "Omega_deg": 81.03932969283586,
-        "omega_deg": 18.7604667294304,
-        "Tp_jd_tdb": 2452246.214939213,
-        "a_au": 16.047508237048504,
-        "Q_au": 27.433673285458976,
-        "period_years": 64.28526091449804,
-        "period_days": 23480.19154902041,
-        "n_deg_per_day": 0.01533207253647891,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:51Z",
-          "r_au": 26.40917662707,
-          "delta_au": 26.1538209039118,
-          "phase_deg": 2.1241,
-          "ra_deg": 266.89432,
-          "dec_deg": -25.49708,
-          "vmag": null,
-          "ra_jnow_deg": 267.3069211193465,
-          "dec_jnow_deg": -25.504590907966925,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.63785663091703,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:51Z",
-          "r_au": 26.40994391662,
-          "delta_au": 26.1711896425929,
-          "phase_deg": 2.1321,
-          "ra_deg": 266.88989,
-          "dec_deg": -25.49663,
-          "vmag": null,
-          "ra_jnow_deg": 267.302531774601,
-          "dec_jnow_deg": -25.50415309629506,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.639443330265856,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:51Z",
-          "r_au": 26.41071091598,
-          "delta_au": 26.188623360982,
-          "phase_deg": 2.1394,
-          "ra_deg": 266.88616,
-          "dec_deg": -25.4962,
-          "vmag": null,
-          "ra_jnow_deg": 267.2988425337155,
-          "dec_jnow_deg": -25.50373347415481,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.641034402018025,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:51Z",
-          "r_au": 26.41147762523,
-          "delta_au": 26.2061169388188,
-          "phase_deg": 2.1461,
-          "ra_deg": 266.88313,
-          "dec_deg": -25.49577,
-          "vmag": null,
-          "ra_jnow_deg": 267.29585333330493,
-          "dec_jnow_deg": -25.503312041088147,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.642629412437607,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:51Z",
-          "r_au": 26.41224404442,
-          "delta_au": 26.2236651632015,
-          "phase_deg": 2.1522,
-          "ra_deg": 266.8808,
-          "dec_deg": -25.49535,
-          "vmag": null,
-          "ra_jnow_deg": 267.2935642053077,
-          "dec_jnow_deg": -25.502898796510316,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.644227921233938,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:51Z",
-          "r_au": 26.4130101736,
-          "delta_au": 26.2412627616043,
-          "phase_deg": 2.1576,
-          "ra_deg": 266.87918,
-          "dec_deg": -25.49495,
-          "vmag": null,
-          "ra_jnow_deg": 267.29198518222984,
-          "dec_jnow_deg": -25.502503713929876,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.645829484330893,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:51Z",
-          "r_au": 26.41377601284,
-          "delta_au": 26.2589044375107,
-          "phase_deg": 2.1624,
-          "ra_deg": 266.87826,
-          "dec_deg": -25.49455,
-          "vmag": null,
-          "ra_jnow_deg": 267.2911061999872,
-          "dec_jnow_deg": -25.502106818776998,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.64743365683872,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:51Z",
-          "r_au": 26.4145415622,
-          "delta_au": 26.276584902733,
-          "phase_deg": 2.1666,
-          "ra_deg": 266.87804,
-          "dec_deg": -25.49417,
-          "vmag": null,
-          "ra_jnow_deg": 267.29092732223376,
-          "dec_jnow_deg": -25.50172811041568,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.649039995729822,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:51Z",
-          "r_au": 26.41530682175,
-          "delta_au": 26.2942989021091,
-          "phase_deg": 2.1701,
-          "ra_deg": 266.87853,
-          "dec_deg": -25.49379,
-          "vmag": null,
-          "ra_jnow_deg": 267.2914584859842,
-          "dec_jnow_deg": -25.501347562460055,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.650648061882748,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:51Z",
-          "r_au": 26.41607179155,
-          "delta_au": 26.3120412290076,
-          "phase_deg": 2.173,
-          "ra_deg": 266.87972,
-          "dec_deg": -25.49343,
-          "vmag": null,
-          "ra_jnow_deg": 267.2926897542534,
-          "dec_jnow_deg": -25.500985200173336,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.652257421350967,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:51Z",
-          "r_au": 26.41683647168,
-          "delta_au": 26.3298067326446,
-          "phase_deg": 2.1753,
-          "ra_deg": 266.88161,
-          "dec_deg": -25.49308,
-          "vmag": null,
-          "ra_jnow_deg": 267.2946210952036,
-          "dec_jnow_deg": -25.500631023032994,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.65386764595959,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:51Z",
-          "r_au": 26.4176008622,
-          "delta_au": 26.3475903197075,
-          "phase_deg": 2.1769,
-          "ra_deg": 266.88421,
-          "dec_deg": -25.49274,
-          "vmag": null,
-          "ra_jnow_deg": 267.29726250935386,
-          "dec_jnow_deg": -25.500285004552637,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.655478313416427,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:51Z",
-          "r_au": 26.41836496317,
-          "delta_au": 26.3653869531121,
-          "phase_deg": 2.1779,
-          "ra_deg": 266.88751,
-          "dec_deg": -25.49242,
-          "vmag": null,
-          "ra_jnow_deg": 267.3006040278347,
-          "dec_jnow_deg": -25.499957170034573,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.657089007196863,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:51Z",
-          "r_au": 26.41912877468,
-          "delta_au": 26.3831916502537,
-          "phase_deg": 2.1782,
-          "ra_deg": 266.89151,
-          "dec_deg": -25.49211,
-          "vmag": null,
-          "ra_jnow_deg": 267.30464561870366,
-          "dec_jnow_deg": -25.499637518946287,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.658699316388606,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:51Z",
-          "r_au": 26.41989229678,
-          "delta_au": 26.4009994823224,
-          "phase_deg": 2.178,
-          "ra_deg": 266.89621,
-          "dec_deg": -25.49181,
-          "vmag": null,
-          "ra_jnow_deg": 267.3093872817979,
-          "dec_jnow_deg": -25.499326050710764,
-          "photometry": {
-            "M1": 8.2,
-            "K1": 11.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.660308835604887,
-          "constellation": "Sagittarius"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 A1)",
-      "v_pred_now": 31.63785663091703,
-      "cobs_mag": 12.0,
-      "name_full": "CK02A010  2001 12  2.7058  4.661312  0.7",
-      "display_name": "CK02A010  2001 12  2.7058  4.661312  0.7"
-    },
-    {
-      "id": "C/2002 A2",
-      "horizons_target": "C/2002 A2",
-      "epoch_utc": "2026-09-06T12:38:05Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026432392,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 4.656435248833288,
-        "e": 0.7071791044919509,
-        "i_deg": 14.03821149600533,
-        "Omega_deg": 81.0474142604549,
-        "omega_deg": 19.11623304552909,
-        "Tp_jd_tdb": 2452253.257902808,
-        "a_au": 15.901991013155996,
-        "Q_au": 27.147546777478706,
-        "period_years": 63.412847540580906,
-        "period_days": 23161.542564197174,
-        "n_deg_per_day": 0.015543006213950687,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:55Z",
-          "r_au": 26.22006717482,
-          "delta_au": 25.9520862680424,
-          "phase_deg": 2.1325,
-          "ra_deg": 267.71149,
-          "dec_deg": -25.69218,
-          "vmag": null,
-          "ra_jnow_deg": 268.12475308399354,
-          "dec_jnow_deg": -25.69757373572759,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.594466980936605,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:55Z",
-          "r_au": 26.22080271061,
-          "delta_au": 25.9693721924714,
-          "phase_deg": 2.141,
-          "ra_deg": 267.70652,
-          "dec_deg": -25.69164,
-          "vmag": null,
-          "ra_jnow_deg": 268.11982356792964,
-          "dec_jnow_deg": -25.69704711317333,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.596059047600008,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:55Z",
-          "r_au": 26.22153795259,
-          "delta_au": 25.9867267903775,
-          "phase_deg": 2.1489,
-          "ra_deg": 267.70225,
-          "dec_deg": -25.6911,
-          "vmag": null,
-          "ra_jnow_deg": 268.1155940799318,
-          "dec_jnow_deg": -25.696518679413966,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.597655828095636,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:55Z",
-          "r_au": 26.22227290082,
-          "delta_au": 26.0041449552155,
-          "phase_deg": 2.1561,
-          "ra_deg": 267.69868,
-          "dec_deg": -25.69057,
-          "vmag": null,
-          "ra_jnow_deg": 268.11206465211285,
-          "dec_jnow_deg": -25.69599843386435,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.599256885809652,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:55Z",
-          "r_au": 26.22300755535,
-          "delta_au": 26.0216214854922,
-          "phase_deg": 2.1627,
-          "ra_deg": 267.69583,
-          "dec_deg": -25.69004,
-          "vmag": null,
-          "ra_jnow_deg": 268.1092552535643,
-          "dec_jnow_deg": -25.695476324186387,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.600861777331723,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:55Z",
-          "r_au": 26.22374191625,
-          "delta_au": 26.0391511177097,
-          "phase_deg": 2.1686,
-          "ra_deg": 267.69368,
-          "dec_deg": -25.68952,
-          "vmag": null,
-          "ra_jnow_deg": 268.1071459155124,
-          "dec_jnow_deg": -25.694962401612933,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.60247005524125,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:55Z",
-          "r_au": 26.22447598357,
-          "delta_au": 26.0567285619613,
-          "phase_deg": 2.174,
-          "ra_deg": 267.69224,
-          "dec_deg": -25.689,
-          "vmag": null,
-          "ra_jnow_deg": 268.10574660656386,
-          "dec_jnow_deg": -25.694446639712506,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.604081271088763,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:55Z",
-          "r_au": 26.22520975738,
-          "delta_au": 26.0743485343662,
-          "phase_deg": 2.1786,
-          "ra_deg": 267.69151,
-          "dec_deg": -25.6885,
-          "vmag": null,
-          "ra_jnow_deg": 268.1050573906392,
-          "dec_jnow_deg": -25.693949037841055,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.605694978117132,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:55Z",
-          "r_au": 26.22594323774,
-          "delta_au": 26.0920057819858,
-          "phase_deg": 2.1827,
-          "ra_deg": 267.69149,
-          "dec_deg": -25.688,
-          "vmag": null,
-          "ra_jnow_deg": 268.10507820394065,
-          "dec_jnow_deg": -25.693449595517567,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.607310733331214,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:55Z",
-          "r_au": 26.22667642471,
-          "delta_au": 26.1096950985954,
-          "phase_deg": 2.1861,
-          "ra_deg": 267.69218,
-          "dec_deg": -25.6875,
-          "vmag": null,
-          "ra_jnow_deg": 268.1058090464743,
-          "dec_jnow_deg": -25.692948312175844,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.60892809880557,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:55Z",
-          "r_au": 26.22740931836,
-          "delta_au": 26.1274113322543,
-          "phase_deg": 2.1888,
-          "ra_deg": 267.69358,
-          "dec_deg": -25.68702,
-          "vmag": null,
-          "ra_jnow_deg": 268.10724998208,
-          "dec_jnow_deg": -25.69246518716438,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.610546642304303,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:55Z",
-          "r_au": 26.22814191876,
-          "delta_au": 26.1451493871437,
-          "phase_deg": 2.1909,
-          "ra_deg": 267.6957,
-          "dec_deg": -25.68655,
-          "vmag": null,
-          "ra_jnow_deg": 268.10941097919533,
-          "dec_jnow_deg": -25.69199019401819,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.612165937417284,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:55Z",
-          "r_au": 26.22887422597,
-          "delta_au": 26.1629042224823,
-          "phase_deg": 2.1924,
-          "ra_deg": 267.69852,
-          "dec_deg": -25.68608,
-          "vmag": null,
-          "ra_jnow_deg": 268.11227200496575,
-          "dec_jnow_deg": -25.691513384072806,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.613785563452467,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:55Z",
-          "r_au": 26.22960624007,
-          "delta_au": 26.1806708508896,
-          "phase_deg": 2.1933,
-          "ra_deg": 267.70204,
-          "dec_deg": -25.68562,
-          "vmag": null,
-          "ra_jnow_deg": 268.11583309121016,
-          "dec_jnow_deg": -25.691044756718856,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.61540510528979,
-          "constellation": "Sagittarius"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:55Z",
-          "r_au": 26.23033796112,
-          "delta_au": 26.1984443377829,
-          "phase_deg": 2.1935,
-          "ra_deg": 267.70628,
-          "dec_deg": -25.68518,
-          "vmag": null,
-          "ra_jnow_deg": 268.12011427055387,
-          "dec_jnow_deg": -25.69059425945788,
-          "photometry": {
-            "M1": 7.5,
-            "K1": 12.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 31.617024153306637,
-          "constellation": "Sagittarius"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 A2)",
-      "v_pred_now": 31.594466980936605,
-      "cobs_mag": 12.0,
-      "name_full": "CK02A020  2001 12  9.7488  4.656408  0.7",
-      "display_name": "CK02A020  2001 12  9.7488  4.656408  0.7"
-    },
-    {
-      "id": "C/2002 A3",
-      "horizons_target": "C/2002 A3",
-      "epoch_utc": "2026-09-06T12:38:09Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026469561,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 5.121040998252941,
-        "e": 0.9687561573335491,
-        "i_deg": 48.63785497825333,
-        "Omega_deg": 136.1650823195876,
-        "omega_deg": 329.4505432957611,
-        "Tp_jd_tdb": 2452391.101174844,
-        "a_au": 163.9056070318723,
-        "Q_au": 322.6901730654917,
-        "period_years": 2098.411781105564,
-        "period_days": 766444.9030488072,
-        "n_deg_per_day": 0.00046970108166676037,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:36:58Z",
-          "r_au": 41.28274144019,
-          "delta_au": 41.2651886372953,
-          "phase_deg": 1.3988,
-          "ra_deg": 257.79139,
-          "dec_deg": 21.84664,
-          "vmag": null,
-          "ra_jnow_deg": 258.07505003909904,
-          "dec_jnow_deg": 21.8155921097787,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.047430866244206,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:36:58Z",
-          "r_au": 41.28602436464,
-          "delta_au": 41.2805944497001,
-          "phase_deg": 1.3983,
-          "ra_deg": 257.79154,
-          "dec_deg": 21.82922,
-          "vmag": null,
-          "ra_jnow_deg": 258.0752803589441,
-          "dec_jnow_deg": 21.798169406051613,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.04861265665642,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:36:58Z",
-          "r_au": 41.28930716165,
-          "delta_au": 41.2960027976456,
-          "phase_deg": 1.3977,
-          "ra_deg": 257.79213,
-          "dec_deg": 21.81176,
-          "vmag": null,
-          "ra_jnow_deg": 258.0759506975325,
-          "dec_jnow_deg": 21.780707818082753,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.049794234031154,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:36:58Z",
-          "r_au": 41.29258983131,
-          "delta_au": 41.3114099750441,
-          "phase_deg": 1.3969,
-          "ra_deg": 257.79315,
-          "dec_deg": 21.79428,
-          "vmag": null,
-          "ra_jnow_deg": 258.07705099846083,
-          "dec_jnow_deg": 21.763227320793792,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.050975403658214,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:36:58Z",
-          "r_au": 41.29587237376,
-          "delta_au": 41.3268122358276,
-          "phase_deg": 1.3959,
-          "ra_deg": 257.7946,
-          "dec_deg": 21.77677,
-          "vmag": null,
-          "ra_jnow_deg": 258.07858129135667,
-          "dec_jnow_deg": 21.745717914570772,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.05215596902277,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:36:58Z",
-          "r_au": 41.29915478908,
-          "delta_au": 41.3422058171272,
-          "phase_deg": 1.3946,
-          "ra_deg": 257.79649,
-          "dec_deg": 21.75925,
-          "vmag": null,
-          "ra_jnow_deg": 258.0805515154594,
-          "dec_jnow_deg": 21.728199625053954,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.05333573301367,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:36:58Z",
-          "r_au": 41.30243707741,
-          "delta_au": 41.3575869624216,
-          "phase_deg": 1.3932,
-          "ra_deg": 257.79882,
-          "dec_deg": 21.74171,
-          "vmag": null,
-          "ra_jnow_deg": 258.0829617004275,
-          "dec_jnow_deg": 21.7106624526484,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.05451449915314,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:36:58Z",
-          "r_au": 41.30571923885,
-          "delta_au": 41.3729519410587,
-          "phase_deg": 1.3915,
-          "ra_deg": 257.80158,
-          "dec_deg": 21.72417,
-          "vmag": null,
-          "ra_jnow_deg": 258.0858017899476,
-          "dec_jnow_deg": 21.693126372286333,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.055692072608466,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:36:58Z",
-          "r_au": 41.30900127352,
-          "delta_au": 41.3882970618791,
-          "phase_deg": 1.3897,
-          "ra_deg": 257.80477,
-          "dec_deg": 21.70662,
-          "vmag": null,
-          "ra_jnow_deg": 258.08907181369597,
-          "dec_jnow_deg": 21.67558138437508,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.05686826090978,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:36:58Z",
-          "r_au": 41.31228318153,
-          "delta_au": 41.4036186805614,
-          "phase_deg": 1.3876,
-          "ra_deg": 257.80839,
-          "dec_deg": 21.68908,
-          "vmag": null,
-          "ra_jnow_deg": 258.0927717132046,
-          "dec_jnow_deg": 21.65804748921538,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.058042874326645,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:36:58Z",
-          "r_au": 41.31556496298,
-          "delta_au": 41.4189132018662,
-          "phase_deg": 1.3853,
-          "ra_deg": 257.81245,
-          "dec_deg": 21.67154,
-          "vmag": null,
-          "ra_jnow_deg": 258.096911515986,
-          "dec_jnow_deg": 21.640514712600456,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.059215725979705,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:36:58Z",
-          "r_au": 41.318846618,
-          "delta_au": 41.4341770786989,
-          "phase_deg": 1.3829,
-          "ra_deg": 257.81693,
-          "dec_deg": 21.65402,
-          "vmag": null,
-          "ra_jnow_deg": 258.1014711679932,
-          "dec_jnow_deg": 21.623003004093892,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.0603866317896,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:36:58Z",
-          "r_au": 41.32212814669,
-          "delta_au": 41.4494068098934,
-          "phase_deg": 1.3802,
-          "ra_deg": 257.82185,
-          "dec_deg": 21.63651,
-          "vmag": null,
-          "ra_jnow_deg": 258.1064706945761,
-          "dec_jnow_deg": 21.60550241487778,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.06155541034767,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:36:58Z",
-          "r_au": 41.32540954917,
-          "delta_au": 41.4645989381578,
-          "phase_deg": 1.3774,
-          "ra_deg": 257.82718,
-          "dec_deg": 21.61902,
-          "vmag": null,
-          "ra_jnow_deg": 258.1118800732658,
-          "dec_jnow_deg": 21.588022869166775,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.062721882807665,
-          "constellation": "Hercules"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:36:58Z",
-          "r_au": 41.32869082555,
-          "delta_au": 41.4797500490157,
-          "phase_deg": 1.3743,
-          "ra_deg": 257.83295,
-          "dec_deg": 21.60157,
-          "vmag": null,
-          "ra_jnow_deg": 258.11772923916243,
-          "dec_jnow_deg": 21.570584443432185,
-          "photometry": {
-            "M1": 6.6,
-            "K1": 10.75,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 32.063885872820656,
-          "constellation": "Hercules"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 A3)",
-      "v_pred_now": 32.047430866244206,
-      "cobs_mag": 12.0,
-      "name_full": "CK02A030  2002 04 26.6027  5.120967  0.9",
-      "display_name": "CK02A030  2002 04 26.6027  5.120967  0.9"
-    },
-    {
-      "id": "C/2002 B1",
-      "horizons_target": "C/2002 B1",
-      "epoch_utc": "2026-09-06T12:38:12Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.02650758,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 2.262885097583643,
-        "e": 0.7707582831915912,
-        "i_deg": 51.02212258063606,
-        "Omega_deg": 58.30186013300327,
-        "omega_deg": 76.05697206514033,
-        "Tp_jd_tdb": 2463701.042057821,
-        "a_au": 9.871174972375877,
-        "Q_au": 17.479464847168114,
-        "period_years": 31.01367811755544,
-        "period_days": 11327.745932437125,
-        "n_deg_per_day": 0.031780373796090895,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:37:01Z",
-          "r_au": 13.23452940204,
-          "delta_au": 12.6062126557291,
-          "phase_deg": 3.4969,
-          "ra_deg": 17.83234,
-          "dec_deg": -52.29085,
-          "vmag": null,
-          "ra_jnow_deg": 18.115053372800883,
-          "dec_jnow_deg": -52.14957234706415,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.604354345723465,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:37:01Z",
-          "r_au": 13.23170544448,
-          "delta_au": 12.6031346104325,
-          "phase_deg": 3.4954,
-          "ra_deg": 17.74791,
-          "dec_deg": -52.33208,
-          "vmag": null,
-          "ra_jnow_deg": 18.030833245986162,
-          "dec_jnow_deg": -52.1907205403678,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.601576614479164,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:37:01Z",
-          "r_au": 13.22888031357,
-          "delta_au": 12.6002470605777,
-          "phase_deg": 3.4944,
-          "ra_deg": 17.66213,
-          "dec_deg": -52.37246,
-          "vmag": null,
-          "ra_jnow_deg": 17.945270024165335,
-          "dec_jnow_deg": -52.231017958504566,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.59883016929787,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:37:01Z",
-          "r_au": 13.22605400892,
-          "delta_au": 12.5975503436503,
-          "phase_deg": 3.4942,
-          "ra_deg": 17.57503,
-          "dec_deg": -52.41199,
-          "vmag": null,
-          "ra_jnow_deg": 17.858393624815974,
-          "dec_jnow_deg": -52.270464639942915,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.596115089751116,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:37:01Z",
-          "r_au": 13.22322653013,
-          "delta_au": 12.5950446717834,
-          "phase_deg": 3.4945,
-          "ra_deg": 17.48665,
-          "dec_deg": -52.45064,
-          "vmag": null,
-          "ra_jnow_deg": 17.770243994769512,
-          "dec_jnow_deg": -52.30903063082448,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.59343143236636,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:37:01Z",
-          "r_au": 13.22039787677,
-          "delta_au": 12.5927301278866,
-          "phase_deg": 3.4955,
-          "ra_deg": 17.39702,
-          "dec_deg": -52.48838,
-          "vmag": null,
-          "ra_jnow_deg": 17.680851110168504,
-          "dec_jnow_deg": -52.34668596912534,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.59077922991173,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:37:01Z",
-          "r_au": 13.21756804845,
-          "delta_au": 12.5906066695455,
-          "phase_deg": 3.4971,
-          "ra_deg": 17.30617,
-          "dec_deg": -52.52519,
-          "vmag": null,
-          "ra_jnow_deg": 17.590244923655263,
-          "dec_jnow_deg": -52.38341069258247,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.588158492097016,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:37:01Z",
-          "r_au": 13.21473704475,
-          "delta_au": 12.5886741391779,
-          "phase_deg": 3.4993,
-          "ra_deg": 17.21416,
-          "dec_deg": -52.56107,
-          "vmag": null,
-          "ra_jnow_deg": 17.498485247184227,
-          "dec_jnow_deg": -52.41920486184932,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.58556920724833,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:37:01Z",
-          "r_au": 13.21190486525,
-          "delta_au": 12.5869322776058,
-          "phase_deg": 3.5022,
-          "ra_deg": 17.121,
-          "dec_deg": -52.59598,
-          "vmag": null,
-          "ra_jnow_deg": 17.405582134599076,
-          "dec_jnow_deg": -52.454028498441,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.583011344658196,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:37:01Z",
-          "r_au": 13.20907150955,
-          "delta_au": 12.5853807380266,
-          "phase_deg": 3.5057,
-          "ra_deg": 17.02676,
-          "dec_deg": -52.62992,
-          "vmag": null,
-          "ra_jnow_deg": 17.311605360462558,
-          "dec_jnow_deg": -52.48788166975514,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.58048485700317,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:37:01Z",
-          "r_au": 13.20623697723,
-          "delta_au": 12.5840190981648,
-          "phase_deg": 3.5098,
-          "ra_deg": 16.93145,
-          "dec_deg": -52.66286,
-          "vmag": null,
-          "ra_jnow_deg": 17.216564952744303,
-          "dec_jnow_deg": -52.52073439663007,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.577989682405274,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:37:01Z",
-          "r_au": 13.20340126787,
-          "delta_au": 12.5828468695748,
-          "phase_deg": 3.5146,
-          "ra_deg": 16.83513,
-          "dec_deg": -52.69478,
-          "vmag": null,
-          "ra_jnow_deg": 17.12052075433792,
-          "dec_jnow_deg": -52.552566737730125,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.575525746054495,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:37:01Z",
-          "r_au": 13.20056438107,
-          "delta_au": 12.5818635041227,
-          "phase_deg": 3.5199,
-          "ra_deg": 16.73784,
-          "dec_deg": -52.72568,
-          "vmag": null,
-          "ra_jnow_deg": 17.02351262907687,
-          "dec_jnow_deg": -52.58337873582812,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.57309296134833,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:37:01Z",
-          "r_au": 13.19772631639,
-          "delta_au": 12.5810683983442,
-          "phase_deg": 3.5259,
-          "ra_deg": 16.63961,
-          "dec_deg": -52.75554,
-          "vmag": null,
-          "ra_jnow_deg": 16.925570512041517,
-          "dec_jnow_deg": -52.61315042570991,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.570691230604126,
-          "constellation": "Phoenix"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:37:01Z",
-          "r_au": 13.19488707344,
-          "delta_au": 12.5804608966708,
-          "phase_deg": 3.5324,
-          "ra_deg": 16.54049,
-          "dec_deg": -52.78434,
-          "vmag": null,
-          "ra_jnow_deg": 16.82674427059877,
-          "dec_jnow_deg": -52.64186185667455,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 24.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 39.56832044569843,
-          "constellation": "Phoenix"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 B1)",
-      "v_pred_now": 39.604354345723465,
-      "cobs_mag": 12.0,
-      "name_full": "CK02B010  2033 04 13.4819  2.262897  0.7",
-      "display_name": "CK02B010  2033 04 13.4819  2.262897  0.7"
-    },
-    {
-      "id": "C/2002 C2",
-      "horizons_target": "C/2002 C2",
-      "epoch_utc": "2026-09-06T12:38:16Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.02654467,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 3.280939852745912,
-        "e": 0.9983307929839579,
-        "i_deg": 105.0584601594646,
-        "Omega_deg": 242.7367629878232,
-        "omega_deg": 159.919362506274,
-        "Tp_jd_tdb": 2452370.616558248,
-        "a_au": 1965.5679740224184,
-        "Q_au": 3927.8550081920907,
-        "period_years": 87142.91854971282,
-        "period_days": 31828951.000282608,
-        "n_deg_per_day": 1.1310457576713841e-05,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:37:04Z",
-          "r_au": 44.15696521078,
-          "delta_au": 44.0848836842407,
-          "phase_deg": 1.3056,
-          "ra_deg": 246.23581,
-          "dec_deg": -71.76288,
-          "vmag": null,
-          "ra_jnow_deg": 246.99210836494706,
-          "dec_jnow_deg": -71.8218324787765,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.3826904793663,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:37:04Z",
-          "r_au": 44.16046587554,
-          "delta_au": 44.0995110253726,
-          "phase_deg": 1.306,
-          "ra_deg": 246.24396,
-          "dec_deg": -71.74499,
-          "vmag": null,
-          "ra_jnow_deg": 246.99992514047017,
-          "dec_jnow_deg": -71.80392952939778,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.383763745631086,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:37:04Z",
-          "r_au": 44.16396641451,
-          "delta_au": 44.1141578890375,
-          "phase_deg": 1.3063,
-          "ra_deg": 246.25327,
-          "dec_deg": -71.72718,
-          "vmag": null,
-          "ra_jnow_deg": 247.00890813550242,
-          "dec_jnow_deg": -71.78610380662442,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.38483769331894,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:37:04Z",
-          "r_au": 44.1674668278,
-          "delta_au": 44.1288208113623,
-          "phase_deg": 1.3064,
-          "ra_deg": 246.26375,
-          "dec_deg": -71.70946,
-          "vmag": null,
-          "ra_jnow_deg": 247.01906759761965,
-          "dec_jnow_deg": -71.76836528493166,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.385912151201154,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:37:04Z",
-          "r_au": 44.17096711551,
-          "delta_au": 44.1434962773736,
-          "phase_deg": 1.3063,
-          "ra_deg": 246.27539,
-          "dec_deg": -71.69183,
-          "vmag": null,
-          "ra_jnow_deg": 247.03039346817897,
-          "dec_jnow_deg": -71.75071398668844,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.38698694576087,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:37:04Z",
-          "r_au": 44.17446727774,
-          "delta_au": 44.158180746323,
-          "phase_deg": 1.3061,
-          "ra_deg": 246.28818,
-          "dec_deg": -71.67429,
-          "vmag": null,
-          "ra_jnow_deg": 247.04287568849188,
-          "dec_jnow_deg": -71.7331499342089,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.38806190244382,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:37:04Z",
-          "r_au": 44.17796731461,
-          "delta_au": 44.1728706772405,
-          "phase_deg": 1.3057,
-          "ra_deg": 246.30211,
-          "dec_deg": -71.65686,
-          "vmag": null,
-          "ra_jnow_deg": 247.05650468308474,
-          "dec_jnow_deg": -71.7156931491799,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.389136846918746,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:37:04Z",
-          "r_au": 44.18146722622,
-          "delta_au": 44.1875625506767,
-          "phase_deg": 1.3051,
-          "ra_deg": 246.31717,
-          "dec_deg": -71.63954,
-          "vmag": null,
-          "ra_jnow_deg": 247.07127039087086,
-          "dec_jnow_deg": -71.69834365381493,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39021160614162,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:37:04Z",
-          "r_au": 44.18496701268,
-          "delta_au": 44.2022528840349,
-          "phase_deg": 1.3043,
-          "ra_deg": 246.33336,
-          "dec_deg": -71.62233,
-          "vmag": null,
-          "ra_jnow_deg": 247.08717278150831,
-          "dec_jnow_deg": -71.68110144641231,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39128600910996,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:37:04Z",
-          "r_au": 44.1884666741,
-          "delta_au": 44.216938239978,
-          "phase_deg": 1.3034,
-          "ra_deg": 246.35067,
-          "dec_deg": -71.60523,
-          "vmag": null,
-          "ra_jnow_deg": 247.10420179388518,
-          "dec_jnow_deg": -71.66396654907454,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39235988727129,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:37:04Z",
-          "r_au": 44.19196621058,
-          "delta_au": 44.2316152291386,
-          "phase_deg": 1.3024,
-          "ra_deg": 246.36909,
-          "dec_deg": -71.58825,
-          "vmag": null,
-          "ra_jnow_deg": 247.12234760705866,
-          "dec_jnow_deg": -71.64694898357324,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39343307465095,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:37:04Z",
-          "r_au": 44.19546562223,
-          "delta_au": 44.2462805092198,
-          "phase_deg": 1.3011,
-          "ra_deg": 246.38861,
-          "dec_deg": -71.5714,
-          "vmag": null,
-          "ra_jnow_deg": 247.14160039869873,
-          "dec_jnow_deg": -71.6300587716385,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.394505407805475,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:37:04Z",
-          "r_au": 44.19896490916,
-          "delta_au": 44.2609307825893,
-          "phase_deg": 1.2997,
-          "ra_deg": 246.40921,
-          "dec_deg": -71.55467,
-          "vmag": null,
-          "ra_jnow_deg": 247.1619398359233,
-          "dec_jnow_deg": -71.61328595942092,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.395576725698994,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:37:04Z",
-          "r_au": 44.20246407147,
-          "delta_au": 44.2755627939757,
-          "phase_deg": 1.2982,
-          "ra_deg": 246.4309,
-          "dec_deg": -71.53808,
-          "vmag": null,
-          "ra_jnow_deg": 247.18337639600557,
-          "dec_jnow_deg": -71.59665052051334,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39664686958476,
-          "constellation": "Apus"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:37:04Z",
-          "r_au": 44.20596310927,
-          "delta_au": 44.2901733292231,
-          "phase_deg": 1.2965,
-          "ra_deg": 246.45365,
-          "dec_deg": -71.52162,
-          "vmag": null,
-          "ra_jnow_deg": 247.205879715615,
-          "dec_jnow_deg": -71.58014252488783,
-          "photometry": {
-            "M1": 9.3,
-            "K1": 10.25,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 34.39771568294171,
-          "constellation": "Apus"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 C2)",
-      "v_pred_now": 34.3826904793663,
-      "cobs_mag": 12.0,
-      "name_full": "CK02C020  2002 04  6.1110  3.280917  0.9",
-      "display_name": "CK02C020  2002 04  6.1110  3.280917  0.9"
-    },
-    {
-      "id": "C/2002 CE10",
-      "horizons_target": "C/2002 CE10",
-      "epoch_utc": "2026-09-06T12:38:19Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026588714,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 2.052603615984506,
-        "e": 0.7898085303712418,
-        "i_deg": 145.361181606749,
-        "Omega_deg": 147.5771656009941,
-        "omega_deg": 126.2652473202429,
-        "Tp_jd_tdb": 2463964.801487879,
-        "a_au": 9.765399231518911,
-        "Q_au": 17.478194847053317,
-        "period_years": 30.516519841361486,
-        "period_days": 11146.158872057284,
-        "n_deg_per_day": 0.03229812208244198,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:37:08Z",
-          "r_au": 14.07117692644,
-          "delta_au": 15.0126001441192,
-          "phase_deg": 1.4238,
-          "ra_deg": 168.51116,
-          "dec_deg": -13.45811,
-          "vmag": null,
-          "ra_jnow_deg": 168.845989189127,
-          "dec_jnow_deg": -13.603746805358776,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.549766494165024,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:37:08Z",
-          "r_au": 14.06867303885,
-          "delta_au": 15.0129962042021,
-          "phase_deg": 1.3907,
-          "ra_deg": 168.56739,
-          "dec_deg": -13.47374,
-          "vmag": null,
-          "ra_jnow_deg": 168.9022795859786,
-          "dec_jnow_deg": -13.619420310720994,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54947598862944,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:37:08Z",
-          "r_au": 14.0661680365,
-          "delta_au": 15.0131304777489,
-          "phase_deg": 1.3595,
-          "ra_deg": 168.62369,
-          "dec_deg": -13.48973,
-          "vmag": null,
-          "ra_jnow_deg": 168.958639927478,
-          "dec_jnow_deg": -13.635453716731982,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.549147400788417,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:37:08Z",
-          "r_au": 14.06366191906,
-          "delta_au": 15.0130017970478,
-          "phase_deg": 1.3304,
-          "ra_deg": 168.68004,
-          "dec_deg": -13.50607,
-          "vmag": null,
-          "ra_jnow_deg": 169.0150502095953,
-          "dec_jnow_deg": -13.651837012775575,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.548780562610077,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:37:08Z",
-          "r_au": 14.0611546862,
-          "delta_au": 15.0126091407287,
-          "phase_deg": 1.3034,
-          "ra_deg": 168.73642,
-          "dec_deg": -13.52277,
-          "vmag": null,
-          "ra_jnow_deg": 169.07149041756253,
-          "dec_jnow_deg": -13.668580188428376,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54837532523134,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:37:08Z",
-          "r_au": 14.0586463376,
-          "delta_au": 15.011951649429,
-          "phase_deg": 1.2789,
-          "ra_deg": 168.79282,
-          "dec_deg": -13.5398,
-          "vmag": null,
-          "ra_jnow_deg": 169.12795056384132,
-          "dec_jnow_deg": -13.685653238435954,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.547931561200194,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:37:08Z",
-          "r_au": 14.05613687294,
-          "delta_au": 15.0110286292409,
-          "phase_deg": 1.257,
-          "ra_deg": 168.84922,
-          "dec_deg": -13.55718,
-          "vmag": null,
-          "ra_jnow_deg": 169.18441062821137,
-          "dec_jnow_deg": -13.703076152692352,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.547449164953605,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:37:08Z",
-          "r_au": 14.05362629191,
-          "delta_au": 15.0098395437636,
-          "phase_deg": 1.2377,
-          "ra_deg": 168.90561,
-          "dec_deg": -13.57489,
-          "vmag": null,
-          "ra_jnow_deg": 169.24086061759584,
-          "dec_jnow_deg": -13.720828926211947,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54692805165577,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:37:08Z",
-          "r_au": 14.05111459417,
-          "delta_au": 15.0083839982612,
-          "phase_deg": 1.2214,
-          "ra_deg": 168.96197,
-          "dec_deg": -13.59292,
-          "vmag": null,
-          "ra_jnow_deg": 169.29728052729754,
-          "dec_jnow_deg": -13.738901549212306,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.546368154892402,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:37:08Z",
-          "r_au": 14.0486017794,
-          "delta_au": 15.0066617205351,
-          "phase_deg": 1.208,
-          "ra_deg": 169.01829,
-          "dec_deg": -13.61126,
-          "vmag": null,
-          "ra_jnow_deg": 169.35366035864155,
-          "dec_jnow_deg": -13.757284016977051,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.545769423906325,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:37:08Z",
-          "r_au": 14.0460878473,
-          "delta_au": 15.0046725425439,
-          "phase_deg": 1.1978,
-          "ra_deg": 169.07454,
-          "dec_deg": -13.62992,
-          "vmag": null,
-          "ra_jnow_deg": 169.4099700901097,
-          "dec_jnow_deg": -13.775986315196104,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54513182093707,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:37:08Z",
-          "r_au": 14.04357279753,
-          "delta_au": 15.00241638524,
-          "phase_deg": 1.1908,
-          "ra_deg": 169.13072,
-          "dec_deg": -13.64888,
-          "vmag": null,
-          "ra_jnow_deg": 169.4662097341591,
-          "dec_jnow_deg": -13.794988444318445,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54445531901973,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:37:08Z",
-          "r_au": 14.04105662978,
-          "delta_au": 14.9998932474136,
-          "phase_deg": 1.1872,
-          "ra_deg": 169.1868,
-          "dec_deg": -13.66813,
-          "vmag": null,
-          "ra_jnow_deg": 169.5223492792436,
-          "dec_jnow_deg": -13.814280390404294,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.543739900383443,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:37:08Z",
-          "r_au": 14.03853934372,
-          "delta_au": 14.9971031980692,
-          "phase_deg": 1.1868,
-          "ra_deg": 169.24279,
-          "dec_deg": -13.68768,
-          "vmag": null,
-          "ra_jnow_deg": 169.5783987284629,
-          "dec_jnow_deg": -13.833872158890157,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.542985555345943,
-          "constellation": "Crater"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:37:08Z",
-          "r_au": 14.03602093904,
-          "delta_au": 14.9940463711232,
-          "phase_deg": 1.1898,
-          "ra_deg": 169.29865,
-          "dec_deg": -13.70751,
-          "vmag": null,
-          "ra_jnow_deg": 169.63431806884958,
-          "dec_jnow_deg": -13.853743731383267,
-          "photometry": {
-            "M1": 13.5,
-            "K1": 4.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 24.54219228155806,
-          "constellation": "Crater"
-        }
-      ],
-      "horizons_name": "LINEAR (C/2002 CE10)",
-      "v_pred_now": 24.549766494165024,
-      "cobs_mag": 12.0,
-      "name_full": "CK02C10E  2034 01  2.3102  2.052620  0.7",
-      "display_name": "CK02C10E  2034 01  2.3102  2.052620  0.7"
-    },
-    {
-      "id": "P/1996 R2",
-      "horizons_target": "P/1996 R2",
-      "epoch_utc": "2026-09-06T12:38:23Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026629332,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 2.586961839137513,
-        "e": 0.3139052670432306,
-        "i_deg": 2.599764742273201,
-        "Omega_deg": 39.98757354220939,
-        "omega_deg": 333.5686785994565,
-        "Tp_jd_tdb": 2461207.948032733,
-        "a_au": 3.770560703751265,
-        "Q_au": 4.954159568365017,
-        "period_years": 7.321649010636299,
-        "period_days": 2674.232301134908,
-        "n_deg_per_day": 0.13461807332415396,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:37:12Z",
-          "r_au": 2.63285285436,
-          "delta_au": 2.16346160136625,
-          "phase_deg": 21.5472,
-          "ra_deg": 54.89557,
-          "dec_deg": 19.27913,
-          "vmag": null,
-          "ra_jnow_deg": 55.28012002852421,
-          "dec_jnow_deg": 19.36413318951477,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.194491007284796,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:37:12Z",
-          "r_au": 2.63395732801,
-          "delta_au": 2.15263074142408,
-          "phase_deg": 21.4343,
-          "ra_deg": 55.04586,
-          "dec_deg": 19.32594,
-          "vmag": null,
-          "ra_jnow_deg": 55.43063920483569,
-          "dec_jnow_deg": 19.410631861528053,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.187326753858876,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:37:12Z",
-          "r_au": 2.635074188228,
-          "delta_au": 2.14185989682682,
-          "phase_deg": 21.316,
-          "ra_deg": 55.19046,
-          "dec_deg": 19.3715,
-          "vmag": null,
-          "ra_jnow_deg": 55.57546265530072,
-          "dec_jnow_deg": 19.455892032143485,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.180208658494635,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:37:12Z",
-          "r_au": 2.636203401072,
-          "delta_au": 2.1311524159949,
-          "phase_deg": 21.1924,
-          "ra_deg": 55.32928,
-          "dec_deg": 19.41581,
-          "vmag": null,
-          "ra_jnow_deg": 55.71450031900457,
-          "dec_jnow_deg": 19.499913962999848,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.173140331648067,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:37:12Z",
-          "r_au": 2.6373449323,
-          "delta_au": 2.12051172466005,
-          "phase_deg": 21.0632,
-          "ra_deg": 55.46226,
-          "dec_deg": 19.45887,
-          "vmag": null,
-          "ra_jnow_deg": 55.847692151202,
-          "dec_jnow_deg": 19.542697849870745,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.166125535150453,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:37:12Z",
-          "r_au": 2.638498747374,
-          "delta_au": 2.10994129183218,
-          "phase_deg": 20.9286,
-          "ra_deg": 55.58931,
-          "dec_deg": 19.50068,
-          "vmag": null,
-          "ra_jnow_deg": 55.974948092267674,
-          "dec_jnow_deg": 19.58424395075761,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.15916814989351,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:37:12Z",
-          "r_au": 2.639664811458,
-          "delta_au": 2.09944459947384,
-          "phase_deg": 20.7883,
-          "ra_deg": 55.71038,
-          "dec_deg": 19.54124,
-          "vmag": null,
-          "ra_jnow_deg": 56.09621810373576,
-          "dec_jnow_deg": 19.624552435932667,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.152272146228675,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:37:12Z",
-          "r_au": 2.640843089429,
-          "delta_au": 2.08902512045266,
-          "phase_deg": 20.6424,
-          "ra_deg": 55.8254,
-          "dec_deg": 19.58055,
-          "vmag": null,
-          "ra_jnow_deg": 56.21143213728688,
-          "dec_jnow_deg": 19.663623516307904,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.145441562009573,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:37:12Z",
-          "r_au": 2.642033545873,
-          "delta_au": 2.07868630668907,
-          "phase_deg": 20.4908,
-          "ra_deg": 55.9343,
-          "dec_deg": 19.61862,
-          "vmag": null,
-          "ra_jnow_deg": 56.32052016930348,
-          "dec_jnow_deg": 19.701467400573105,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.13868049047023,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:37:12Z",
-          "r_au": 2.643236145095,
-          "delta_au": 2.06843158654823,
-          "phase_deg": 20.3335,
-          "ra_deg": 56.03704,
-          "dec_deg": 19.65544,
-          "vmag": null,
-          "ra_jnow_deg": 56.42344214341463,
-          "dec_jnow_deg": 19.738074230476144,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.131993077397453,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:37:12Z",
-          "r_au": 2.644450851115,
-          "delta_au": 2.0582643686374,
-          "phase_deg": 20.1703,
-          "ra_deg": 56.13355,
-          "dec_deg": 19.69102,
-          "vmag": null,
-          "ra_jnow_deg": 56.520128036671295,
-          "dec_jnow_deg": 19.77345420985243,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.125383524837083,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:37:12Z",
-          "r_au": 2.645677627681,
-          "delta_au": 2.04818804866904,
-          "phase_deg": 20.0014,
-          "ra_deg": 56.22379,
-          "dec_deg": 19.72536,
-          "vmag": null,
-          "ra_jnow_deg": 56.61053781747648,
-          "dec_jnow_deg": 19.807607475291913,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.118856098126415,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:37:12Z",
-          "r_au": 2.646916438263,
-          "delta_au": 2.03820601660168,
-          "phase_deg": 19.8266,
-          "ra_deg": 56.3077,
-          "dec_deg": 19.75845,
-          "vmag": null,
-          "ra_jnow_deg": 56.69461141963204,
-          "dec_jnow_deg": 19.84052420395843,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.11241513326903,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:37:12Z",
-          "r_au": 2.648167246062,
-          "delta_au": 2.02832166228729,
-          "phase_deg": 19.6459,
-          "ra_deg": 56.38524,
-          "dec_deg": 19.79031,
-          "vmag": null,
-          "ra_jnow_deg": 56.77230886060822,
-          "dec_jnow_deg": 19.8722245269847,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.106065042876256,
-          "constellation": "Taurus"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:37:12Z",
-          "r_au": 2.649430014011,
-          "delta_au": 2.01853837888575,
-          "phase_deg": 19.4592,
-          "ra_deg": 56.45636,
-          "dec_deg": 19.82091,
-          "vmag": null,
-          "ra_jnow_deg": 56.843580030416724,
-          "dec_jnow_deg": 19.902678594490535,
-          "photometry": {
-            "M1": 6.9,
-            "K1": 20.5,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 17.099810319742957,
-          "constellation": "Taurus"
-        }
-      ],
-      "horizons_name": "Lagerkvist (P/1996 R2)",
-      "v_pred_now": 17.194491007284796,
-      "cobs_mag": 12.0,
-      "name_full": "PJ96R020  2026 06 16.1087  2.586996  0.3",
-      "display_name": "PJ96R020  2026 06 16.1087  2.586996  0.3"
-    },
-    {
-      "id": "P/1998 VS24",
-      "horizons_target": "P/1998 VS24",
-      "epoch_utc": "2026-09-06T12:38:26Z",
-      "orbit": {
-        "epoch_jd_tdb": 2461290.026671807,
-        "frame": "ecliptic J2000",
-        "type": "comet",
-        "q_au": 3.41938593471047,
-        "e": 0.243247067657934,
-        "i_deg": 5.028876636469857,
-        "Omega_deg": 158.9788659151376,
-        "omega_deg": 245.0117769130532,
-        "Tp_jd_tdb": 2461656.98017078,
-        "a_au": 4.518497105954848,
-        "Q_au": 5.617608277199226,
-        "period_years": 9.604859418281382,
-        "period_days": 3508.1749025272748,
-        "n_deg_per_day": 0.10261746064617744,
-        "solution": "osculating",
-        "reference": "JPL SBDB (via Horizons)"
-      },
-      "ephemeris_15d": [
-        {
-          "epoch_utc": "2026-09-06T12:37:15Z",
-          "r_au": 3.783285326728,
-          "delta_au": 2.77553120300815,
-          "phase_deg": 0.3954,
-          "ra_deg": 346.32653,
-          "dec_deg": -6.57212,
-          "vmag": null,
-          "ra_jnow_deg": 346.6723259080224,
-          "dec_jnow_deg": -6.427697137851301,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.295421530796116,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-07T12:37:15Z",
-          "r_au": 3.781538984599,
-          "delta_au": 2.77384689873927,
-          "phase_deg": 0.1894,
-          "ra_deg": 346.18504,
-          "dec_deg": -6.64942,
-          "vmag": null,
-          "ra_jnow_deg": 346.53095991040664,
-          "dec_jnow_deg": -6.505068352119906,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.2920982533181,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-08T12:37:15Z",
-          "r_au": 3.779795218625,
-          "delta_au": 2.77245624030046,
-          "phase_deg": 0.3111,
-          "ra_deg": 346.04327,
-          "dec_deg": -6.72671,
-          "vmag": null,
-          "ra_jnow_deg": 346.38931497220466,
-          "dec_jnow_deg": -6.582430636288355,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.289006213550145,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-09T12:37:15Z",
-          "r_au": 3.77805404186,
-          "delta_au": 2.77135962065351,
-          "phase_deg": 0.5828,
-          "ra_deg": 345.90138,
-          "dec_deg": -6.80394,
-          "vmag": null,
-          "ra_jnow_deg": 346.24755101660924,
-          "dec_jnow_deg": -6.65973389555184,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.286146082975566,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-10T12:37:15Z",
-          "r_au": 3.776315467371,
-          "delta_au": 2.77055717475798,
-          "phase_deg": 0.8743,
-          "ra_deg": 345.75951,
-          "dec_deg": -6.88103,
-          "vmag": null,
-          "ra_jnow_deg": 346.1058079502111,
-          "dec_jnow_deg": -6.73689804368541,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.283518258752153,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-11T12:37:15Z",
-          "r_au": 3.774579508238,
-          "delta_au": 2.77004876954264,
-          "phase_deg": 1.1708,
-          "ra_deg": 345.6178,
-          "dec_deg": -6.95792,
-          "vmag": null,
-          "ra_jnow_deg": 345.96422568856286,
-          "dec_jnow_deg": -6.8138629909335755,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.281122855050207,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-12T12:37:15Z",
-          "r_au": 3.772846177551,
-          "delta_au": 2.76983400777153,
-          "phase_deg": 1.4691,
-          "ra_deg": 345.4764,
-          "dec_deg": -7.03454,
-          "vmag": null,
-          "ra_jnow_deg": 345.82295413421235,
-          "dec_jnow_deg": -6.890558637597831,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.27895970567432,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-13T12:37:15Z",
-          "r_au": 3.771115488413,
-          "delta_au": 2.76991224365503,
-          "phase_deg": 1.7679,
-          "ra_deg": 345.33546,
-          "dec_deg": -7.11082,
-          "vmag": null,
-          "ra_jnow_deg": 345.68214318592936,
-          "dec_jnow_deg": -6.966914880230514,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.277028376310632,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-14T12:37:15Z",
-          "r_au": 3.769387453939,
-          "delta_au": 2.77028260556093,
-          "phase_deg": 2.0666,
-          "ra_deg": 345.19511,
-          "dec_deg": -7.18669,
-          "vmag": null,
-          "ra_jnow_deg": 345.54192274501156,
-          "dec_jnow_deg": -7.042861624768538,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.275328182731087,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-15T12:37:15Z",
-          "r_au": 3.767662087254,
-          "delta_au": 2.77094402059075,
-          "phase_deg": 2.365,
-          "ra_deg": 345.05551,
-          "dec_deg": -7.26211,
-          "vmag": null,
-          "ra_jnow_deg": 345.40245271997213,
-          "dec_jnow_deg": -7.118358754114111,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.273858210817217,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-16T12:37:15Z",
-          "r_au": 3.765939401496,
-          "delta_au": 2.771895236951,
-          "phase_deg": 2.6627,
-          "ra_deg": 344.91678,
-          "dec_deg": -7.33699,
-          "vmag": null,
-          "ra_jnow_deg": 345.26385299520206,
-          "dec_jnow_deg": -7.193316173999588,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.272617335175116,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-17T12:37:15Z",
-          "r_au": 3.764219409814,
-          "delta_au": 2.77313484202614,
-          "phase_deg": 2.9595,
-          "ra_deg": 344.77908,
-          "dec_deg": -7.41128,
-          "vmag": null,
-          "ra_jnow_deg": 345.1262834658388,
-          "dec_jnow_deg": -7.267683760358528,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.271604234649416,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-18T12:37:15Z",
-          "r_au": 3.762502125371,
-          "delta_au": 2.77466127590699,
-          "phase_deg": 3.2553,
-          "ra_deg": 344.64253,
-          "dec_deg": -7.48492,
-          "vmag": null,
-          "ra_jnow_deg": 344.9898640300186,
-          "dec_jnow_deg": -7.341401412553555,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.270817404524024,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-19T12:37:15Z",
-          "r_au": 3.760787561338,
-          "delta_au": 2.77647284136733,
-          "phase_deg": 3.5497,
-          "ra_deg": 344.50726,
-          "dec_deg": -7.55785,
-          "vmag": null,
-          "ra_jnow_deg": 344.8547245797636,
-          "dec_jnow_deg": -7.414409020369698,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.27025516614937,
-          "constellation": "Aquarius"
-        },
-        {
-          "epoch_utc": "2026-09-20T12:37:15Z",
-          "r_au": 3.759075730901,
-          "delta_au": 2.77856771188495,
-          "phase_deg": 3.8428,
-          "ra_deg": 344.37341,
-          "dec_deg": -7.63002,
-          "vmag": null,
-          "ra_jnow_deg": 344.7210050079376,
-          "dec_jnow_deg": -7.486656463782824,
-          "photometry": {
-            "M1": 11.3,
-            "K1": 10.0,
-            "model": "M1 + 5*log10(delta_au) + K1*log10(r_au)"
-          },
-          "v_pred": 19.269915675254026,
-          "constellation": "Aquarius"
-        }
-      ],
-      "horizons_name": "LINEAR (P/1998 VS24)",
-      "v_pred_now": 19.295421530796116,
-      "cobs_mag": 12.0,
-      "name_full": "PJ98V24S  2027 09  8.4479  3.419411  0.2",
-      "display_name": "PJ98V24S  2027 09  8.4479  3.419411  0.2"
+      "horizons_name": "ATLAS (C/2024 J3)",
+      "v_pred_now": 14.948356730242303,
+      "name_full": "CK24J030  2026 11 25.4251  3.865514  0.9",
+      "display_name": "C/2024 J3"
     }
   ],
   "script": "horizons_orbit_ephem.py",
@@ -4324,16 +604,16 @@
     "max_items": 15
   },
   "_debug_first_names": [
-    "CJ42E00A  2028 09 13.9648  1.277797  0.9",
-    "CJ47X01b  1947 10 21.2095  0.124034  0.9",
-    "CJ95O010  1997 03 29.0338  0.924783  0.9",
-    "CJ97B06A  1999 11 17.6143  3.453865  0.9",
-    "CJ99F010  2002 01 28.2854  5.824847  0.9",
-    "CJ99J020  2000 04 10.8114  7.063072  1.0",
-    "CK01M100  2001 05 31.4949  5.355769  0.7",
-    "CK02A010  2001 12  2.7058  4.661312  0.7",
-    "CK02A020  2001 12  9.7488  4.656408  0.7",
-    "CK02A030  2002 04 26.6027  5.120967  0.9"
+    "CK02P010  2001 11  9.1137  6.583819  0.9",
+    "CK09P010  2011 12 23.9570  1.537741  0.9",
+    "CK11K36P  2016 05 23.2816  4.927117  0.8",
+    "PK11P010  2030 12 21.8004  5.034676  0.3",
+    "CK12L26P  2015 08 12.0497  6.563830  1.0",
+    "CK13P030  2014 11 24.8396  8.683703  1.0",
+    "PK15PM9D  2034 12 13.5689  4.872148  0.3",
+    "PK15TK0P  2036 06  4.8848  3.363588  0.5",
+    "PK16P010  2027 05  4.3902  2.304334  0.2",
+    "PK17P010  2018 06 14.0730  5.476136  0.3"
   ],
   "_debug_counts": {
     "total_objects": 0,
