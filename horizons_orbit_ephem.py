@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 """
 Standalone generator for data/comets_orbit_ephem.json for the brightest comets.
-
-Key points:
-- Uses MPC observable comets list as a reliable master data feed.
-- Falls back to COBS if accessible.
-- Queries JPL Horizons/SBDB for orbital elements and 15-day daily ephemerides.
 """
 
 import json
@@ -39,10 +34,11 @@ from horizons_pull import (
 
 OUT_JSON_PATH = Path("data/comets_orbit_ephem.json")
 DAYS = 15
-PAUSE_S = 0.25
+PAUSE_S = 0.2
+MAX_CANDIDATES = 20
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
-def parse_mpc_observable_comets() -> Dict[str, str]:
+def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, str]:
     """Fetch active comet designations directly from the Minor Planet Center."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
@@ -50,18 +46,19 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
     
     try:
         print("[orbit_ephem] Fetching active comets from Minor Planet Center...")
-        resp = requests.get(mpc_url, headers=headers, timeout=30)
+        resp = requests.get(mpc_url, headers=headers, timeout=20)
         resp.raise_for_status()
         
         for line in resp.text.splitlines():
             line = line.strip()
             if not line:
                 continue
-            # Extract standard designation (e.g., C/2023 A3, 12P, 13P)
             match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
             if match:
                 desig = match.group(1).strip()
                 comet_map[desig] = line[:40].strip()
+                if len(comet_map) >= max_items:
+                    break
     except Exception as e:
         print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
         
@@ -83,12 +80,12 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Attempt COBS pull first
+    # Try COBS first
     page = 1
     while True:
         params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
         try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=15)
+            resp = requests.get(base_url, params=params, headers=headers, timeout=10)
             if resp.status_code != 200:
                 break
             data = resp.json()
@@ -112,22 +109,22 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
                         pass
 
             info = data.get("info", {})
-            if page >= int(info.get("pages", 1) or 1):
+            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= MAX_CANDIDATES:
                 break
             page += 1
         except Exception:
             break
 
-    # Primary Fallback: Fetch from MPC if COBS fails or returns empty
+    # Fallback to MPC list capped at MAX_CANDIDATES
     if len(cobs_map) == 0:
         print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
-        mpc_comets = parse_mpc_observable_comets()
+        mpc_comets = parse_mpc_observable_comets(max_items=MAX_CANDIDATES)
         for desig, full_name in mpc_comets.items():
-            cobs_map[desig] = 12.0  # Assign default visual magnitude placeholder
+            cobs_map[desig] = 12.0
             fullname_map[desig] = full_name
 
-    comet_ids = sorted(cobs_map.keys())
-    result: Dict[str, Any] = dict(cobs_map)
+    comet_ids = sorted(cobs_map.keys())[:MAX_CANDIDATES]
+    result: Dict[str, Any] = {cid: cobs_map[cid] for cid in comet_ids}
     result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
     result["_debug_counts"] = debug_counts
     result["_fullname_map"] = fullname_map
@@ -217,14 +214,14 @@ def _get_horizons_ephemerides_for_label(
     epochs: List[float],
 ):
     rec_id = resolve_ambiguous_to_record_id(label)
-    candidates: List[Tuple[str, str]] = []
+    candidates: List[Tuple[str, Any]] = []
     if rec_id:
         candidates.append((rec_id, "smallbody"))
-        candidates.append((rec_id, "id"))
+        candidates.append((rec_id, None))
         candidates.append((rec_id, "designation"))
     candidates.append((label, "designation"))
     candidates.append((label, "smallbody"))
-    candidates.append((label, "id"))
+    candidates.append((label, None))
 
     last_error: Optional[Exception] = None
     for obj_id, id_type in candidates:
@@ -371,8 +368,7 @@ def main() -> None:
 
     comet_ids: List[str] = sorted(cobs_map.keys())
     results: List[Dict[str, Any]] = []
-    
-    # Process comets sequentially
+
     for cid in comet_ids:
         print(f"[orbit_ephem] Fetching {cid} ...")
         full_name = fullname_map.get(cid)
