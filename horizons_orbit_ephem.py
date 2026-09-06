@@ -72,8 +72,8 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
                 else:
                     secondary_targets.append((desig, full_name))
 
-        # Add priority targets first, capped to prevent hanging loops
-        for desig, full_name in (priority_targets + secondary_targets)[:20]:
+        # Add priority targets first
+        for desig, full_name in priority_targets + secondary_targets:
             if desig not in comet_map:
                 comet_map[desig] = full_name
 
@@ -98,12 +98,12 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Try COBS API (will fail/timeout quickly due to Cloudflare, dropping straight to MPC fallback)
+    # Try COBS API
     page = 1
-    while page <= 2:
+    while True:
         params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
         try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=5)
+            resp = requests.get(base_url, params=params, headers=headers, timeout=10)
             if resp.status_code != 200:
                 break
             data = resp.json()
@@ -427,6 +427,7 @@ def main() -> None:
 
         time.sleep(PAUSE_S)
 
+    # Sort accepted comets by brightness
     results.sort(key=lambda x: (
         x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
     ))
