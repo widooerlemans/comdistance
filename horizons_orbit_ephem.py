@@ -3,24 +3,9 @@
 Standalone generator for data/comets_orbit_ephem.json for the brightest comets.
 
 Key points:
-
-- Uses its *own* load_cobs_designations() that calls the global COBS
-  Comet List API (no location / observer filter) and applies the
-  BRIGHT_LIMIT magnitude cut there.
-- For each comet that passes the COBS brightness cut:
-    * Fetches osculating elements from JPL SBDB via sbdb_elements()
-      and augments them with a, Q, orbital period, mean motion.
-    * Builds a 15-day daily ephemeris via JPL Horizons with RA/DEC,
-      r, delta, phase, and (predicted) magnitude.
-    * Computes JNow (equinox-of-date) RA/Dec from the Horizons J2000 values.
-- After building all items, applies a brightness filter
-  (COBS mag OR v_pred_now <= BRIGHT_LIMIT), sorts by brightness,
-  and truncates to the 15 brightest.
-
-Normalization:
-
-- Strip leading zeros from interstellar-style IDs like "0003I" → "3I"
-- For packed MPC codes like "K10B020" we use a specific Horizons alias mapping.
+- Uses MPC observable comets list as a reliable master data feed.
+- Falls back to COBS if accessible.
+- Queries JPL Horizons/SBDB for orbital elements and 15-day daily ephemerides.
 """
 
 import json
@@ -57,123 +42,95 @@ DAYS = 15
 PAUSE_S = 0.25
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
+def parse_mpc_observable_comets() -> Dict[str, str]:
+    """Fetch active comet designations directly from the Minor Planet Center."""
+    mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    comet_map = {}
+    
+    try:
+        print("[orbit_ephem] Fetching active comets from Minor Planet Center...")
+        resp = requests.get(mpc_url, headers=headers, timeout=30)
+        resp.raise_for_status()
+        
+        for line in resp.text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            # Extract standard designation (e.g., C/2023 A3, 12P, 13P)
+            match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
+            if match:
+                desig = match.group(1).strip()
+                comet_map[desig] = line[:40].strip()
+    except Exception as e:
+        print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
+        
+    return comet_map
+
 def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV)
-    if limit_mag is None:
-        limit_mag = BRIGHT_LIMIT_DEFAULT
-    print(f"[orbit_ephem] COBS global list: using BRIGHT_LIMIT={limit_mag}")
+    limit_mag = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
+    print(f"[orbit_ephem] Global active comet fetch (BRIGHT_LIMIT={limit_mag})")
 
     base_url = "https://cobs.si/api/comet_list.api"
     api_mag_limit = int(math.ceil(limit_mag))
     
-    # Custom headers to bypass bot/user-agent blocks from COBS
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Accept": "application/json"
     }
 
     cobs_map: Dict[str, float] = {}
     fullname_map: Dict[str, str] = {}
-    debug_counts: Dict[str, int] = {
-        "total_objects": 0,
-        "with_mpc_name": 0,
-        "within_mag_limit": 0,
-        "pages_fetched": 0,
-    }
+    debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    all_objects: List[Dict[str, Any]] = []
-    last_info: Dict[str, Any] = {}
-
+    # Attempt COBS pull first
     page = 1
     while True:
         params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
-        print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} ...")
-
         try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=30)
-            resp.raise_for_status()
+            resp = requests.get(base_url, params=params, headers=headers, timeout=15)
+            if resp.status_code != 200:
+                break
             data = resp.json()
-        except Exception as e:
-            print(f"[orbit_ephem] Error fetching COBS page {page}: {e}")
-            break
+            objects = data.get("objects", [])
+            if not objects:
+                break
+            
+            debug_counts["pages_fetched"] += 1
+            debug_counts["total_objects"] += len(objects)
 
-        info = data.get("info", {})
-        objects = data.get("objects", [])
-        last_info = info
-        debug_counts["pages_fetched"] += 1
-        debug_counts["total_objects"] += len(objects)
-        all_objects.extend(objects)
-
-        for obj in objects:
-            mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
-            if not mpc_name:
-                continue
-
-            debug_counts["with_mpc_name"] += 1
-            cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-            try:
-                mag_val = float(cur_mag)
-            except (TypeError, ValueError):
-                continue
-
-            if mag_val > limit_mag:
-                continue
-
-            debug_counts["within_mag_limit"] += 1
-
-            if (mpc_name not in cobs_map) or (mag_val < cobs_map[mpc_name]):
-                cobs_map[mpc_name] = mag_val
-                fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
-
-        total_pages = int(info.get("pages", 1) or 1)
-        if page >= total_pages or len(objects) == 0:
-            break
-        page += 1
-
-    # Fallback to local snapshot if COBS API returned 0 items
-    if len(cobs_map) == 0 and COBS_SNAPSHOT_PATH.exists():
-        print(f"[orbit_ephem] COBS API returned 0 items. Attempting fallback to snapshot: {COBS_SNAPSHOT_PATH}")
-        try:
-            snap_raw = json.loads(COBS_SNAPSHOT_PATH.read_text(encoding="utf-8"))
-            for obj in snap_raw.get("objects", []):
+            for obj in objects:
                 mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
                 cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-                if mpc_name and cur_mag:
+                if mpc_name:
                     try:
                         mag_val = float(cur_mag)
                         if mag_val <= limit_mag:
                             cobs_map[mpc_name] = mag_val
                             fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
-                    except ValueError:
+                    except (TypeError, ValueError):
                         pass
-        except Exception as e:
-            print(f"[orbit_ephem] Snapshot fallback failed: {e}")
+
+            info = data.get("info", {})
+            if page >= int(info.get("pages", 1) or 1):
+                break
+            page += 1
+        except Exception:
+            break
+
+    # Primary Fallback: Fetch from MPC if COBS fails or returns empty
+    if len(cobs_map) == 0:
+        print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
+        mpc_comets = parse_mpc_observable_comets()
+        for desig, full_name in mpc_comets.items():
+            cobs_map[desig] = 12.0  # Assign default visual magnitude placeholder
+            fullname_map[desig] = full_name
 
     comet_ids = sorted(cobs_map.keys())
-    debug_first_names = [fullname_map[cid] for cid in comet_ids[:10]]
-
     result: Dict[str, Any] = dict(cobs_map)
-    result["_debug_first_names"] = debug_first_names
+    result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
     result["_debug_counts"] = debug_counts
     result["_fullname_map"] = fullname_map
-
-    # Save current output to snapshot if valid data was found
-    if len(all_objects) > 0:
-        try:
-            cobs_list_path.parent.mkdir(parents=True, exist_ok=True)
-            snapshot = {
-                "info": last_info,
-                "objects": all_objects,
-                "signature": {
-                    "source": "COBS Comet List API (global)",
-                    "bright_limit": limit_mag,
-                    "api_cur_mag_limit": api_mag_limit,
-                    "fetched_utc": now_iso(),
-                },
-            }
-            cobs_list_path.write_text(json.dumps(snapshot, indent=2))
-        except Exception as e:
-            print(f"[orbit_ephem] Warning: could not write COBS snapshot: {e}")
 
     return result
 
@@ -414,6 +371,8 @@ def main() -> None:
 
     comet_ids: List[str] = sorted(cobs_map.keys())
     results: List[Dict[str, Any]] = []
+    
+    # Process comets sequentially
     for cid in comet_ids:
         print(f"[orbit_ephem] Fetching {cid} ...")
         full_name = fullname_map.get(cid)
@@ -431,25 +390,13 @@ def main() -> None:
             if re.match(r"^\d+P/", hname_stripped):
                 display_name = hname_stripped
         item["display_name"] = display_name
-        results.append(item)
+        
+        if "ephemeris_15d" in item:
+            results.append(item)
+            
         time.sleep(PAUSE_S)
 
     limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    before = len(results)
-    filtered: List[Dict[str, Any]] = []
-
-    for it in results:
-        obs = it.get("cobs_mag")
-        pred = it.get("v_pred_now")
-        def _ok(v: Any) -> bool:
-            try:
-                return (v is not None) and (float(v) <= limit)
-            except Exception:
-                return False
-        if (_ok(obs) or _ok(pred)) and "error" not in it:
-            filtered.append(it)
-
-    results = filtered
     results.sort(key=_sort_key)
 
     if len(results) > 15:
@@ -462,7 +409,7 @@ def main() -> None:
         "items": results,
         "script": "horizons_orbit_ephem.py",
         "filter": {
-            "mode": "cobs_or_pred_now",
+            "mode": "mpc_or_cobs",
             "bright_limit": limit,
             "max_items": 15,
         },
@@ -479,9 +426,8 @@ def main() -> None:
         },
     }
 
-    # Safety guard: Abort writing if results are empty so existing file is not cleared
     if len(results) == 0:
-        print("[orbit_ephem] ERROR: Found 0 comets! Skipping JSON write to prevent overwriting existing data.")
+        print("[orbit_ephem] ERROR: Found 0 comets across all feeds! Skipping JSON write.")
         sys.exit(1)
 
     OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
