@@ -45,7 +45,7 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
     
     try:
         print("[orbit_ephem] Fetching active comets from Minor Planet Center...")
-        resp = requests.get(mpc_url, headers=headers, timeout=20)
+        resp = requests.get(mpc_url, headers=headers)
         resp.raise_for_status()
         
         lines = resp.text.splitlines()
@@ -83,67 +83,13 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
     return comet_map
 
 def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    print(f"[orbit_ephem] Global active comet fetch (BRIGHT_LIMIT={limit_mag})")
-
-    base_url = "https://cobs.si/api/comet_list.api"
-    api_mag_limit = int(math.ceil(limit_mag))
-    
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/json"
-    }
-
-    cobs_map: Dict[str, float] = {}
-    fullname_map: Dict[str, str] = {}
-    debug_counts = {"total_objects": 0, "pages_fetched": 0}
-
-    # Try COBS API
-    page = 1
-    while True:
-        params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
-        try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=10)
-            if resp.status_code != 200:
-                break
-            data = resp.json()
-            objects = data.get("objects", [])
-            if not objects:
-                break
-            
-            debug_counts["pages_fetched"] += 1
-            debug_counts["total_objects"] += len(objects)
-
-            for obj in objects:
-                mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
-                cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-                if mpc_name:
-                    try:
-                        mag_val = float(cur_mag)
-                        if mag_val <= limit_mag:
-                            cobs_map[mpc_name] = mag_val
-                            fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
-                    except (TypeError, ValueError):
-                        pass
-
-            info = data.get("info", {})
-            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= 30:
-                break
-            page += 1
-        except Exception:
-            break
-
-    # Fallback to MPC if COBS blocked/offline
-    if len(cobs_map) == 0:
-        print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
-        mpc_comets = parse_mpc_observable_comets()
-        for desig, full_name in mpc_comets.items():
-            fullname_map[desig] = full_name
+    print("[orbit_ephem] Using Minor Planet Center feed for active targets...")
+    fullname_map: Dict[str, str] = parse_mpc_observable_comets()
 
     comet_ids = list(fullname_map.keys())
-    result: Dict[str, Any] = {cid: cobs_map.get(cid) for cid in comet_ids if cid in cobs_map}
+    result: Dict[str, Any] = {cid: None for cid in comet_ids}
     result["_debug_first_names"] = [fullname_map[cid] for cid in comet_ids[:10]]
-    result["_debug_counts"] = debug_counts
+    result["_debug_counts"] = {"total_objects": len(comet_ids)}
     result["_fullname_map"] = fullname_map
 
     return result
@@ -440,7 +386,7 @@ def main() -> None:
         "items": results,
         "script": "horizons_orbit_ephem.py",
         "filter": {
-            "mode": "mpc_or_cobs",
+            "mode": "jpl_mpc_feed",
             "bright_limit": limit,
             "max_items": 15,
         },
@@ -458,7 +404,7 @@ def main() -> None:
     }
 
     if len(results) == 0:
-        print("[orbit_ephem] ERROR: Found 0 comets under magnitude 15! Skipping JSON write.")
+        print(f"[orbit_ephem] ERROR: Found 0 comets under magnitude threshold! Skipping JSON write.")
         sys.exit(1)
 
     OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
