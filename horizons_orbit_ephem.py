@@ -38,19 +38,18 @@ PAUSE_S = 0.2
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
 def parse_mpc_observable_comets() -> Dict[str, str]:
-    """Fetch active comet designations directly from the Minor Planet Center."""
+    """Fetch active comet designations directly from the Minor Planet Center, capped for speed."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     comet_map = {}
     
     try:
         print("[orbit_ephem] Fetching active comets from Minor Planet Center...")
-        resp = requests.get(mpc_url, headers=headers, timeout=20)
+        resp = requests.get(mpc_url, headers=headers, timeout=15)
         resp.raise_for_status()
         
         lines = resp.text.splitlines()
         priority_targets = []
-        secondary_targets = []
 
         for line in lines:
             line_str = line.strip()
@@ -62,18 +61,14 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
                 desig = match.group(1).strip()
                 full_name = line_str[:40].strip()
 
-                # Filter out historical designations prior to 2023
                 if re.search(r"[CP]/19\d{2}|[CP]/200\d|[CP]/201\d|[CP]/202[0-2]", desig):
                     continue
 
-                # Priority 1: Periodic comets (e.g. 10P, 78P) & recent 2024-2026 comets
                 if re.match(r"^\d+P", desig) or "2024" in desig or "2025" in desig or "2026" in desig:
                     priority_targets.append((desig, full_name))
-                else:
-                    secondary_targets.append((desig, full_name))
 
-        # Add priority targets first
-        for desig, full_name in priority_targets + secondary_targets:
+        # SAFETY CAP: Take only the first 15 priority targets to keep runtime under ~1.5 minutes
+        for desig, full_name in priority_targets[:15]:
             if desig not in comet_map:
                 comet_map[desig] = full_name
 
@@ -84,36 +79,18 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
 
 def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     limit_mag = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    print(f"[orbit_ephem] Global active comet fetch (BRIGHT_LIMIT={limit_mag})")
-
-    base_url = "https://cobs.si/api/comet_list.api"
-    api_mag_limit = int(math.ceil(limit_mag))
-    
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/json"
-    }
+    print(f"[orbit_ephem] Loading active comet targets (BRIGHT_LIMIT={limit_mag})")
 
     cobs_map: Dict[str, float] = {}
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Try COBS API
-    page = 1
-    while True:
-        params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
+    # 1. Try loading from the local snapshot file first (instant & avoids network blocks)
+    if cobs_list_path.exists():
         try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=10)
-            if resp.status_code != 200:
-                break
-            data = resp.json()
+            print(f"[orbit_ephem] Reading local snapshot from {cobs_list_path}...")
+            data = json.loads(cobs_list_path.read_text())
             objects = data.get("objects", [])
-            if not objects:
-                break
-            
-            debug_counts["pages_fetched"] += 1
-            debug_counts["total_objects"] += len(objects)
-
             for obj in objects:
                 mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
                 cur_mag = obj.get("current_mag", obj.get("cur_mag"))
@@ -125,17 +102,13 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
                             fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
                     except (TypeError, ValueError):
                         pass
+            debug_counts["total_objects"] = len(objects)
+        except Exception as e:
+            print(f"[orbit_ephem] Local snapshot read failed: {e}")
 
-            info = data.get("info", {})
-            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= 30:
-                break
-            page += 1
-        except Exception:
-            break
-
-    # Fallback to MPC if COBS blocked/offline
-    if len(cobs_map) == 0:
-        print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
+    # 2. If local snapshot is missing or empty, fallback to the safe MPC feed
+    if len(fullname_map) == 0:
+        print("[orbit_ephem] Local snapshot unavailable. Switching to Minor Planet Center feed...")
         mpc_comets = parse_mpc_observable_comets()
         for desig, full_name in mpc_comets.items():
             fullname_map[desig] = full_name
@@ -439,7 +412,7 @@ def main() -> None:
         "items": results,
         "script": "horizons_orbit_ephem.py",
         "filter": {
-            "mode": "mpc_or_cobs",
+            "mode": "jpl_clean_run",
             "bright_limit": limit,
             "max_items": 15,
         },
