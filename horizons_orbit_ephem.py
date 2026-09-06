@@ -39,7 +39,7 @@ MAX_CANDIDATES = 25
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
 def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, str]:
-    """Fetch active comet designations directly from the Minor Planet Center."""
+    """Fetch active comet designations directly from the Minor Planet Center, prioritizing recent/active ones."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     comet_map = {}
@@ -49,7 +49,10 @@ def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, st
         resp = requests.get(mpc_url, headers=headers, timeout=20)
         resp.raise_for_status()
         
-        for line in resp.text.splitlines():
+        lines = resp.text.splitlines()
+        
+        # Priority 1: Current/Recent provisional designations (e.g., C/2024, C/2025, C/2026) and active periodic comets
+        for line in lines:
             line = line.strip()
             if not line:
                 continue
@@ -58,9 +61,27 @@ def parse_mpc_observable_comets(max_items: int = MAX_CANDIDATES) -> Dict[str, st
             if match:
                 desig = match.group(1).strip()
                 full_name = line[:40].strip()
-                comet_map[desig] = full_name
-                if len(comet_map) >= max_items:
-                    break
+                
+                # Prioritize currently active targets over historical ones (e.g. 1995, 1997, 2002)
+                if re.search(r"(202[3-6]|\b\d{1,3}P\b)", desig) or re.search(r"(202[3-6]|\b\d{1,3}P\b)", full_name):
+                    comet_map[desig] = full_name
+                    if len(comet_map) >= max_items:
+                        break
+
+        # Priority 2: If we still have room, add remaining entries
+        if len(comet_map) < max_items:
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
+                if match:
+                    desig = match.group(1).strip()
+                    if desig not in comet_map:
+                        comet_map[desig] = line[:40].strip()
+                        if len(comet_map) >= max_items:
+                            break
+
     except Exception as e:
         print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
         
@@ -380,7 +401,6 @@ def main() -> None:
         if full_name:
             item["name_full"] = full_name
 
-        # Construct clean human-readable display name
         display_name = item.get("horizons_name") or item.get("name_full") or item["id"]
         if isinstance(display_name, str):
             paren_match = re.search(r"\(([^)]+)\)", display_name)
@@ -397,8 +417,8 @@ def main() -> None:
         time.sleep(PAUSE_S)
 
     limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    
-    # Keep only comets with predicted/observed magnitude <= BRIGHT_LIMIT (15.0)
+
+    # Filter by JPL predicted magnitude (or COBS mag if available) <= BRIGHT_LIMIT (15.0)
     filtered_results = []
     for it in results:
         vpred = it.get("v_pred_now")
@@ -406,12 +426,14 @@ def main() -> None:
         if (vpred is not None and vpred <= limit) or (cmag is not None and cmag <= limit):
             filtered_results.append(it)
 
-    # If all fail mag thresholding, keep top brightest based on JPL predicted mag
+    # Sort remaining comets by predicted brightness (brightest first)
     if len(filtered_results) > 0:
         results = filtered_results
 
-    results.sort(key=_sort_key)
-
+    results.sort(key=lambda x: (
+        x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
+    ))
+    
     if len(results) > 15:
         results = results[:15]
 
