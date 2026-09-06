@@ -83,11 +83,12 @@ def parse_mpc_observable_comets() -> Dict[str, str]:
     return comet_map
 
 def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
-    limit_mag = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
-    print(f"[orbit_ephem] Global active comet fetch (BRIGHT_LIMIT={limit_mag})")
+    limit_mag = 16.0
+    print(f"[orbit_ephem] Global active comet fetch via Proxy (BRIGHT_LIMIT={limit_mag})")
 
-    base_url = "https://cobs.si/api/comet_list.api"
-    api_mag_limit = int(math.ceil(limit_mag))
+    # Route request through corsproxy.io to bypass Cloudflare IP blocks
+    target_api = f"https://cobs.si/api/comet_list.api?format=json&cur-mag={int(math.ceil(limit_mag))}"
+    proxy_url = f"https://corsproxy.io/?{requests.utils.quote(target_api, safe='')}"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -98,26 +99,17 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     fullname_map: Dict[str, str] = {}
     debug_counts = {"total_objects": 0, "pages_fetched": 0}
 
-    # Try COBS API
-    page = 1
-    while True:
-        params = {"format": "json", "cur-mag": str(api_mag_limit), "page": str(page)}
-        try:
-            resp = requests.get(base_url, params=params, headers=headers, timeout=10)
-            if resp.status_code != 200:
-                break
+    try:
+        resp = requests.get(proxy_url, headers=headers, timeout=15)
+        if resp.status_code == 200:
             data = resp.json()
             objects = data.get("objects", [])
-            if not objects:
-                break
-            
-            debug_counts["pages_fetched"] += 1
-            debug_counts["total_objects"] += len(objects)
+            debug_counts["total_objects"] = len(objects)
 
             for obj in objects:
                 mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
                 cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-                if mpc_name:
+                if mpc_name and cur_mag is not None:
                     try:
                         mag_val = float(cur_mag)
                         if mag_val <= limit_mag:
@@ -125,17 +117,13 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
                             fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
                     except (TypeError, ValueError):
                         pass
+            print(f"[orbit_ephem] Successfully fetched {len(cobs_map)} observed comets from COBS.")
+    except Exception as e:
+        print(f"[orbit_ephem] Proxy query failed ({e}).")
 
-            info = data.get("info", {})
-            if page >= int(info.get("pages", 1) or 1) or len(cobs_map) >= 30:
-                break
-            page += 1
-        except Exception:
-            break
-
-    # Fallback to MPC if COBS blocked/offline
+    # Fallback to Minor Planet Center if COBS fails or is empty
     if len(cobs_map) == 0:
-        print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
+        print("[orbit_ephem] Switching to Minor Planet Center fallback feed...")
         mpc_comets = parse_mpc_observable_comets()
         for desig, full_name in mpc_comets.items():
             fullname_map[desig] = full_name
@@ -378,7 +366,7 @@ def fetch_orbit_and_ephem(
     return item
 
 def main() -> None:
-    limit = try_float_env(BRIGHT_LIMIT_ENV) or BRIGHT_LIMIT_DEFAULT
+    limit = 16.0
     cobs_map = load_cobs_designations(COBS_SNAPSHOT_PATH)
     debug_first_names = cobs_map.pop("_debug_first_names", [])
     debug_counts = cobs_map.pop("_debug_counts", {})
@@ -430,7 +418,9 @@ def main() -> None:
 
     # Sort accepted comets by brightness
     results.sort(key=lambda x: (
-        x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
+        x.get("cobs_mag") if x.get("cobs_mag") is not None else (
+            x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
+        )
     ))
 
     payload: Dict[str, Any] = {
@@ -440,7 +430,7 @@ def main() -> None:
         "items": results,
         "script": "horizons_orbit_ephem.py",
         "filter": {
-            "mode": "mpc_or_cobs",
+            "mode": "cobs_via_proxy",
             "bright_limit": limit,
             "max_items": 15,
         },
@@ -458,7 +448,7 @@ def main() -> None:
     }
 
     if len(results) == 0:
-        print("[orbit_ephem] ERROR: Found 0 comets under magnitude 15! Skipping JSON write.")
+        print(f"[orbit_ephem] ERROR: Found 0 comets under magnitude {limit}! Skipping JSON write.")
         sys.exit(1)
 
     OUT_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
