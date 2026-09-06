@@ -37,7 +37,7 @@ DAYS = 15
 PAUSE_S = 0.2
 COBS_SNAPSHOT_PATH = Path("data/cobs_list_global_snapshot.json")
 
-def parse_mpc_observable_comets(max_candidates: int = 150) -> Dict[str, str]:
+def parse_mpc_observable_comets() -> Dict[str, str]:
     """Fetch active comet designations directly from the Minor Planet Center."""
     mpc_url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
@@ -49,39 +49,33 @@ def parse_mpc_observable_comets(max_candidates: int = 150) -> Dict[str, str]:
         resp.raise_for_status()
         
         lines = resp.text.splitlines()
-        
-        # Scan full MPC list, prioritizing 2024-2026 provisional targets and periodic comets
+        priority_targets = []
+        secondary_targets = []
+
         for line in lines:
-            line = line.strip()
-            if not line:
+            line_str = line.strip()
+            if not line_str or len(line_str) < 40:
                 continue
 
-            match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
+            match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line_str)
             if match:
                 desig = match.group(1).strip()
-                full_name = line[:40].strip()
-                
-                # Exclude obvious old historical apparitions (prior to 2020)
-                if re.search(r"(P/19|P/200|P/201)", desig):
+                full_name = line_str[:40].strip()
+
+                # Filter out historical designations prior to 2023
+                if re.search(r"[CP]/19\d{2}|[CP]/200\d|[CP]/201\d|[CP]/202[0-2]", desig):
                     continue
 
+                # Priority 1: Periodic comets (e.g. 10P, 78P) & recent 2024-2026 comets
+                if re.match(r"^\d+P", desig) or "2024" in desig or "2025" in desig or "2026" in desig:
+                    priority_targets.append((desig, full_name))
+                else:
+                    secondary_targets.append((desig, full_name))
+
+        # Add priority targets first
+        for desig, full_name in priority_targets + secondary_targets:
+            if desig not in comet_map:
                 comet_map[desig] = full_name
-                if len(comet_map) >= max_candidates:
-                    break
-
-        # Fallback to general lines if list is still small
-        if len(comet_map) < 15:
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                match = re.search(r"([CPD]/[-A-Za-z0-9\s]+|\d+P)", line)
-                if match:
-                    desig = match.group(1).strip()
-                    if desig not in comet_map:
-                        comet_map[desig] = line[:40].strip()
-                        if len(comet_map) >= max_candidates:
-                            break
 
     except Exception as e:
         print(f"[orbit_ephem] Warning: Failed to fetch MPC feed: {e}")
@@ -142,7 +136,7 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     # Fallback to MPC if COBS blocked/offline
     if len(cobs_map) == 0:
         print("[orbit_ephem] COBS API unavailable. Switching to Minor Planet Center feed...")
-        mpc_comets = parse_mpc_observable_comets(max_candidates=100)
+        mpc_comets = parse_mpc_observable_comets()
         for desig, full_name in mpc_comets.items():
             fullname_map[desig] = full_name
 
@@ -393,7 +387,7 @@ def main() -> None:
     comet_ids: List[str] = list(fullname_map.keys())
     results: List[Dict[str, Any]] = []
 
-    print(f"[orbit_ephem] Checking candidates against brightness threshold (<= {limit})...")
+    print(f"[orbit_ephem] Checking active candidates (BRIGHT_LIMIT <= {limit})...")
 
     for cid in comet_ids:
         full_name = fullname_map.get(cid)
@@ -404,11 +398,11 @@ def main() -> None:
 
         vpred = item.get("v_pred_now")
         cmag = cobs_map.get(cid)
-
-        # STRICT FILTER: Discard any object fainter than BRIGHT_LIMIT (15.0)
         eff_mag = cmag if cmag is not None else vpred
+
+        # Discard objects fainter than threshold or without mag predictions
         if eff_mag is None or eff_mag > limit:
-            print(f"[orbit_ephem] Skipping {cid} (mag={eff_mag} > {limit})")
+            print(f"[orbit_ephem] Skipping {cid} (mag={eff_mag})")
             continue
 
         print(f"[orbit_ephem] ACCEPTED: {cid} (mag={eff_mag})")
@@ -429,13 +423,12 @@ def main() -> None:
         item["display_name"] = display_name
         results.append(item)
         
-        # Stop once 15 valid bright comets are collected
         if len(results) >= 15:
             break
 
         time.sleep(PAUSE_S)
 
-    # Sort accepted comets by predicted brightness (brightest first)
+    # Sort accepted comets by brightness
     results.sort(key=lambda x: (
         x.get("v_pred_now") if x.get("v_pred_now") is not None else 99.0
     ))
