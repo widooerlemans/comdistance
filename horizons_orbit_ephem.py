@@ -58,9 +58,9 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     base_url = "https://cobs.si/api/comet_list.api"
     api_mag_limit = int(math.ceil(limit_mag))
     
-    # Use clean, official parameters matching COBS documentation guidelines
+   # Use clean, official parameters matching COBS documentation guidelines
+   # Official COBS API parameters (removed the unsupported 'format' parameter)
     params_base = {
-        "format": "json", 
         "cur-mag": str(api_mag_limit)
     }
 
