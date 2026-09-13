@@ -33,7 +33,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from astropy.time import Time
-# UPDATED IMPORT: Added get_constellation
 from astropy.coordinates import SkyCoord, FK5, get_constellation
 import astropy.units as u
 from astroquery.jplhorizons import Horizons
@@ -102,20 +101,25 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
                 continue
 
             debug_counts["with_mpc_name"] += 1
-            cur_mag = obj.get("current_mag", obj.get("cur_mag"))
-            try:
-                mag_val = float(cur_mag)
-            except (TypeError, ValueError):
-                continue
+            
+            # Robust magnitude lookup across different possible COBS API keys
+            mag_val = None
+            for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag", "cur_mag"):
+                if k in obj:
+                    try:
+                        mag_val = float(obj[k])
+                        break
+                    except (TypeError, ValueError):
+                        pass
 
-            if mag_val > limit_mag:
+            if mag_val is None or mag_val > limit_mag:
                 continue
 
             debug_counts["within_mag_limit"] += 1
 
             if (mpc_name not in cobs_map) or (mag_val < cobs_map[mpc_name]):
                 cobs_map[mpc_name] = mag_val
-                fullname_map[mpc_name] = obj.get("fullname") or obj.get("name", mpc_name)
+                fullname_map[mpc_name] = obj.get("fullname") or obj.get("comet_fullname") or obj.get("name", mpc_name)
 
         total_pages = int(info.get("pages", 1) or 1)
         if page >= total_pages:
@@ -317,7 +321,6 @@ def build_ephemeris_span(
                 c_jnow = c_j2000.transform_to(FK5(equinox=t_utc))
                 core["ra_jnow_deg"] = float(c_jnow.ra.deg)
                 core["dec_jnow_deg"] = float(c_jnow.dec.deg)
-                # UPDATED: Added constellation lookup
                 core["constellation"] = get_constellation(c_j2000)
             except Exception:
                 pass
