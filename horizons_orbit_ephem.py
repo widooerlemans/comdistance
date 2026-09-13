@@ -3,10 +3,8 @@
 Standalone generator for data/comets_orbit_ephem.json for the brightest comets.
 
 Key points:
-
-- Uses its *own* load_cobs_designations() that calls the global COBS
-  Comet List API (no location / observer filter) and applies the
-  BRIGHT_LIMIT magnitude cut there.
+- Uses an updated load_cobs_designations() with a browser User-Agent header 
+  to prevent cloud blocking by COBS, querying the global COBS Comet List API.
 - For each comet that passes the COBS brightness cut:
     * Fetches osculating elements from JPL SBDB via sbdb_elements()
       and augments them with a, Q, orbital period, mean motion.
@@ -16,11 +14,6 @@ Key points:
 - After building all items, applies a brightness filter
   (COBS mag OR v_pred_now <= BRIGHT_LIMIT), sorts by brightness,
   and truncates to the 15 brightest.
-
-Normalization:
-
-- Strip leading zeros from interstellar-style IDs like "0003I" → "3I"
-- For packed MPC codes like "K10B020" we use a specific Horizons alias mapping.
 """
 
 import json
@@ -64,7 +57,18 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
     base_url = "https://cobs.si/api/comet_list.api"
     api_mag_limit = int(math.ceil(limit_mag))
-    params_base = {"format": "json", "cur-mag": str(api_mag_limit)}
+    
+    # Official COBS API parameters with active filter
+    params_base = {
+        "format": "json", 
+        "cur-mag": str(api_mag_limit),
+        "is-active": "1"
+    }
+
+    # Browser User-Agent header to prevent GitHub Azure IPs from being blocked/emptied
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
 
     cobs_map: Dict[str, float] = {}
     fullname_map: Dict[str, str] = {}
@@ -84,18 +88,23 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
         params["page"] = str(page)
         print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} ...")
 
-        resp = requests.get(base_url, params=params, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
+        try:
+            resp = requests.get(base_url, params=params, headers=headers, timeout=30)
+            resp.raise_for_status()
+            data = resp.json()
+        except Exception as e:
+            print(f"[orbit_ephem] Error fetching from COBS API: {e}")
+            break
 
         info = data.get("info", {})
         
+        # Robustly parse objects using official COBS structure ('objects') with fallbacks
         objects = []
         if isinstance(data, dict):
-            if isinstance(data.get("comet_list"), list):
-                objects = data["comet_list"]
+            if isinstance(data.get("objects"), list):
+                objects = data["objects"]
             else:
-                for k in ("objects", "comets", "data", "items", "list"):
+                for k in ("comet_list", "comets", "data", "items", "list"):
                     if isinstance(data.get(k), list):
                         objects = data[k]
                         break
@@ -107,6 +116,10 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
         debug_counts["total_objects"] += len(objects)
         all_objects.extend(objects)
 
+        if not objects:
+            print(f"[orbit_ephem] Warning: No objects returned on page {page}.")
+            break
+
         for obj in objects:
             mpc_name = obj.get("mpc_name") or obj.get("mpc") or obj.get("name")
             if not mpc_name:
@@ -114,9 +127,10 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
             debug_counts["with_mpc_name"] += 1
             
+            # Robust magnitude lookup ('current_mag' per official docs, with fallbacks)
             mag_val = None
-            for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag", "cur_mag"):
-                if k in obj:
+            for k in ("current_mag", "mag", "magnitude", "peak_mag", "cur_mag"):
+                if k in obj and obj[k] is not None:
                     try:
                         mag_val = float(obj[k])
                         break
