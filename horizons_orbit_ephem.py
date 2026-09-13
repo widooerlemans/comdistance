@@ -58,14 +58,13 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     base_url = "https://cobs.si/api/comet_list.api"
     api_mag_limit = int(math.ceil(limit_mag))
     
-    # Official COBS API parameters with active filter
+    # Use clean, official parameters matching COBS documentation guidelines
     params_base = {
         "format": "json", 
-        "cur-mag": str(api_mag_limit),
-        "is-active": "1"
+        "cur-mag": str(api_mag_limit)
     }
 
-    # Browser User-Agent header to prevent GitHub Azure IPs from being blocked/emptied
+    # Browser User-Agent header to prevent GitHub Azure IPs from being blocked
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
@@ -86,15 +85,20 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
     while True:
         params = dict(params_base)
         params["page"] = str(page)
-        print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} ...")
+        print(f"[orbit_ephem] Fetching COBS comet_list.api page {page} with params {params} ...")
 
         try:
             resp = requests.get(base_url, params=params, headers=headers, timeout=30)
+            print(f"[orbit_ephem] Response status: {resp.status_code}")
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
             print(f"[orbit_ephem] Error fetching from COBS API: {e}")
             break
+
+        # Debug print snippet of raw text if objects are missing
+        if not data or (isinstance(data, dict) and not data.get("objects") and not data.get("comet_list")):
+            print(f"[orbit_ephem] Raw response text: {resp.text[:500]}")
 
         info = data.get("info", {})
         
