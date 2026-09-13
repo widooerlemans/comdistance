@@ -89,7 +89,19 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
         data = resp.json()
 
         info = data.get("info", {})
-        objects = data.get("objects", [])
+        
+        objects = []
+        if isinstance(data, dict):
+            if isinstance(data.get("comet_list"), list):
+                objects = data["comet_list"]
+            else:
+                for k in ("objects", "comets", "data", "items", "list"):
+                    if isinstance(data.get(k), list):
+                        objects = data[k]
+                        break
+        elif isinstance(data, list):
+            objects = data
+
         last_info = info
         debug_counts["pages_fetched"] += 1
         debug_counts["total_objects"] += len(objects)
@@ -102,7 +114,6 @@ def load_cobs_designations(cobs_list_path: Path) -> Dict[str, Any]:
 
             debug_counts["with_mpc_name"] += 1
             
-            # Robust magnitude lookup across different possible COBS API keys
             mag_val = None
             for k in ("mag", "magnitude", "current_mag", "peak_mag", "estimated_mag", "cur_mag"):
                 if k in obj:
